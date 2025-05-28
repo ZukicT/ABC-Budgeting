@@ -6,13 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		DC6566912DE6C01200BAEEE0 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = DC6566902DE6C01200BAEEE0 /* AsyncAlgorithms */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		DC20FE7E2DE16A92006253C1 /* ABC Budgeting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ABC Budgeting.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DC20FED42DE2450F006253C1 /* Exceptions for "ABC Budgeting" folder in "ABC Budgeting" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = DC20FE7D2DE16A92006253C1 /* ABC Budgeting */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DC20FE802DE16A92006253C1 /* ABC Budgeting */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DC20FED42DE2450F006253C1 /* Exceptions for "ABC Budgeting" folder in "ABC Budgeting" target */,
+			);
 			path = "ABC Budgeting";
 			sourceTree = "<group>";
 		};
@@ -23,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC6566912DE6C01200BAEEE0 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +83,7 @@
 			);
 			name = "ABC Budgeting";
 			packageProductDependencies = (
+				DC6566902DE6C01200BAEEE0 /* AsyncAlgorithms */,
 			);
 			productName = "ABC Budgeting";
 			productReference = DC20FE7E2DE16A92006253C1 /* ABC Budgeting.app */;
@@ -94,6 +113,9 @@
 			);
 			mainGroup = DC20FE752DE16A92006253C1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DC65668F2DE6C01200BAEEE0 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DC20FE7F2DE16A92006253C1 /* Products */;
 			projectDirPath = "";
@@ -324,6 +346,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DC65668F2DE6C01200BAEEE0 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DC6566902DE6C01200BAEEE0 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DC65668F2DE6C01200BAEEE0 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DC20FE762DE16A92006253C1 /* Project object */;
 }
