@@ -48,7 +48,7 @@ struct MainHeaderView: View {
                         .accessibilityLabel("Notifications")
                         .accessibilityAddTraits(.isButton)
                     }
-                    .padding(.top, -60)
+                    .padding(.top, -50)
                     .padding(.horizontal)
                     .padding(.bottom, 8)
                 }
@@ -60,7 +60,7 @@ struct MainHeaderView: View {
                 .padding(.top, geometry.safeAreaInsets.top)
             }
         }
-        .frame(height: 8 + 12 + 8 + 28) // Adjust as needed for your header
+        .frame(height: 24 + 12 + 8 + 28) // Adjust as needed for your header
     }
 }
 

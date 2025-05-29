@@ -1,79 +1,30 @@
 import SwiftUI
+import Foundation
 
 struct TransactionsView: View {
     @State private var selectedCategory: TransactionCategory? = nil
     @State private var transactions: [Transaction] = []
     @State private var showAddTransaction = false
     @Binding var goals: [GoalFormData]
+    @State private var selectedTransaction: Transaction? = nil
 
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            AppColors.background.ignoresSafeArea()
-            VStack(alignment: .leading, spacing: 0) {
-                // Static Title and Filter Chips
-                Text("Transactions")
-                    .font(.title.bold())
-                    .foregroundColor(.primary)
-                    .padding(.top, 20)
-                    .padding(.horizontal)
-                FilterChips(selected: $selectedCategory)
-                    .padding(.top, 12)
-                    .padding(.horizontal)
-                // Scrollable Content
-                if transactions.isEmpty {
-                    VStack(spacing: 16) {
-                        Spacer(minLength: 40)
-                        Image("Transactions")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 220, maxHeight: 220)
-                            .accessibilityLabel("No transactions yet")
-                        Text("No transactions yet")
-                            .font(.title3.weight(.semibold))
-                            .foregroundColor(.secondary)
-                        Text("Tap the + button to add your first transaction.")
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 32)
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("Today")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .padding(.top, 20)
-                                .padding(.horizontal)
-                            VStack(spacing: 16) {
-                                ForEach(transactions.filter { selectedCategory == nil || $0.category == selectedCategory }) { transaction in
-                                    TransactionRow(transaction: transaction)
-                                        .onAppear { print("Rendering TransactionRow for: \(transaction.title)") }
-                                }
-                            }
-                            .padding(.top, 8)
-                            .padding(.horizontal)
-                            .padding(.bottom, 80) // For FAB spacing
-                        }
-                    }
+        NavigationStack {
+            ZStack(alignment: .bottomTrailing) {
+                AppColors.background.ignoresSafeArea()
+                VStack(alignment: .leading, spacing: 0) {
+                    headerSection
+                    filterChipsSection
+                    contentSection
                 }
+                fabSection
             }
-            FloatingActionButton(action: {
-                print("FAB tapped: showAddTransaction = true")
-                showAddTransaction = true
-            })
-            .padding(.trailing, AppPaddings.fabTrailing)
-            .padding(.bottom, AppPaddings.fabBottom)
             .sheet(isPresented: $showAddTransaction) {
                 AddTransactionView(availableGoals: goals) { newTransaction in
-                    print("Saving new transaction: \(newTransaction.title), amount: \(newTransaction.amount)")
                     // If the transaction is linked to a goal, update the goal's savedAmount
                     if let linkedGoalName = newTransaction.linkedGoalName,
                        let idx = goals.firstIndex(where: { $0.name == linkedGoalName }) {
                         let amount = newTransaction.amount
-                        print("Updating goal '", goals[idx].name, "' with amount: ", amount)
                         if amount > 0 {
                             goals[idx] = GoalFormData(
                                 name: goals[idx].name,
@@ -90,23 +41,104 @@ struct TransactionsView: View {
                                 name: goals[idx].name,
                                 subtitle: goals[idx].subtitle,
                                 targetAmount: goals[idx].targetAmount,
-                                savedAmount: goals[idx].savedAmount + amount, // subtracts since amount is negative
+                                savedAmount: goals[idx].savedAmount + amount,
                                 targetDate: goals[idx].targetDate,
                                 notes: goals[idx].notes,
                                 iconName: goals[idx].iconName,
                                 iconColorName: goals[idx].iconColorName
                             )
                         }
-                        print("Goal '", goals[idx].name, "' new savedAmount: ", goals[idx].savedAmount)
                     }
                     transactions.insert(newTransaction, at: 0)
-                    print("Transaction list count: \(transactions.count)")
                     showAddTransaction = false
                 }
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
             }
+            .sheet(item: $selectedTransaction) { transaction in
+                TransactionDetailView(transaction: transaction) { updatedTransaction in
+                    if let idx = transactions.firstIndex(where: { $0.id == updatedTransaction.id }) {
+                        transactions[idx] = updatedTransaction
+                    }
+                }
+            }
         }
+    }
+
+    private var headerSection: some View {
+        Text("Transactions")
+            .font(.title.bold())
+            .foregroundColor(.primary)
+            .padding(.top, 20)
+            .padding(.horizontal)
+    }
+
+    private var filterChipsSection: some View {
+        FilterChips(selected: $selectedCategory)
+            .padding(.top, 12)
+            .padding(.horizontal)
+    }
+
+    private var contentSection: some View {
+        Group {
+            if transactions.isEmpty {
+                emptyStateSection
+            } else {
+                transactionListSection
+            }
+        }
+    }
+
+    private var emptyStateSection: some View {
+        VStack(spacing: 16) {
+            Spacer(minLength: 40)
+            Image("Transactions")
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 220, maxHeight: 220)
+                .accessibilityLabel("No transactions yet")
+            Text("No transactions yet")
+                .font(.title3.weight(.semibold))
+                .foregroundColor(.secondary)
+            Text("Tap the + button to add your first transaction.")
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var transactionListSection: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Today")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 20)
+                    .padding(.horizontal)
+                VStack(spacing: 16) {
+                    ForEach(transactions.filter { selectedCategory == nil || $0.category == selectedCategory }) { transaction in
+                        Button(action: { selectedTransaction = transaction }) {
+                            TransactionRow(transaction: transaction)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.horizontal)
+                .padding(.bottom, 80) // For FAB spacing
+            }
+        }
+    }
+
+    private var fabSection: some View {
+        FloatingActionButton(action: {
+            showAddTransaction = true
+        })
+        .padding(.trailing, AppPaddings.fabTrailing)
+        .padding(.bottom, AppPaddings.fabBottom)
     }
 }
 
@@ -194,7 +226,7 @@ struct TransactionRow: View {
                 .shadow(color: Color.black.opacity(0.03), radius: 2, y: 1)
         )
         .accessibilityElement(children: .combine)
-        .onAppear { print("TransactionRow appeared for: \(transaction.title)") }
+        .onAppear { }
     }
     // Helper to determine outcome color
     private var outcomeColor: Color {
@@ -204,8 +236,8 @@ struct TransactionRow: View {
 }
 
 // MARK: - Mock Data
-struct Transaction: Identifiable {
-    let id = UUID()
+struct Transaction: Identifiable, Hashable {
+    let id: UUID
     let title: String
     let subtitle: String
     let amount: Double
@@ -220,12 +252,12 @@ struct Transaction: Identifiable {
 
     static func makeMockData() -> [Transaction] {
         [
-            Transaction(title: "Adobe Illustrator", subtitle: "Subscription fee", amount: -32, iconName: "cart", iconColorName: "orange", iconBackgroundName: "orange.opacity15", category: .essentials, linkedGoalName: nil),
-            Transaction(title: "Spotify", subtitle: "Music subscription", amount: -10, iconName: "music.note", iconColorName: "purple", iconBackgroundName: "purple.opacity15", category: .leisure, linkedGoalName: nil),
-            Transaction(title: "Savings Deposit", subtitle: "Monthly savings", amount: 100, iconName: "banknote", iconColorName: "green", iconBackgroundName: "green.opacity15", category: .savings, linkedGoalName: nil),
-            Transaction(title: "Salary", subtitle: "Monthly income", amount: 2000, iconName: "dollarsign.circle", iconColorName: "mint", iconBackgroundName: "mint.opacity15", category: .income, linkedGoalName: nil),
-            Transaction(title: "Electric Bill", subtitle: "Utilities", amount: -60, iconName: "doc.text", iconColorName: "red", iconBackgroundName: "red.opacity15", category: .bills, linkedGoalName: nil),
-            Transaction(title: "Miscellaneous", subtitle: "Other expense", amount: -25, iconName: "ellipsis", iconColorName: "gray", iconBackgroundName: "gray.opacity15", category: .other, linkedGoalName: nil)
+            Transaction(id: UUID(), title: "Adobe Illustrator", subtitle: "Subscription fee", amount: -32, iconName: "cart", iconColorName: "orange", iconBackgroundName: "orange.opacity15", category: .essentials, linkedGoalName: nil),
+            Transaction(id: UUID(), title: "Spotify", subtitle: "Music subscription", amount: -10, iconName: "music.note", iconColorName: "purple", iconBackgroundName: "purple.opacity15", category: .leisure, linkedGoalName: nil),
+            Transaction(id: UUID(), title: "Savings Deposit", subtitle: "Monthly savings", amount: 100, iconName: "banknote", iconColorName: "green", iconBackgroundName: "green.opacity15", category: .savings, linkedGoalName: nil),
+            Transaction(id: UUID(), title: "Salary", subtitle: "Monthly income", amount: 2000, iconName: "dollarsign.circle", iconColorName: "mint", iconBackgroundName: "mint.opacity15", category: .income, linkedGoalName: nil),
+            Transaction(id: UUID(), title: "Electric Bill", subtitle: "Utilities", amount: -60, iconName: "doc.text", iconColorName: "red", iconBackgroundName: "red.opacity15", category: .bills, linkedGoalName: nil),
+            Transaction(id: UUID(), title: "Miscellaneous", subtitle: "Other expense", amount: -25, iconName: "ellipsis", iconColorName: "gray", iconBackgroundName: "gray.opacity15", category: .other, linkedGoalName: nil)
         ]
     }
 }
@@ -452,6 +484,12 @@ struct AddTransactionView: View {
                 .padding(AppPaddings.inputField)
                 .background(Color.white)
                 .cornerRadius(12)
+                .onChange(of: amount) { _, newValue in
+                    let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
+                    if formatted != newValue {
+                        amount = formatted
+                    }
+                }
         }
         .padding(.top, 0)
     }
@@ -623,6 +661,7 @@ struct AddTransactionView: View {
     private func save() {
         let value = Double(amount.replacingOccurrences(of: "$", with: "")) ?? 0
         let newTransaction = Transaction(
+            id: UUID(),
             title: title,
             subtitle: notes,
             amount: value,
@@ -660,4 +699,234 @@ enum IncomeOrOutcome: String, CaseIterable, Identifiable, CustomStringConvertibl
     case outcome = "Outcome"
     var id: String { rawValue }
     var description: String { rawValue }
+}
+
+struct TransactionDetailView: View {
+    let transaction: Transaction
+    var onSave: (Transaction) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var note: String
+    @State private var isEditing = false
+    @State private var editedTitle: String
+    @State private var editedAmount: String
+    @State private var editedCategory: TransactionCategory
+    @State private var editedIconName: String
+    @State private var editedDate: Date
+    @State private var editedLinkedGoalName: String?
+    // For demo, we just update the local note. In a real app, this would persist to storage or view model.
+    init(transaction: Transaction, onSave: @escaping (Transaction) -> Void) {
+        self.transaction = transaction
+        self.onSave = onSave
+        _note = State(initialValue: transaction.subtitle)
+        _editedTitle = State(initialValue: transaction.title)
+        _editedAmount = State(initialValue: String(format: "%g", transaction.amount))
+        _editedCategory = State(initialValue: transaction.category)
+        _editedIconName = State(initialValue: transaction.iconName)
+        _editedDate = State(initialValue: Date.now) // Replace with transaction.date if available
+        _editedLinkedGoalName = State(initialValue: transaction.linkedGoalName)
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            Capsule()
+                .fill(Color.secondary.opacity(0.25))
+                .frame(width: 40, height: 5)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 8)
+                .padding(.bottom, 8)
+                .onTapGesture { dismiss() }
+
+            HStack(alignment: .center, spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(editedCategory.color.opacity(0.18))
+                        .frame(width: 56, height: 56)
+                    Image(systemName: editedIconName)
+                        .font(.system(size: 30, weight: .semibold))
+                        .foregroundColor(editedCategory.color)
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    if isEditing {
+                        TextField("Title", text: $editedTitle)
+                            .font(.title2.bold())
+                            .foregroundColor(.primary)
+                        // Icon picker
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(editedCategory.icons, id: \.self) { icon in
+                                    Button(action: { editedIconName = icon }) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(editedIconName == icon ? editedCategory.color : Color(.systemGray5))
+                                                .frame(width: 36, height: 36)
+                                            Image(systemName: icon)
+                                                .font(.system(size: 18, weight: .semibold))
+                                                .foregroundColor(editedIconName == icon ? .white : editedCategory.color)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        Text(transaction.title)
+                            .font(.title2.bold())
+                            .foregroundColor(.primary)
+                        if !transaction.subtitle.isEmpty {
+                            Text(transaction.subtitle)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
+            Divider().padding(.vertical, 4)
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("Amount")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    if isEditing {
+                        TextField("Amount", text: $editedAmount)
+                            .keyboardType(.decimalPad)
+                            .font(.title3.weight(.semibold))
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 100)
+                            .onChange(of: editedAmount) { _, newValue in
+                                let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
+                                if formatted != newValue {
+                                    editedAmount = formatted
+                                }
+                            }
+                    } else {
+                        Text(transaction.amount, format: .currency(code: "USD"))
+                            .font(.title3.weight(.semibold))
+                            .foregroundColor(transaction.amount >= 0 ? .green : .red)
+                    }
+                }
+                HStack {
+                    Text("Category")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    if isEditing {
+                        Picker("Category", selection: $editedCategory) {
+                            ForEach(TransactionCategory.allCases) { cat in
+                                Text(cat.label).tag(cat)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    } else {
+                        Label(transaction.category.label, systemImage: transaction.category.symbol)
+                            .font(.body)
+                            .foregroundColor(transaction.category.color)
+                    }
+                }
+                if isEditing {
+                    // Linked Goal Picker (if needed)
+                }
+                if let linkedGoalName = transaction.linkedGoalName {
+                    HStack {
+                        Text("Linked Goal")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        if isEditing {
+                            TextField("Linked Goal", text: Binding(
+                                get: { editedLinkedGoalName ?? "" },
+                                set: { editedLinkedGoalName = $0.isEmpty ? nil : $0 }
+                            ))
+                                .font(.body)
+                                .foregroundColor(.primary)
+                        } else {
+                            Text(linkedGoalName)
+                                .font(.body)
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+                HStack {
+                    Text("Date & Time")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    if isEditing {
+                        DatePicker("", selection: $editedDate, displayedComponents: [.date, .hourAndMinute])
+                            .labelsHidden()
+                    } else {
+                        Text(editedDate.formatted(date: .abbreviated, time: .shortened))
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    }
+                }
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Note")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                    if isEditing {
+                        TextField("Add a note...", text: $note, axis: .vertical)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    } else {
+                        Text(note.isEmpty ? "No note" : note)
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
+            HStack {
+                if isEditing {
+                    Button(action: { isEditing = false }) {
+                        Text("Cancel")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color(.systemGray5))
+                            .foregroundColor(.primary)
+                            .cornerRadius(12)
+                    }
+                    Button(action: {
+                        // Save logic: create new Transaction and call onSave
+                        let updatedTransaction = Transaction(
+                            id: transaction.id,
+                            title: editedTitle,
+                            subtitle: note,
+                            amount: Double(editedAmount) ?? 0,
+                            iconName: editedIconName,
+                            iconColorName: editedCategory.color.toHex(),
+                            iconBackgroundName: editedCategory.color.toHex() + ".opacity15",
+                            category: editedCategory,
+                            linkedGoalName: editedLinkedGoalName
+                        )
+                        onSave(updatedTransaction)
+                        isEditing = false
+                        dismiss()
+                    }) {
+                        Text("Save")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(AppColors.brandBlack)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+                } else {
+                    Button(action: { isEditing = true }) {
+                        Text("Edit")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(AppColors.brandBlack)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
+                }
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+        .padding(.bottom, 32)
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
 }

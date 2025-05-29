@@ -50,7 +50,8 @@ struct GoalCard: View {
                     .foregroundColor(.secondary)
             }
         }
-        .padding(AppPaddings.card)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
         .frame(maxWidth: .infinity, alignment: .center)
         .background(
             RoundedRectangle(cornerRadius: 12, style: .continuous)

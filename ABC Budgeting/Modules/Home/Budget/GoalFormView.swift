@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 struct GoalFormView: View {
     @Environment(\.dismiss) private var dismiss
@@ -63,12 +64,24 @@ struct GoalFormView: View {
                                 .padding(AppPaddings.inputField)
                                 .background(Color.white)
                                 .cornerRadius(12)
+                                .onChange(of: targetAmount) { _, newValue in
+                                    let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
+                                    if formatted != newValue {
+                                        targetAmount = formatted
+                                    }
+                                }
                             Text("Current Saved").font(.headline)
                             TextField("e.g. 1200", text: $savedAmount)
                                 .keyboardType(.decimalPad)
                                 .padding(AppPaddings.inputField)
                                 .background(Color.white)
                                 .cornerRadius(12)
+                                .onChange(of: savedAmount) { _, newValue in
+                                    let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
+                                    if formatted != newValue {
+                                        savedAmount = formatted
+                                    }
+                                }
                         }
                         Group {
                             Text("Target Date").font(.headline)
@@ -106,13 +119,15 @@ struct GoalFormView: View {
                     .padding(.bottom, AppPaddings.large)
                     .padding(.top, AppPaddings.sectionTitleTop)
                 }
+                .onTapGesture { hideKeyboard() }
             }
             .background(AppColors.background)
         }
     }
 }
 
-struct GoalFormData: Hashable {
+struct GoalFormData: Hashable, Identifiable {
+    var id: String { name }
     let name: String
     let subtitle: String?
     let targetAmount: Double

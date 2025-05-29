@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 struct NewSavingGoalView: View {
     @Environment(\.dismiss) private var dismiss
@@ -52,6 +53,7 @@ struct NewSavingGoalView: View {
                     .padding(.horizontal, AppPaddings.section)
                     .padding(.bottom, AppPaddings.large)
                 }
+                .onTapGesture { hideKeyboard() }
             }
             .background(AppColors.background)
             .toolbar { EmptyView() } // Remove default toolbar
@@ -89,6 +91,12 @@ struct NewSavingGoalView: View {
                 .padding(AppPaddings.inputField)
                 .background(Color.white)
                 .cornerRadius(12)
+                .onChange(of: targetAmount) { _, newValue in
+                    let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
+                    if formatted != newValue {
+                        targetAmount = formatted
+                    }
+                }
         }
     }
     private var savedAmountSection: some View {
@@ -99,6 +107,12 @@ struct NewSavingGoalView: View {
                 .padding(AppPaddings.inputField)
                 .background(Color.white)
                 .cornerRadius(12)
+                .onChange(of: savedAmount) { _, newValue in
+                    let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
+                    if formatted != newValue {
+                        savedAmount = formatted
+                    }
+                }
         }
     }
     private var targetDateSection: some View {

@@ -3,6 +3,7 @@ import SwiftUI
 struct MainView: View {
     var body: some View {
         MainTabCoordinator()
+            .preferredColorScheme(.light)
     }
 }
 

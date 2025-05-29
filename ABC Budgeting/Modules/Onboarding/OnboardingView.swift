@@ -1,13 +1,17 @@
 import SwiftUI
+import UserNotifications
+import Foundation
 
 struct OnboardingView: View {
     let onComplete: () -> Void
     @State private var currentPage: Int = 0
     private let totalPages = 5
     @State private var username: String = ""
+    @State private var balanceRaw: String = ""
     @State private var balance: String = ""
     @State private var currency: String = "USD (US Dollar)"
-    @State private var notificationsEnabled: Bool = true
+    @State private var notificationsEnabled: Bool = false
+    @State private var showNotificationAlert = false
     private let currencies = [
         "USD (US Dollar)",
         "EUR (Euro)",
@@ -98,13 +102,29 @@ struct OnboardingView: View {
                         .padding(.bottom, 20)
 
                         FormField(label: "Current Total Balance") {
-                            TextField("$20,569", text: $balance)
+                            TextField("$0.00", text: $balanceRaw)
                                 .keyboardType(.decimalPad)
                                 .padding()
                                 .background(Color(.secondarySystemBackground))
                                 .cornerRadius(16)
                                 .font(.body)
                                 .foregroundColor(.primary)
+                                .onChange(of: balanceRaw) { _, newValue in
+                                    let currencyCode = UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD"
+                                    let cleaned = newValue.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+                                    if let cents = Int(cleaned) {
+                                        let doubleValue = Double(cents) / 100.0
+                                        balance = String(format: "%.2f", doubleValue)
+                                        let formatter = NumberFormatter()
+                                        formatter.numberStyle = .currency
+                                        formatter.currencyCode = currencyCode
+                                        formatter.maximumFractionDigits = 2
+                                        balanceRaw = formatter.string(from: NSNumber(value: doubleValue)) ?? "$0.00"
+                                    } else {
+                                        balance = "0.00"
+                                        balanceRaw = "$0.00"
+                                    }
+                                }
                         }
                         .padding(.bottom, 20)
 
@@ -163,7 +183,14 @@ struct OnboardingView: View {
                         withAnimation { currentPage += 1 }
                     } else {
                         UserDefaults.standard.set(username, forKey: "displayName")
-                        onComplete()
+                        let balanceValue = Double(balance) ?? 0
+                        UserDefaults.standard.set(balanceValue, forKey: "startingBalance")
+                        UserDefaults.standard.set(currency, forKey: "preferredCurrency")
+                        if notificationsEnabled {
+                            showNotificationAlert = true
+                        } else {
+                            onComplete()
+                        }
                     }
                 }) {
                     ZStack {
@@ -178,10 +205,29 @@ struct OnboardingView: View {
                 }
                 .accessibilityLabel(currentPage < totalPages - 1 ? "Next" : "Get Started")
                 .padding(.trailing, AppPaddings.section)
+                .disabled(showNotificationAlert)
             }
             .padding(.bottom, AppPaddings.large)
         }
-        .background(Color(.systemBackground).ignoresSafeArea())
+        .background(AppColors.brandBlack.ignoresSafeArea())
+        .alert(isPresented: $showNotificationAlert) {
+            Alert(
+                title: Text("Enable Notifications?"),
+                message: Text("ABC Budgeting will use notifications to remind you about budgets, savings goals, and important account activity. Would you like to allow notifications?"),
+                primaryButton: .default(Text("Allow"), action: {
+                    showNotificationAlert = false
+                    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, _ in
+                        DispatchQueue.main.async {
+                            onComplete()
+                        }
+                    }
+                }),
+                secondaryButton: .cancel(Text("Not Now"), action: {
+                    showNotificationAlert = false
+                    onComplete()
+                })
+            )
+        }
     }
 }
 

@@ -14,7 +14,43 @@ struct ABCBudgetingApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            MainView()
+            LaunchCoordinator()
+        }
+    }
+}
+
+struct LaunchCoordinator: View {
+    @AppStorage("isOnboardingComplete") private var isOnboardingComplete: Bool = false
+    @State private var showSplash = true
+    @State private var showOnboarding = false
+
+    var body: some View {
+        Group {
+            if showSplash {
+                SplashScreenView(onComplete: {
+                    if isOnboardingComplete {
+                        showSplash = false
+                    } else {
+                        showSplash = false
+                        showOnboarding = true
+                    }
+                })
+            } else if showOnboarding {
+                OnboardingView(onComplete: {
+                    isOnboardingComplete = true
+                    showOnboarding = false
+                })
+            } else {
+                MainView()
+            }
+        }
+        .onAppear {
+            // Only show splash on cold launch
+            if !isOnboardingComplete {
+                showSplash = true
+            } else {
+                showSplash = true
+            }
         }
     }
 }

@@ -14,11 +14,11 @@ struct MainTabCoordinator: View {
             TabView {
                 OverviewView()
                     .tabItem {
-                        Label("Overview", systemImage: "chart.pie")
+                        Label("Overview", systemImage: "house")
                     }
                 TransactionsView(goals: $goals)
                     .tabItem {
-                        Label("Transactions", systemImage: "list.bullet.rectangle")
+                        Label("Transactions", systemImage: "text.rectangle.page")
                     }
                 BudgetView(goals: $goals)
                     .tabItem {
