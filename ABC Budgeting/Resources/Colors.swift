@@ -22,7 +22,7 @@ struct AppColors {
 
     // Semantic
     static var income: Color { return brandGreen }
-    static var outcome: Color { return brandRed }
+    static var expense: Color { return brandRed }
     static var accent: Color { return brandBlue }
     static var savings: Color { return brandYellow }
     static var earnings: Color { return brandPink }

@@ -64,24 +64,20 @@ struct GoalFormView: View {
                                 .padding(AppPaddings.inputField)
                                 .background(Color.white)
                                 .cornerRadius(12)
-                                .onChange(of: targetAmount) { _, newValue in
-                                    let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
-                                    if formatted != newValue {
-                                        targetAmount = formatted
-                                    }
-                                }
+                            if let doubleValue = Double(targetAmount) {
+                                Text(doubleValue, format: .currency(code: UserDefaults.standard.string(forKey: "preferredCurrency")?.components(separatedBy: " ").first ?? "USD")).font(.caption).foregroundColor(.secondary)
+                            }
+                        }
+                        Group {
                             Text("Current Saved").font(.headline)
                             TextField("e.g. 1200", text: $savedAmount)
                                 .keyboardType(.decimalPad)
                                 .padding(AppPaddings.inputField)
                                 .background(Color.white)
                                 .cornerRadius(12)
-                                .onChange(of: savedAmount) { _, newValue in
-                                    let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
-                                    if formatted != newValue {
-                                        savedAmount = formatted
-                                    }
-                                }
+                            if let doubleValue = Double(savedAmount) {
+                                Text(doubleValue, format: .currency(code: UserDefaults.standard.string(forKey: "preferredCurrency")?.components(separatedBy: " ").first ?? "USD")).font(.caption).foregroundColor(.secondary)
+                            }
                         }
                         Group {
                             Text("Target Date").font(.headline)

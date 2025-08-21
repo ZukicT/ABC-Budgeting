@@ -9,161 +9,243 @@ enum SpendingPeriod: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
-// Add this near the top of the file, outside any struct
-private let incomeSpendingTableData: [(label: String, spending: Double, income: Double)] = [
-    (label: "Hour", spending: 12.0, income: 15.0),
-    (label: "Week", spending: 480.0, income: 600.0),
-    (label: "Bi-Week", spending: 950.0, income: 1200.0),
-    (label: "Month", spending: 2100.0, income: 2600.0),
-    (label: "Year", spending: 25000.0, income: 31200.0)
-]
-
-struct OverviewView: View {
-    @State private var spendingPeriod: SpendingPeriod = .monthly
-    @AppStorage("startingBalance") private var totalBalance: Double = 0
-    @AppStorage("preferredCurrency") private var preferredCurrency: String = "USD"
+// Dynamically calculate income and expense breakdowns from user data
+private func calculateIncomeExpenseTableData(transactions: [Transaction]) -> [(label: String, expense: Double, income: Double)] {
+    let now = Date()
+    let calendar = Calendar.current
     
-    // Computed property for chart data
-    private var spendingDiversityData: [SpendingDiversityDonutChartView.CategoryData] {
-        switch spendingPeriod {
-        case .weekly:
-            return [
-                .init(category: "Food", value: 50, color: AppColors.brandGreen, symbol: "fork.knife", avgSpent: 50),
-                .init(category: "Transport", value: 20, color: AppColors.brandBlue, symbol: "car.fill", avgSpent: 20),
-                .init(category: "Entertainment", value: 15, color: AppColors.brandPurple, symbol: "music.note", avgSpent: 15),
-                .init(category: "Utilities", value: 10, color: AppColors.brandYellow, symbol: "bolt.fill", avgSpent: 10),
-                .init(category: "Other", value: 5, color: AppColors.brandPink, symbol: "ellipsis", avgSpent: 5)
-            ]
-        case .biweekly:
-            return [
-                .init(category: "Food", value: 100, color: AppColors.brandGreen, symbol: "fork.knife", avgSpent: 50),
-                .init(category: "Transport", value: 40, color: AppColors.brandBlue, symbol: "car.fill", avgSpent: 20),
-                .init(category: "Entertainment", value: 30, color: AppColors.brandPurple, symbol: "music.note", avgSpent: 15),
-                .init(category: "Utilities", value: 20, color: AppColors.brandYellow, symbol: "bolt.fill", avgSpent: 10),
-                .init(category: "Other", value: 10, color: AppColors.brandPink, symbol: "ellipsis", avgSpent: 5)
-            ]
-        case .monthly:
-            return [
-                .init(category: "Food", value: 200, color: AppColors.brandGreen, symbol: "fork.knife", avgSpent: 200),
-                .init(category: "Transport", value: 75, color: AppColors.brandBlue, symbol: "car.fill", avgSpent: 75),
-                .init(category: "Entertainment", value: 50, color: AppColors.brandPurple, symbol: "music.note", avgSpent: 50),
-                .init(category: "Utilities", value: 38, color: AppColors.brandYellow, symbol: "bolt.fill", avgSpent: 38),
-                .init(category: "Other", value: 25, color: AppColors.brandPink, symbol: "ellipsis", avgSpent: 25)
-            ]
-        case .yearly:
-            return [
-                .init(category: "Food", value: 800, color: AppColors.brandGreen, symbol: "fork.knife", avgSpent: 200),
-                .init(category: "Transport", value: 300, color: AppColors.brandBlue, symbol: "car.fill", avgSpent: 75),
-                .init(category: "Entertainment", value: 200, color: AppColors.brandPurple, symbol: "music.note", avgSpent: 50),
-                .init(category: "Utilities", value: 150, color: AppColors.brandYellow, symbol: "bolt.fill", avgSpent: 38),
-                .init(category: "Other", value: 100, color: AppColors.brandPink, symbol: "ellipsis", avgSpent: 25)
-            ]
+
+    
+    // Helper to get the monthly equivalent of a transaction (for recurring)
+    func monthlyEquivalent(for transaction: Transaction) -> Double {
+        let isRecurring = transaction.subtitle.localizedCaseInsensitiveContains("recurring")
+        guard isRecurring else { return 0 }
+        let amount = abs(transaction.amount)
+        if transaction.subtitle.localizedCaseInsensitiveContains("daily") {
+            return amount * 30.0 // 30 days in a month
+        } else if transaction.subtitle.localizedCaseInsensitiveContains("weekly") {
+            return amount * 4.33 // 4.33 weeks in a month
+        } else if transaction.subtitle.localizedCaseInsensitiveContains("monthly") {
+            return amount
+        } else if transaction.subtitle.localizedCaseInsensitiveContains("yearly") {
+            return amount / 12.0 // 12 months in a year
+        } else {
+            // Default to monthly
+            return amount
         }
     }
+    // Sum all recurring as monthly equivalent
+    let recurringMonthly = transactions.filter { !$0.isIncome }
+        .map { monthlyEquivalent(for: $0) }
+        .reduce(0, +)
+    // Add one-time transactions for current month
+    let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) ?? now
+    let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart) ?? now
+    let oneTimeMonthly = transactions.filter {
+        !$0.isIncome && !$0.subtitle.localizedCaseInsensitiveContains("recurring") &&
+        $0.date >= monthStart && $0.date < monthEnd
+    }.reduce(0) { $0 + $0.amount }
+    let monthlyExpenses = recurringMonthly + oneTimeMonthly
+    let yearlyExpenses = monthlyExpenses * 12.0
+    let biWeeklyExpenses = yearlyExpenses / 26.0
+    let weeklyExpenses = yearlyExpenses / 52.0
+    let hourlyExpenses = yearlyExpenses / 2080.0
+    // Table rows: Hour, Week, Bi-Week, Month, Year
+    return [
+        (label: "Hour", spending: hourlyExpenses, income: hourlyExpenses),
+        (label: "Week", spending: weeklyExpenses, income: weeklyExpenses),
+        (label: "Bi-Week", spending: biWeeklyExpenses, income: biWeeklyExpenses),
+        (label: "Month", spending: monthlyExpenses, income: monthlyExpenses),
+        (label: "Year", spending: yearlyExpenses, income: yearlyExpenses)
+    ]
+}
+
+struct OverviewView: View {
+    let transactions: [Transaction]
+    let goals: [GoalFormData]
+    @State private var spendingPeriod: SpendingPeriod = .monthly
+    @AppStorage("startingBalance") private var startingBalance: Double = 0
+    @AppStorage("preferredCurrency") private var preferredCurrency: String = "USD"
+    
+    // Debug: Print goals when they change
+    private var debugGoals: String {
+        "Goals count: \(goals.count), Names: \(goals.map { $0.name })"
+    }
+    
+    // Calculate total balance from starting balance and all transactions
+    // Use isIncome property to determine if it's income or expense
+    private var totalBalance: Double {
+        let allIncome = transactions.filter { $0.isIncome }.reduce(0) { $0 + $0.amount }
+        let allExpenses = transactions.filter { !$0.isIncome }.reduce(0) { $0 + $0.amount }
+        return startingBalance + allIncome - allExpenses
+    }
+    
+    // Calculate current month income and expenses
+    // Use isIncome property to determine if it's income or expense
+    private var currentMonthIncome: Double {
+        let now = Date()
+        let calendar = Calendar.current
+        return transactions.filter {
+            $0.isIncome && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }.reduce(0) { $0 + $0.amount }
+    }
+    private var currentMonthExpenses: Double {
+        let now = Date()
+        let calendar = Calendar.current
+        return transactions.filter {
+            !$0.isIncome && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
+        }.reduce(0) { $0 + $0.amount }
+    }
+    
+    // Computed property for chart data (real user data)
+    private var spendingDiversityData: [SpendingDiversityDonutChartView.CategoryData] {
+        let now = Date()
+        let calendar = Calendar.current
+        let (start, end): (Date, Date) = {
+            switch spendingPeriod {
+            case .weekly:
+                let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) ?? now
+                return (weekStart, now)
+            case .biweekly:
+                let biweekStart = calendar.date(byAdding: .day, value: -13, to: now) ?? now
+                return (biweekStart, now)
+            case .monthly:
+                let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) ?? now
+                return (monthStart, now)
+            case .yearly:
+                let yearStart = calendar.date(from: calendar.dateComponents([.year], from: now)) ?? now
+                return (yearStart, now)
+            }
+        }()
+        
+        // Filter transactions for the period and exclude income
+        let periodTxs = transactions.filter { 
+            $0.date >= start && 
+            $0.date < end && 
+            !$0.isIncome 
+        }
+        
+        // Group transactions by category and calculate totals
+        let categoryTotals = Dictionary(grouping: periodTxs) { $0.category }
+            .mapValues { transactions in
+                transactions.reduce(0) { $0 + $0.amount }
+            }
+        
+        // Map categories to their display properties
+        let categoryData: [SpendingDiversityDonutChartView.CategoryData] = TransactionCategory.allCases
+            .filter { $0 != .income } // Exclude income category
+            .map { category in
+                let value = categoryTotals[category] ?? 0
+                
+                // Get the most used icon for this category from the transactions
+                let categoryTransactions = periodTxs.filter { $0.category == category }
+                let iconCounts = Dictionary(grouping: categoryTransactions) { $0.iconName }
+                    .mapValues { $0.count }
+                let mostUsedIcon = iconCounts.max(by: { $0.value < $1.value })?.key ?? category.symbol
+                
+                // Calculate average spent per month for this category
+                let avgSpent = value / Double(calendar.dateComponents([.day], from: start, to: end).day ?? 30) * 30
+                
+                return SpendingDiversityDonutChartView.CategoryData(
+                    category: category.label,
+                    value: value,
+                    color: category.color,
+                    symbol: mostUsedIcon,
+                    avgSpent: avgSpent
+                )
+            }
+            .filter { $0.value > 0 } // Only include categories with transactions
+        
+        return categoryData
+    }
     var body: some View {
+        let currencyCode = preferredCurrency.components(separatedBy: " ").first ?? "USD"
         ZStack {
             AppColors.background.ignoresSafeArea()
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 20) {
-                    // Total Balance Card
+                VStack(alignment: .leading, spacing: 0) {
+                    // Section Title
+                    Text("Overview")
+                        .font(.title.bold())
+                        .foregroundColor(.primary)
+                        .padding(.top, AppPaddings.sectionTitleTop)
+                        .padding(.bottom, AppPaddings.sectionTitleBottom)
+                    // Combined Balance/Income/Expenses Card (vertical stack)
                     ZStack {
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        RoundedRectangle(cornerRadius: AppPaddings.cardRadius, style: .continuous)
                             .fill(AppColors.brandBlack)
-                        // Decorative shapes (top right, bottom left)
-                        HStack {
-                            Spacer()
-                            Circle()
-                                .fill(AppColors.brandBlue)
-                                .frame(width: 70, height: 70)
-                                .offset(x: 60, y: -36)
-                            Circle()
-                                .fill(AppColors.brandYellow)
-                                .frame(width: 80, height: 90)
-                                .offset(x: 25, y: -40)
-                        }
-                        .frame(height: 0)
-                        HStack {
-                            Circle()
-                                .fill(AppColors.brandGreen)
-                                .frame(width: 60, height: 60)
-                                .offset(x: -20, y: 40)
-                            Spacer()
-                        }
-                        .frame(maxHeight: .infinity, alignment: .bottom)
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Total Balance")
-                                .font(.headline)
-                                .foregroundColor(.white.opacity(0.85))
-                            Text(totalBalance, format: .currency(code: preferredCurrency).precision(.fractionLength(2)))
-                                .font(.system(size: 38, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .padding(.vertical, 20)
-                        .padding(.leading, 24)
-                    }
-                    .frame(height: 120)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    // Income/Outcome Card
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .fill(AppColors.brandBlack)
-                        // Decorative shapes (top left, bottom right)
-                        HStack {
-                            Circle()
-                                .fill(AppColors.brandPurple)
-                                .frame(width: 36, height: 36)
-                                .offset(x: -18, y: -18)
-                            Spacer()
-                        }
-                        .frame(height: 0)
-                        HStack {
-                            Spacer()
-                            Circle()
-                                .fill(AppColors.brandYellow)
-                                .frame(width: 28, height: 28)
-                                .offset(x: 18, y: 18)
-                        }
-                        .frame(maxHeight: .infinity, alignment: .bottom)
-                        HStack(spacing: 32) {
-                            VStack(alignment: .center, spacing: 8) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "arrow.down")
-                                        .font(.system(size: 22, weight: .bold))
-                                        .foregroundColor(AppColors.brandGreen)
-                                    Text("Income")
-                                        .font(.subheadline)
-                                        .foregroundColor(.white.opacity(0.85))
-                                }
-                                Text(20000, format: .currency(code: preferredCurrency).precision(.fractionLength(0)))
-                                    .font(.title2.bold())
+                        VStack(alignment: .leading, spacing: 0) {
+                            // Total Balance (top row)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Total Balance")
+                                    .font(.headline)
+                                    .foregroundColor(.white.opacity(0.85))
+                                Text(totalBalance, format: .currency(code: currencyCode).precision(.fractionLength(2)))
+                                    .font(.system(size: 36, weight: .bold, design: .rounded))
                                     .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            .frame(maxWidth: .infinity)
+                            .padding(.top, 32)
+                            .padding(.horizontal, 32)
+                            // Divider between balance and income/expenses
                             Divider()
-                                .frame(width: 1, height: 44)
+                                .frame(height: 1)
                                 .background(Color.white.opacity(0.18))
-                            VStack(alignment: .center, spacing: 8) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "arrow.up")
-                                        .font(.system(size: 22, weight: .bold))
-                                        .foregroundColor(AppColors.brandRed)
-                                    Text("Outcome")
-                                        .font(.subheadline)
-                                        .foregroundColor(.white.opacity(0.85))
+                                .padding(.vertical, 16)
+                                .padding(.horizontal, 32)
+                            // Income & Expenses (vertical stack)
+                            VStack(alignment: .leading, spacing: 12) {
+                                // Income
+                                VStack(alignment: .leading, spacing: 6) {
+                                    HStack(spacing: 4) {
+                                        Text("Income")
+                                            .font(.caption)
+                                            .foregroundColor(.white.opacity(0.85))
+                                        Text("(This Month)")
+                                            .font(.caption2)
+                                            .foregroundColor(.white.opacity(0.65))
+                                    }
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "arrow.up")
+                                            .font(.system(size: 16, weight: .bold))
+                                            .foregroundColor(AppColors.brandGreen)
+                                        Text(currentMonthIncome, format: .currency(code: currencyCode).precision(.fractionLength(2)))
+                                            .font(.title3.bold())
+                                            .foregroundColor(.white)
+                                    }
                                 }
-                                Text(17000, format: .currency(code: preferredCurrency).precision(.fractionLength(0)))
-                                    .font(.title2.bold())
-                                    .foregroundColor(.white)
+                                
+                                // Divider between income and expenses
+                                Divider()
+                                    .frame(height: 1)
+                                    .background(Color.white.opacity(0.18))
+                                
+                                // Expenses
+                                VStack(alignment: .leading, spacing: 6) {
+                                    HStack(spacing: 4) {
+                                        Text("Expenses")
+                                            .font(.caption)
+                                            .foregroundColor(.white.opacity(0.85))
+                                        Text("(This Month)")
+                                            .font(.caption2)
+                                            .foregroundColor(.white.opacity(0.65))
+                                    }
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "arrow.down")
+                                            .font(.system(size: 16, weight: .bold))
+                                            .foregroundColor(AppColors.brandRed)
+                                        Text(currentMonthExpenses, format: .currency(code: currencyCode).precision(.fractionLength(2)))
+                                            .font(.title3.bold())
+                                            .foregroundColor(.white)
+                                    }
+                                }
                             }
-                            .frame(maxWidth: .infinity)
+                            .padding(.bottom, 32)
+                            .padding(.horizontal, 32)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 20)
-                        .padding(.horizontal, 24)
                     }
-                    .frame(height: 100)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .frame(height: 240)
+                    .clipShape(RoundedRectangle(cornerRadius: AppPaddings.cardRadius, style: .continuous))
                     // Insights Section
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
@@ -175,69 +257,52 @@ struct OverviewView: View {
                         }
                         .padding(.top, AppPaddings.sectionTitleTop)
                         VStack(spacing: 16) {
-                            ChartCard(title: "Income Required", subtitle: "Minimum income needed for each period.", chartHeight: 450, titleAlignment: .leading) {
+                            let incomeExpenseTableData = calculateIncomeExpenseTableData(transactions: transactions)
+                            ChartCard(title: "Income Required", subtitle: "Minimum income needed for each period.", chartHeight: 510, titleAlignment: .leading) {
                                 VStack(spacing: 12) {
                                     IncomeRequiredChartView(
-                                        data: [
-                                            .init(label: "Hour", value: 15, spending: 12),
-                                            .init(label: "Week", value: 600, spending: 480),
-                                            .init(label: "Bi-Week", value: 1200, spending: 950),
-                                            .init(label: "Month", value: 2600, spending: 2100),
-                                            .init(label: "Year", value: 31200, spending: 25000)
-                                        ],
+                                        data: incomeExpenseTableData.map { .init(label: $0.label, value: $0.income) },
                                         barColor: AppColors.brandGreen
                                     )
-                                    // Legend below the chart
-                                    HStack(spacing: 20) {
-                                        HStack(spacing: 6) {
-                                            RoundedRectangle(cornerRadius: 3)
-                                                .fill(AppColors.brandRed)
-                                                .frame(width: 22, height: 12)
-                                            Text("Spending")
-                                                .font(.caption)
-                                                .foregroundColor(.primary)
-                                        }
-                                        HStack(spacing: 6) {
-                                            RoundedRectangle(cornerRadius: 3)
-                                                .fill(AppColors.brandGreen)
-                                                .frame(width: 22, height: 12)
-                                            Text("Income Required")
-                                                .font(.caption)
-                                                .foregroundColor(.primary)
-                                        }
-                                    }
-                                    .padding(.top, 4)
-                                    // Table below the legend
-                                    VStack(spacing: 4) {
+                                    // Table below the chart
+                                    VStack(spacing: 0) {
                                         HStack {
                                             Text("Period")
                                                 .font(.caption.bold())
                                                 .frame(minWidth: 60, alignment: .leading)
                                             Spacer()
-                                            Text("Spending")
-                                                .font(.caption.bold())
-                                                .frame(minWidth: 60, alignment: .trailing)
                                             Text("Income Required")
                                                 .font(.caption.bold())
                                                 .frame(minWidth: 80, alignment: .trailing)
                                         }
-                                        ForEach(incomeSpendingTableData, id: \.label) { row in
+                                        .padding(.vertical, 6)
+                                        .padding(.horizontal, 8)
+                                        .background(Color(.systemGray6))
+                                        ForEach(incomeExpenseTableData.indices, id: \ .self) { idx in
+                                            let row = incomeExpenseTableData[idx]
                                             HStack {
                                                 Text(row.label)
                                                     .font(.caption)
                                                     .frame(minWidth: 60, alignment: .leading)
                                                 Spacer()
-                                                Text(row.spending, format: .currency(code: preferredCurrency).precision(.fractionLength(0)))
-                                                    .font(.caption)
-                                                    .foregroundColor(AppColors.brandRed)
-                                                    .frame(minWidth: 60, alignment: .trailing)
-                                                Text(row.income, format: .currency(code: preferredCurrency).precision(.fractionLength(0)))
+                                                Text(row.income, format: .currency(code: currencyCode).precision(.fractionLength(2)))
                                                     .font(.caption)
                                                     .foregroundColor(AppColors.brandGreen)
                                                     .frame(minWidth: 80, alignment: .trailing)
                                             }
+                                            .padding(.vertical, 6)
+                                            .padding(.horizontal, 8)
+                                            .background(Color.white.opacity(idx % 2 == 0 ? 0.95 : 0.85))
+                                            if idx < incomeExpenseTableData.count - 1 {
+                                                Divider()
+                                                    .padding(.leading, 4)
+                                            }
                                         }
                                     }
+                                    .background(
+                                        RoundedRectangle(cornerRadius: AppPaddings.cardRadius, style: .continuous)
+                                            .stroke(Color(.systemGray4), lineWidth: 1)
+                                    )
                                     .padding(.top, 8)
                                 }
                             }
@@ -254,13 +319,91 @@ struct OverviewView: View {
                                     .padding(.horizontal, 16)
                                     .padding(.bottom, 8)
                                     ZStack(alignment: .bottom) {
-                                        SpendingDiversityDonutChartView(data: spendingDiversityData, preferredCurrency: preferredCurrency)
+                                        if spendingDiversityData.allSatisfy({ $0.value == 0 }) {
+                                            ZStack {
+                                                GeometryReader { geo in
+                                                    let size = min(geo.size.width, geo.size.height)
+                                                    ZStack {
+                                                        Circle()
+                                                            .strokeBorder(AppColors.brandBlack.opacity(0.18), lineWidth: 38)
+                                                            .frame(width: size, height: size)
+                                                        Image(systemName: "chart.pie")
+                                                            .font(.system(size: 36, weight: .regular))
+                                                            .foregroundColor(.secondary)
+                                                    }
+                                                    .frame(width: size, height: size)
+                                                    .position(x: geo.size.width/2, y: geo.size.height/2)
+                                                }
+                                                .frame(height: 220)
+                                            }
+                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        } else {
+                                            SpendingDiversityDonutChartView(data: spendingDiversityData, preferredCurrency: currencyCode)
+                                        }
                                     }
                                     .padding(.bottom, 24)
                                 }
                             }
                         }
                     }
+                    
+                    // Savings Goals Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text("Savings Goals")
+                                .font(.title2.bold())
+                                .foregroundColor(.primary)
+                                .padding(.leading, 4)
+                            Spacer()
+                            Button(action: {
+                                // Navigation logic to switch to Budget tab goes here
+                            }) {
+                                Text("See All")
+                                    .font(.subheadline.bold())
+                                    .foregroundColor(AppColors.brandBlue)
+                                }
+                                .accessibilityLabel("See all savings goals")
+                        }
+                        .padding(.top, AppPaddings.sectionTitleTop)
+                        .padding(.bottom, AppPaddings.sectionTitleBottom)
+                        
+                        if goals.isEmpty {
+                            VStack(spacing: 16) {
+                                Image(systemName: "target")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 60, height: 60)
+                                    .foregroundColor(.secondary)
+                                Text("No savings goals yet")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundColor(.secondary)
+                                Text("Create your first savings goal in the Budget tab to see it here.")
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                
+                                // Debug info
+                                Text("Debug: goals count = \(goals.count)")
+                                    .font(.caption)
+                                    .foregroundColor(.red)
+                                    .padding(.top, 8)
+                                Text(debugGoals)
+                                    .font(.caption)
+                                    .foregroundColor(.red)
+                                    .padding(.top, 4)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, AppPaddings.large)
+                        } else {
+                            VStack(spacing: 12) {
+                                ForEach(goals.prefix(3), id: \.id) { goal in
+                                    SavingsGoalRow(goal: goal, currencyCode: preferredCurrency)
+                                }
+                            }
+                            .padding(.bottom, AppPaddings.large)
+                        }
+                    }
+                    
                     // Recent Transactions Section
                     // Section Title (detached from list)
                     HStack {
@@ -279,18 +422,40 @@ struct OverviewView: View {
                         .accessibilityLabel("See all transactions")
                     }
                     .padding(.top, AppPaddings.sectionTitleTop)
+                    .padding(.bottom, AppPaddings.sectionTitleBottom)
                     // Transaction List (separate from title)
-                    VStack(spacing: 12) {
-                        ForEach(Transaction.makeMockData().prefix(5), id: \ .id) { transaction in
-                            TransactionRow(transaction: transaction)
+                    if transactions.isEmpty {
+                        VStack(spacing: 16) {
+                            Image(systemName: "tray")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 60, height: 60)
+                                .foregroundColor(.secondary)
+                            Text("No recent transactions yet")
+                                .font(.body.weight(.semibold))
+                                .foregroundColor(.secondary)
+                            Text("Your recent transactions will appear here once you add them.")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
                         }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, AppPaddings.large)
+                    } else {
+                        VStack(spacing: 12) {
+                            ForEach(transactions.prefix(5), id: \ .id) { transaction in
+                                TransactionRow(transaction: transaction)
+                            }
+                        }
+                        .padding(.bottom, AppPaddings.large)
                     }
-                    .padding(.bottom, 24)
                     Spacer()
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 24)
             }
+        }
+        .onAppear {
+            print("DEBUG: OverviewView appeared with \(goals.count) goals: \(goals.map { $0.name })")
         }
     }
 }
@@ -351,40 +516,26 @@ struct IncomeRequiredChartView: View {
         let id = UUID()
         let label: String
         let value: Double // income required
-        let spending: Double // rough spending for the period
-    }
-    struct BarGroup: Identifiable {
-        let id: String
-        let type: String
-        let label: String
-        let value: Double
     }
     let data: [IncomeData]
     let barColor: Color
     var body: some View {
-        let groupedData: [BarGroup] = data.flatMap { item in
-            [
-                BarGroup(id: "Spending-\(item.label)", type: "Spending", label: item.label, value: item.spending),
-                BarGroup(id: "Income-\(item.label)", type: "Income", label: item.label, value: item.value)
-            ]
-        }
-        Chart(groupedData, id: \.id) { bar in
+        Chart(data, id: \.id) { item in
             BarMark(
-                x: .value("Period", bar.label),
-                y: .value(bar.type, bar.value)
+                x: .value("Period", item.label),
+                y: .value("Income Required", item.value)
             )
-            .foregroundStyle(bar.type == "Spending" ? AppColors.brandRed : barColor)
+            .foregroundStyle(barColor)
             .cornerRadius(4)
-            .position(by: .value("Type", bar.type))
         }
         .chartYAxis {
-            let maxValue = max(data.map { max($0.value, $0.spending) }.max() ?? 1, 1)
+            let maxValue = data.map { $0.value }.max() ?? 1
             let step = maxValue > 10000 ? 5000.0 : (maxValue > 1000 ? 1000.0 : (maxValue > 100 ? 100.0 : 10.0))
             let ticks = Array(stride(from: 0.0, through: maxValue, by: step))
             AxisMarks(position: .leading, values: ticks) {
                 AxisGridLine()
                 AxisTick()
-                AxisValueLabel(format: FloatingPointFormatStyle<Double>().precision(.fractionLength(0)))
+                AxisValueLabel(format: FloatingPointFormatStyle<Double>().precision(.fractionLength(2)))
             }
         }
         .chartXAxis {
@@ -394,7 +545,7 @@ struct IncomeRequiredChartView: View {
                 AxisValueLabel()
             }
         }
-        .chartYScale(domain: 0...max(data.map { max($0.value, $0.spending) }.max() ?? 1, 1))
+        .chartYScale(domain: 0...(data.map { $0.value }.max() ?? 1))
         .frame(height: 280)
         .accessibilityElement(children: .contain)
     }
@@ -450,28 +601,44 @@ struct SpendingDiversityDonutChartView: View {
     }
 
     private var legend: some View {
-        let selected = viewModel.selectedCategory ?? viewModel.categories.first
-        let avgSpentString = data.first(where: { $0.category == selected?.name })?.avgSpent.formatted(.currency(code: preferredCurrency).precision(.fractionLength(0))) ?? ""
-        let legendText = avgSpentString.isEmpty ? "" : "Avg spent: \(avgSpentString)/mo"
-        return VStack(alignment: .leading, spacing: 6) {
-            if let selected {
-                HStack(spacing: 8) {
-                    Circle()
-                        .fill(selected.color)
-                        .frame(width: 16, height: 16)
-                    Text(selected.name)
-                        .font(.subheadline.bold())
-                        .foregroundColor(.primary)
+        if data.allSatisfy({ $0.value == 0 }) {
+            return AnyView(
+                HStack {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(.secondary)
+                    Text("No spending data for this period")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
-            }
-            if !legendText.isEmpty {
-                Text(legendText)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.vertical, 16)
+            )
+        } else {
+            let selected = viewModel.selectedCategory ?? viewModel.categories.first
+            let avgSpentString = data.first(where: { $0.category == selected?.name })?.avgSpent.formatted(.currency(code: preferredCurrency).precision(.fractionLength(2))) ?? ""
+            let legendText = avgSpentString.isEmpty ? "" : "Avg spent: \(avgSpentString)/mo"
+            return AnyView(
+                VStack(alignment: .leading, spacing: 6) {
+                    if let selected {
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(selected.color)
+                                .frame(width: 16, height: 16)
+                            Text(selected.name)
+                                .font(.subheadline.bold())
+                                .foregroundColor(.primary)
+                        }
+                    }
+                    if !legendText.isEmpty {
+                        Text(legendText)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.vertical, 10)
+                .padding(.top, 8)
+            )
         }
-        .padding(.vertical, 10)
-        .padding(.top, 8)
     }
 }
 
@@ -498,5 +665,132 @@ struct TotalBalanceOverTimeSection: View {
                 .tint(AppColors.brandBlack)
             }
         }
+    }
+}
+
+// MARK: - Savings Goal Row Component
+struct SavingsGoalRow: View {
+    let goal: GoalFormData
+    let currencyCode: String
+    
+    private var progressPercentage: Double {
+        guard goal.targetAmount > 0 else { return 0 }
+        return min(goal.savedAmount / goal.targetAmount, 1.0)
+    }
+    
+    private var remainingAmount: Double {
+        max(goal.targetAmount - goal.savedAmount, 0)
+    }
+    
+    private var daysRemaining: Int {
+        let calendar = Calendar.current
+        let now = Date()
+        let components = calendar.dateComponents([.day], from: now, to: goal.targetDate)
+        return max(components.day ?? 0, 0)
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header with icon, name, and progress
+            HStack(spacing: 12) {
+                // Icon
+                Image(systemName: goal.iconName)
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundColor(goal.iconColor)
+                    .frame(width: 48, height: 48)
+                    .background(goal.iconColor.opacity(0.15))
+                    .clipShape(Circle())
+                
+                // Goal info
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(goal.name)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    
+                    if let notes = goal.notes, !notes.isEmpty {
+                        Text(notes)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
+                }
+                
+                Spacer()
+                
+                // Progress percentage
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(Int(progressPercentage * 100))%")
+                        .font(.title3.bold())
+                        .foregroundColor(goal.iconColor)
+                    Text("Complete")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            // Progress bar
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    // Background bar
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color(.systemGray5))
+                        .frame(height: 8)
+                    
+                    // Progress bar
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(goal.iconColor)
+                        .frame(width: geometry.size.width * progressPercentage, height: 8)
+                        .animation(.easeInOut(duration: 0.3), value: progressPercentage)
+                }
+            }
+            .frame(height: 8)
+            
+            // Financial details
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Saved")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text(goal.savedAmount, format: .currency(code: currencyCode))
+                        .font(.subheadline.bold())
+                        .foregroundColor(.primary)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Target")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text(goal.targetAmount, format: .currency(code: currencyCode))
+                        .font(.subheadline.bold())
+                        .foregroundColor(.primary)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Remaining")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text(remainingAmount, format: .currency(code: currencyCode))
+                        .font(.subheadline.bold())
+                        .foregroundColor(.primary)
+                }
+                
+                Spacer()
+                
+                // Days remaining
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(daysRemaining)")
+                        .font(.title3.bold())
+                        .foregroundColor(daysRemaining < 30 ? .red : .primary)
+                    Text("days left")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(16)
+        .background(AppColors.card)
+        .cornerRadius(AppPaddings.cardRadius)
+        .shadow(color: AppColors.cardShadow, radius: 2, y: 1)
     }
 }

@@ -3,7 +3,7 @@ import Foundation
 
 struct TransactionsView: View {
     @State private var selectedCategory: TransactionCategory? = nil
-    @State private var transactions: [Transaction] = []
+    @Binding var transactions: [Transaction]
     @State private var showAddTransaction = false
     @Binding var goals: [GoalFormData]
     @State private var selectedTransaction: Transaction? = nil
@@ -215,7 +215,7 @@ struct TransactionRow: View {
             Spacer()
             Text(transaction.amount, format: .currency(code: "USD"))
                 .font(.body.bold())
-                .foregroundColor(outcomeColor)
+                .foregroundColor(transactionColor)
             // Category Tag removed
         }
         .padding(.vertical, 12)
@@ -228,10 +228,10 @@ struct TransactionRow: View {
         .accessibilityElement(children: .combine)
         .onAppear { }
     }
-    // Helper to determine outcome color
-    private var outcomeColor: Color {
-        // Treat all non-income as outcome (red), income as green
-        transaction.category == .income ? .green : .red
+    // Helper to determine transaction color
+    private var transactionColor: Color {
+        // Green for income, red for expenses
+        transaction.isIncome ? .green : .red
     }
 }
 
@@ -245,19 +245,23 @@ struct Transaction: Identifiable, Hashable {
     let iconColorName: String
     let iconBackgroundName: String
     let category: TransactionCategory
+    let isIncome: Bool
     let linkedGoalName: String?
+    let date: Date
 
     var iconColor: Color { Color.fromName(iconColorName) }
     var iconBackground: Color { Color.fromName(iconBackgroundName) }
 
     static func makeMockData() -> [Transaction] {
-        [
-            Transaction(id: UUID(), title: "Adobe Illustrator", subtitle: "Subscription fee", amount: -32, iconName: "cart", iconColorName: "orange", iconBackgroundName: "orange.opacity15", category: .essentials, linkedGoalName: nil),
-            Transaction(id: UUID(), title: "Spotify", subtitle: "Music subscription", amount: -10, iconName: "music.note", iconColorName: "purple", iconBackgroundName: "purple.opacity15", category: .leisure, linkedGoalName: nil),
-            Transaction(id: UUID(), title: "Savings Deposit", subtitle: "Monthly savings", amount: 100, iconName: "banknote", iconColorName: "green", iconBackgroundName: "green.opacity15", category: .savings, linkedGoalName: nil),
-            Transaction(id: UUID(), title: "Salary", subtitle: "Monthly income", amount: 2000, iconName: "dollarsign.circle", iconColorName: "mint", iconBackgroundName: "mint.opacity15", category: .income, linkedGoalName: nil),
-            Transaction(id: UUID(), title: "Electric Bill", subtitle: "Utilities", amount: -60, iconName: "doc.text", iconColorName: "red", iconBackgroundName: "red.opacity15", category: .bills, linkedGoalName: nil),
-            Transaction(id: UUID(), title: "Miscellaneous", subtitle: "Other expense", amount: -25, iconName: "ellipsis", iconColorName: "gray", iconBackgroundName: "gray.opacity15", category: .other, linkedGoalName: nil)
+        let now = Date()
+        let calendar = Calendar.current
+        return [
+            Transaction(id: UUID(), title: "Adobe Illustrator", subtitle: "Subscription fee", amount: 32, iconName: "cart", iconColorName: "orange", iconBackgroundName: "orange.opacity15", category: .essentials, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -2, to: now)!),
+            Transaction(id: UUID(), title: "Spotify", subtitle: "Music subscription", amount: 10, iconName: "music.note", iconColorName: "purple", iconBackgroundName: "purple.opacity15", category: .leisure, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -10, to: now)!),
+            Transaction(id: UUID(), title: "Savings Deposit", subtitle: "Monthly savings", amount: 100, iconName: "banknote", iconColorName: "green", iconBackgroundName: "green.opacity15", category: .savings, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -15, to: now)!),
+            Transaction(id: UUID(), title: "Salary", subtitle: "Monthly income", amount: 2000, iconName: "dollarsign.circle", iconColorName: "mint", iconBackgroundName: "mint.opacity15", category: .income, isIncome: true, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -20, to: now)!),
+            Transaction(id: UUID(), title: "Electric Bill", subtitle: "Utilities", amount: 60, iconName: "doc.text", iconColorName: "red", iconBackgroundName: "red.opacity15", category: .bills, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -25, to: now)!),
+            Transaction(id: UUID(), title: "Miscellaneous", subtitle: "Other expense", amount: 25, iconName: "ellipsis", iconColorName: "gray", iconBackgroundName: "gray.opacity15", category: .other, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -30, to: now)!)
         ]
     }
 }
@@ -407,7 +411,7 @@ struct AddTransactionView: View {
     @State private var isRecurringBool: Bool = false
     @State private var recurringFrequency: RecurringFrequency = .monthly
     @State private var notifyMe: Bool = false
-    @State private var incomeOrOutcome: IncomeOrOutcome = .outcome
+    @State private var incomeOrExpense: IncomeOrExpense = .expense
     @State private var selectedCategory: TransactionCategory = .essentials
     let availableGoals: [GoalFormData]
     @State private var selectedGoal: GoalFormData? = nil
@@ -453,7 +457,7 @@ struct AddTransactionView: View {
                         amountSection
                         titleSection
                         iconPickerSection
-                        incomeOrOutcomeSection
+                        incomeOrExpenseSection
                         typeSection
                         if isRecurringBool { frequencySection }
                         dateSection
@@ -465,8 +469,10 @@ struct AddTransactionView: View {
                     .padding(.horizontal, AppPaddings.section)
                     .padding(.bottom, AppPaddings.large)
                 }
+                .background(AppColors.background)
+                .contentShape(Rectangle())
+                .simultaneousGesture(TapGesture().onEnded { UIApplication.shared.endEditing() })
             }
-            .background(AppColors.background)
             .toolbar { EmptyView() } // Remove default toolbar
         }
     }
@@ -477,21 +483,26 @@ struct AddTransactionView: View {
             .padding(.top, AppPaddings.sectionTitleTop)
     }
     private var amountSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let preferredCurrency = UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD (US Dollar)"
+        let currencyCode = preferredCurrency.components(separatedBy: " ").first ?? "USD"
+        let currencySymbol = Locale.availableIdentifiers.compactMap { Locale(identifier: $0) }
+            .first(where: { $0.currency?.identifier == currencyCode })?.currencySymbol ?? "$"
+        return VStack(alignment: .leading, spacing: 8) {
             Text("Amount").font(.headline)
-            TextField("$0.00", text: $amount)
-                .keyboardType(.decimalPad)
-                .padding(AppPaddings.inputField)
-                .background(Color.white)
-                .cornerRadius(12)
-                .onChange(of: amount) { _, newValue in
-                    let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
-                    if formatted != newValue {
-                        amount = formatted
-                    }
-                }
+            ZStack(alignment: .leading) {
+                Text(currencySymbol)
+                    .font(.body.weight(.semibold))
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 12)
+                TextField("0.00", text: $amount)
+                    .keyboardType(.decimalPad)
+                    .foregroundColor((Double(amount) ?? 0) >= 0 ? .green : .red)
+                    .padding(.vertical, AppPaddings.inputField)
+                    .padding(.trailing, AppPaddings.inputField)
+                    .background(Color.white)
+                    .cornerRadius(12)
+            }
         }
-        .padding(.top, 0)
     }
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -581,10 +592,10 @@ struct AddTransactionView: View {
             }
         }
     }
-    private var incomeOrOutcomeSection: some View {
+    private var incomeOrExpenseSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Type of Transaction").font(.headline)
-            BrandSegmentedPicker(selection: $incomeOrOutcome, options: IncomeOrOutcome.allCases, accessibilityLabel: "Income or Outcome")
+            BrandSegmentedPicker(selection: $incomeOrExpense, options: IncomeOrExpense.allCases, accessibilityLabel: "Income or Expense")
         }
     }
     private var typeSection: some View {
@@ -660,6 +671,8 @@ struct AddTransactionView: View {
 
     private func save() {
         let value = Double(amount.replacingOccurrences(of: "$", with: "")) ?? 0
+        // Store the amount as positive, use isIncome to determine if it's income or expense
+        
         let newTransaction = Transaction(
             id: UUID(),
             title: title,
@@ -669,7 +682,9 @@ struct AddTransactionView: View {
             iconColorName: iconColorName,
             iconBackgroundName: iconBackgroundName,
             category: category,
-            linkedGoalName: selectedGoal?.name
+            isIncome: incomeOrExpense == .income,
+            linkedGoalName: selectedGoal?.name,
+            date: Date()
         )
         onSave(newTransaction)
         // If notifyMe is enabled, schedule notifications for 5 days before, 2 days before, and on the day of the transaction date.
@@ -693,10 +708,10 @@ extension RecurringFrequency: CustomStringConvertible {
     var description: String { label }
 }
 
-// MARK: - IncomeOrOutcome Enum
-enum IncomeOrOutcome: String, CaseIterable, Identifiable, CustomStringConvertible {
+// MARK: - IncomeOrExpense Enum
+enum IncomeOrExpense: String, CaseIterable, Identifiable, CustomStringConvertible {
     case income = "Income"
-    case outcome = "Outcome"
+    case expense = "Expense"
     var id: String { rawValue }
     var description: String { rawValue }
 }
@@ -727,6 +742,9 @@ struct TransactionDetailView: View {
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture { UIApplication.shared.endEditing() }
             Capsule()
                 .fill(Color.secondary.opacity(0.25))
                 .frame(width: 40, height: 5)
@@ -786,17 +804,23 @@ struct TransactionDetailView: View {
                         .foregroundColor(.secondary)
                     Spacer()
                     if isEditing {
-                        TextField("Amount", text: $editedAmount)
-                            .keyboardType(.decimalPad)
-                            .font(.title3.weight(.semibold))
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 100)
-                            .onChange(of: editedAmount) { _, newValue in
-                                let formatted = newValue.currencyInputFormatting(currencyCode: UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD")
-                                if formatted != newValue {
-                                    editedAmount = formatted
-                                }
-                            }
+                        let preferredCurrency = UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD (US Dollar)"
+                        let currencyCode = preferredCurrency.components(separatedBy: " ").first ?? "USD"
+                        let currencySymbol = Locale.availableIdentifiers.compactMap { Locale(identifier: $0) }
+                            .first(where: { $0.currency?.identifier == currencyCode })?.currencySymbol ?? "$"
+                        ZStack(alignment: .leading) {
+                            Text(currencySymbol)
+                                .font(.body.weight(.semibold))
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 8)
+                            TextField("0.00", text: $editedAmount)
+                                .keyboardType(.decimalPad)
+                                .font(.title3.weight(.semibold))
+                                .foregroundColor((Double(editedAmount) ?? 0) >= 0 ? .green : .red)
+                                .multilineTextAlignment(.trailing)
+                                .padding(.leading, 32)
+                                .frame(width: 100)
+                        }
                     } else {
                         Text(transaction.amount, format: .currency(code: "USD"))
                             .font(.title3.weight(.semibold))
@@ -896,7 +920,9 @@ struct TransactionDetailView: View {
                             iconColorName: editedCategory.color.toHex(),
                             iconBackgroundName: editedCategory.color.toHex() + ".opacity15",
                             category: editedCategory,
-                            linkedGoalName: editedLinkedGoalName
+                            isIncome: editedCategory == .income,
+                            linkedGoalName: editedLinkedGoalName,
+                            date: editedDate
                         )
                         onSave(updatedTransaction)
                         isEditing = false
@@ -928,5 +954,12 @@ struct TransactionDetailView: View {
         .padding(.bottom, 32)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+    }
+}
+
+// Helper to dismiss keyboard
+extension UIApplication {
+    func endEditing() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

@@ -116,6 +116,7 @@ struct BudgetView: View {
                 .sheet(isPresented: $showAddGoal) {
                     NewSavingGoalView { newGoal in
                         goals.append(newGoal)
+                        print("DEBUG: Added new goal: \(newGoal.name), total goals: \(goals.count)")
                         showAddGoal = false
                     }
                     .presentationDetents([.large])
@@ -133,7 +134,9 @@ struct BudgetView: View {
                     iconColorName: goal.iconColorName,
                     iconBackgroundName: goal.iconColorName + ".opacity15",
                     category: .savings,
-                    linkedGoalName: nil
+                    isIncome: false,
+                    linkedGoalName: nil,
+                    date: Date()
                 )
                 TransactionDetailView(transaction: pseudoTransaction) { updated in
                     if let idx = goals.firstIndex(where: { $0.name == goal.name }) {

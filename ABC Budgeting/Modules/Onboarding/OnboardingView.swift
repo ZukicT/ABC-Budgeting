@@ -12,33 +12,7 @@ struct OnboardingView: View {
     @State private var currency: String = "USD (US Dollar)"
     @State private var notificationsEnabled: Bool = false
     @State private var showNotificationAlert = false
-    private let currencies = [
-        "USD (US Dollar)",
-        "EUR (Euro)",
-        "GBP (British Pound)",
-        "JPY (Japanese Yen)",
-        "AUD (Australian Dollar)",
-        "CAD (Canadian Dollar)",
-        "CHF (Swiss Franc)",
-        "CNY (Chinese Yuan)",
-        "HKD (Hong Kong Dollar)",
-        "NZD (New Zealand Dollar)",
-        "SGD (Singapore Dollar)",
-        "INR (Indian Rupee)",
-        "MXN (Mexican Peso)",
-        "BRL (Brazilian Real)",
-        "ZAR (South African Rand)",
-        "AED (UAE Dirham)",
-        "SAR (Saudi Riyal)",
-        "KRW (South Korean Won)",
-        "PLN (Polish Złoty)",
-        "SEK (Swedish Krona)",
-        "NOK (Norwegian Krone)",
-        "DKK (Danish Krone)",
-        "ILS (Israeli Shekel)",
-        "TRY (Turkish Lira)",
-        "RUB (Russian Ruble)"
-    ]
+    private let currencies = CurrencyList.all
 
     var body: some View {
         VStack {
@@ -109,8 +83,9 @@ struct OnboardingView: View {
                                 .cornerRadius(16)
                                 .font(.body)
                                 .foregroundColor(.primary)
+                                .multilineTextAlignment(.leading)
                                 .onChange(of: balanceRaw) { _, newValue in
-                                    let currencyCode = UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD"
+                                    let currencyCode = currency.components(separatedBy: " ").first ?? "USD"
                                     let cleaned = newValue.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
                                     if let cents = Int(cleaned) {
                                         let doubleValue = Double(cents) / 100.0
@@ -122,7 +97,11 @@ struct OnboardingView: View {
                                         balanceRaw = formatter.string(from: NSNumber(value: doubleValue)) ?? "$0.00"
                                     } else {
                                         balance = "0.00"
-                                        balanceRaw = "$0.00"
+                                        let formatter = NumberFormatter()
+                                        formatter.numberStyle = .currency
+                                        formatter.currencyCode = currencyCode
+                                        formatter.maximumFractionDigits = 2
+                                        balanceRaw = formatter.string(from: NSNumber(value: 0.0)) ?? "$0.00"
                                     }
                                 }
                         }
@@ -145,7 +124,7 @@ struct OnboardingView: View {
 
                         FormField(label: "Enable Notifications") {
                             Toggle("", isOn: $notificationsEnabled)
-                                .toggleStyle(SwitchToggleStyle(tint: .blue))
+                                .toggleStyle(SwitchToggleStyle(tint: AppColors.brandGreen))
                                 .labelsHidden()
                         }
                     }
@@ -179,6 +158,7 @@ struct OnboardingView: View {
                 
                 // Continue button
                 Button(action: {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     if currentPage < totalPages - 1 {
                         withAnimation { currentPage += 1 }
                     } else {
@@ -210,6 +190,7 @@ struct OnboardingView: View {
             .padding(.bottom, AppPaddings.large)
         }
         .background(AppColors.brandBlack.ignoresSafeArea())
+        .onTapGesture { self.hideKeyboard() }
         .alert(isPresented: $showNotificationAlert) {
             Alert(
                 title: Text("Enable Notifications?"),
