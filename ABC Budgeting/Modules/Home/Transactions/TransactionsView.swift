@@ -275,12 +275,14 @@ extension Color {
         case "mint": return .mint
         case "red": return .red
         case "gray": return .gray
+        case "blue": return .blue
         case "orange.opacity15": return Color.orange.opacity(0.15)
         case "purple.opacity15": return Color.purple.opacity(0.15)
         case "green.opacity15": return Color.green.opacity(0.15)
         case "mint.opacity15": return Color.mint.opacity(0.15)
         case "red.opacity15": return Color.red.opacity(0.15)
         case "gray.opacity15": return Color.gray.opacity(0.15)
+        case "blue.opacity15": return Color.blue.opacity(0.15)
         default: return .gray
         }
     }
