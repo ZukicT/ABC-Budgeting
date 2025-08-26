@@ -19,123 +19,247 @@ struct NewSavingGoalView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Sheet Header with brandBlack background and rounded top corners
+                // Enhanced Sheet Header with gradient background
                 ZStack(alignment: .topLeading) {
-                    AppColors.brandBlack
-                        .clipShape(
-                            RoundedCorner(radius: 24, corners: [.topLeft, .topRight])
-                        )
-                        .edgesIgnoringSafeArea(.top)
-                        .frame(height: 56)
+                    LinearGradient(
+                        colors: [AppColors.brandBlack, AppColors.brandBlack.opacity(0.9)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .clipShape(
+                        RoundedCorner(radius: 28, corners: [.topLeft, .topRight])
+                    )
+                    .edgesIgnoringSafeArea(.top)
+                    .frame(height: 64)
+                    
                     HStack {
-                        Button("Cancel") { dismiss() }
-                            .foregroundColor(.white)
-                            .font(.body.weight(.semibold))
-                            .padding(.leading, AppPaddings.section)
+                        Button(action: { dismiss() }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 16, weight: .semibold))
+                                Text("Cancel")
+                                    .font(.body.weight(.semibold))
+                            }
+                            .foregroundColor(.white.opacity(0.9))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(Color.white.opacity(0.15))
+                            )
+                        }
+                        .padding(.leading, AppPaddings.section)
+                        
                         Spacer()
+                        
+                        Text("New Saving Goal")
+                            .font(.title3.weight(.semibold))
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        // Placeholder for balance
+                        Color.clear
+                            .frame(width: 80)
                     }
-                    .frame(height: 56)
+                    .frame(height: 64)
                 }
                 .accessibilityElement(children: .combine)
+                
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 24) {
                         headerSection
                         goalNameSection
                         subtitleSection
                         targetAmountSection
                         savedAmountSection
                         targetDateSection
-                        notesSection
-                        iconSection
+                        iconPickerSection
                         reminderSection
+                        notesSection
                         saveButtonSection
                     }
                     .padding(.horizontal, AppPaddings.section)
                     .padding(.bottom, AppPaddings.large)
                 }
-                .onTapGesture { hideKeyboard() }
+                .background(AppColors.background)
+                .contentShape(Rectangle())
+                .simultaneousGesture(TapGesture().onEnded { UIApplication.shared.endEditing() })
             }
-            .background(AppColors.background)
             .toolbar { EmptyView() } // Remove default toolbar
         }
     }
 
     private var headerSection: some View {
-        Text("New Saving & Goal")
-            .font(.largeTitle.bold())
-            .padding(.top, AppPaddings.sectionTitleTop)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Goal Details")
+                .font(.title2.weight(.bold))
+                .foregroundColor(.primary)
+            Text("Fill in the details below to create your saving goal")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
+        .padding(.top, 8)
     }
+    
     private var goalNameSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Goal Name").font(.headline)
-            TextField("e.g. Vacation", text: $goalName)
-                .padding(AppPaddings.inputField)
-                .background(Color.white)
-                .cornerRadius(12)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "textformat")
+                    .foregroundColor(AppColors.brandBlue)
+                    .font(.title2)
+                Text("Goal Name")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
+            TextField("e.g. Vacation, New Car, Emergency Fund", text: $goalName)
+                .font(.body)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                )
         }
     }
+    
     private var subtitleSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Subtitle").font(.headline)
-            TextField("e.g. Trip to Italy", text: $subtitle)
-                .padding(AppPaddings.inputField)
-                .background(Color.white)
-                .cornerRadius(12)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "text.badge.plus")
+                    .foregroundColor(AppColors.brandPurple)
+                    .font(.title2)
+                Text("Description")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
+            TextField("e.g. Trip to Italy, Tesla Model 3", text: $subtitle)
+                .font(.body)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                )
         }
     }
+    
     private var targetAmountSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Target Amount").font(.headline)
-            TextField("e.g. 3000", text: $targetAmount)
-                .keyboardType(.decimalPad)
-                .padding(AppPaddings.inputField)
-                .background(Color.white)
-                .cornerRadius(12)
-            if let doubleValue = Double(targetAmount) {
-                Text(doubleValue, format: .currency(code: UserDefaults.standard.string(forKey: "preferredCurrency")?.components(separatedBy: " ").first ?? "USD")).font(.caption).foregroundColor(.secondary)
+        let preferredCurrency = UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD (US Dollar)"
+        let currencyCode = preferredCurrency.components(separatedBy: " ").first ?? "USD"
+        let currencySymbol = Locale.availableIdentifiers.compactMap { Locale(identifier: $0) }
+            .first(where: { $0.currency?.identifier == currencyCode })?.currencySymbol ?? "$"
+        
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "target")
+                    .foregroundColor(AppColors.brandGreen)
+                    .font(.title2)
+                Text("Target Amount")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
             }
+            
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.white)
+                    .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                
+                HStack(spacing: 12) {
+                    Text(currencySymbol)
+                        .font(.title.weight(.bold))
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 20)
+                    
+                    TextField("0.00", text: $targetAmount)
+                        .keyboardType(.decimalPad)
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(.vertical, 20)
+            }
+            .frame(height: 72)
         }
     }
+    
     private var savedAmountSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Current Saved").font(.headline)
-            TextField("e.g. 1200", text: $savedAmount)
-                .keyboardType(.decimalPad)
-                .padding(AppPaddings.inputField)
-                .background(Color.white)
-                .cornerRadius(12)
-            if let doubleValue = Double(savedAmount) {
-                Text(doubleValue, format: .currency(code: UserDefaults.standard.string(forKey: "preferredCurrency")?.components(separatedBy: " ").first ?? "USD")).font(.caption).foregroundColor(.secondary)
+        let preferredCurrency = UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD (US Dollar)"
+        let currencyCode = preferredCurrency.components(separatedBy: " ").first ?? "USD"
+        let currencySymbol = Locale.availableIdentifiers.compactMap { Locale(identifier: $0) }
+            .first(where: { $0.currency?.identifier == currencyCode })?.currencySymbol ?? "$"
+        
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "banknote")
+                    .foregroundColor(AppColors.brandOrange)
+                    .font(.title2)
+                Text("Current Saved")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
             }
+            
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.white)
+                    .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                
+                HStack(spacing: 12) {
+                    Text(currencySymbol)
+                        .font(.title.weight(.bold))
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 20)
+                    
+                    TextField("0.00", text: $savedAmount)
+                        .keyboardType(.decimalPad)
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(.vertical, 20)
+            }
+            .frame(height: 72)
         }
     }
+    
     private var targetDateSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Target Date").font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "calendar.circle.fill")
+                    .foregroundColor(AppColors.brandCyan)
+                    .font(.title2)
+                Text("Target Date")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
             DatePicker("", selection: $targetDate, displayedComponents: .date)
                 .datePickerStyle(.compact)
                 .labelsHidden()
         }
     }
-    private var notesSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Notes").font(.headline)
-            TextField("Add a note...", text: $notes, axis: .vertical)
-                .padding(AppPaddings.inputField)
-                .background(Color.white)
-                .cornerRadius(12)
-        }
-    }
-    private var iconSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Icon").font(.headline)
+    
+    private var iconPickerSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "paintbrush.circle.fill")
+                    .foregroundColor(AppColors.brandPink)
+                    .font(.title2)
+                Text("Icon & Category")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
             // Category row
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppPaddings.small) {
                     ForEach(TransactionCategory.allCases) { cat in
                         Button(action: {
                             selectedCategory = cat
-                            // Optionally reset icon selection to default for new category
                             iconName = cat.symbol
                             iconColorName = cat.color.toHex()
                         }) {
@@ -167,6 +291,7 @@ struct NewSavingGoalView: View {
                     }
                 }
             }
+            
             // Icon row for selected category
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AppPaddings.small) {
@@ -203,29 +328,72 @@ struct NewSavingGoalView: View {
             }
         }
     }
+    
     private var reminderSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "bell.circle.fill")
+                    .foregroundColor(AppColors.brandYellow)
+                    .font(.title2)
+                Text("Reminders")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
             Toggle(isOn: $notifyMe) {
-                Text("Remind Me").font(.headline)
+                Text("Remind Me")
+                    .font(.body)
+                    .foregroundColor(.primary)
             }
             .tint(AppColors.brandGreen)
+            
             if notifyMe {
-                HStack {
-                    Text("Frequency:").font(.subheadline)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Frequency")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                     BrandSegmentedPicker(selection: $reminderFrequency, options: RecurringFrequency.allCases, accessibilityLabel: "Reminder Frequency")
+                        .padding(.horizontal, 4)
                 }
             }
         }
     }
+    
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "note.text")
+                    .foregroundColor(AppColors.brandCyan)
+                    .font(.title2)
+                Text("Notes")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
+            TextField("Add a note about this goal...", text: $notes, axis: .vertical)
+                .font(.body)
+                .lineLimit(3...6)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                )
+        }
+    }
+    
     private var saveButtonSection: some View {
         Button(action: save) {
             Text("Save Goal")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(goalName.isEmpty || targetAmount.isEmpty ? Color(.systemGray4) : AppColors.brandBlack)
+                .font(.headline.weight(.semibold))
                 .foregroundColor(.white)
-                .cornerRadius(12)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(goalName.isEmpty || targetAmount.isEmpty ? Color(.systemGray4) : AppColors.brandBlack)
+                )
         }
         .disabled(goalName.isEmpty || targetAmount.isEmpty)
         .padding(.top, 8)
@@ -246,6 +414,5 @@ struct NewSavingGoalView: View {
             dismiss()
         }
     }
-}
-
+} 
 // You can reuse GoalFormData from GoalFormView 

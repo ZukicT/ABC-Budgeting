@@ -12,10 +12,13 @@ struct TransactionsView: View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
                 AppColors.background.ignoresSafeArea()
-                VStack(alignment: .leading, spacing: 0) {
-                    headerSection
-                    filterChipsSection
-                    contentSection
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        headerSection
+                        filterChipsSection
+                        contentSection
+                    }
+                    .padding(.bottom, 80) // For FAB spacing
                 }
                 fabSection
             }
@@ -435,31 +438,60 @@ struct AddTransactionView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Sheet Header with brandBlack background and rounded top corners
+                // Enhanced Sheet Header with gradient background
                 ZStack(alignment: .topLeading) {
-                    AppColors.brandBlack
-                        .clipShape(
-                            RoundedCorner(radius: 24, corners: [.topLeft, .topRight])
-                        )
-                        .edgesIgnoringSafeArea(.top)
-                        .frame(height: 56)
+                    LinearGradient(
+                        colors: [AppColors.brandBlack, AppColors.brandBlack.opacity(0.9)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .clipShape(
+                        RoundedCorner(radius: 28, corners: [.topLeft, .topRight])
+                    )
+                    .edgesIgnoringSafeArea(.top)
+                    .frame(height: 64)
+                    
                     HStack {
-                        Button("Cancel") { dismiss() }
-                            .foregroundColor(.white)
-                            .font(.body.weight(.semibold))
-                            .padding(.leading, AppPaddings.section)
+                        Button(action: { dismiss() }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 16, weight: .semibold))
+                                Text("Cancel")
+                                    .font(.body.weight(.semibold))
+                            }
+                            .foregroundColor(.white.opacity(0.9))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(Color.white.opacity(0.15))
+                            )
+                        }
+                        .padding(.leading, AppPaddings.section)
+                        
                         Spacer()
+                        
+                        Text("New Transaction")
+                            .font(.title3.weight(.semibold))
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        // Placeholder for balance
+                        Color.clear
+                            .frame(width: 80)
                     }
-                    .frame(height: 56)
+                    .frame(height: 64)
                 }
                 .accessibilityElement(children: .combine)
+                
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 24) {
                         headerSection
                         amountSection
                         titleSection
-                        iconPickerSection
                         incomeOrExpenseSection
+                        iconPickerSection
                         typeSection
                         if isRecurringBool { frequencySection }
                         dateSection
@@ -480,47 +512,113 @@ struct AddTransactionView: View {
     }
 
     private var headerSection: some View {
-        Text("Add Transaction")
-            .font(.largeTitle.bold())
-            .padding(.top, AppPaddings.sectionTitleTop)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Transaction Details")
+                .font(.title2.weight(.bold))
+                .foregroundColor(.primary)
+            Text("Fill in the details below to add your transaction")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
+        .padding(.top, 8)
     }
+    
     private var amountSection: some View {
         let preferredCurrency = UserDefaults.standard.string(forKey: "preferredCurrency") ?? "USD (US Dollar)"
         let currencyCode = preferredCurrency.components(separatedBy: " ").first ?? "USD"
         let currencySymbol = Locale.availableIdentifiers.compactMap { Locale(identifier: $0) }
             .first(where: { $0.currency?.identifier == currencyCode })?.currencySymbol ?? "$"
-        return VStack(alignment: .leading, spacing: 8) {
-            Text("Amount").font(.headline)
-            ZStack(alignment: .leading) {
-                Text(currencySymbol)
-                    .font(.body.weight(.semibold))
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 12)
-                TextField("0.00", text: $amount)
-                    .keyboardType(.decimalPad)
-                    .foregroundColor((Double(amount) ?? 0) >= 0 ? .green : .red)
-                    .padding(.vertical, AppPaddings.inputField)
-                    .padding(.trailing, AppPaddings.inputField)
-                    .background(Color.white)
-                    .cornerRadius(12)
+        
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "dollarsign.circle.fill")
+                    .foregroundColor(AppColors.brandGreen)
+                    .font(.title2)
+                Text("Amount")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
             }
+            
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.white)
+                    .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                
+                HStack(spacing: 12) {
+                    Text(currencySymbol)
+                        .font(.title.weight(.bold))
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 20)
+                    
+                    TextField("0.00", text: $amount)
+                        .keyboardType(.decimalPad)
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(.vertical, 20)
+            }
+            .frame(height: 72)
         }
     }
+    
     private var titleSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Title").font(.headline)
-            TextField("e.g. Coffee, Rent", text: $title)
-                .padding(AppPaddings.inputField)
-                .background(Color.white)
-                .cornerRadius(12)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "textformat")
+                    .foregroundColor(AppColors.brandBlue)
+                    .font(.title2)
+                Text("Title")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
+            TextField("e.g. Coffee, Rent, Salary", text: $title)
+                .font(.body)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                )
         }
     }
+    
+    private var incomeOrExpenseSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "arrow.up.arrow.down.circle.fill")
+                    .foregroundColor(AppColors.brandPurple)
+                    .font(.title2)
+                Text("Transaction Type")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
+            BrandSegmentedPicker(selection: $incomeOrExpense, options: IncomeOrExpense.allCases, accessibilityLabel: "Income or Expense")
+                .padding(.horizontal, 4)
+        }
+    }
+    
     private var iconPickerSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Icon").font(.headline)
-            // Category row
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppPaddings.small) {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Image(systemName: "paintbrush.fill")
+                    .foregroundColor(AppColors.brandOrange)
+                    .font(.title2)
+                Text("Category & Icon")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
+            // Category selection with enhanced visual feedback
+            VStack(spacing: 12) {
+                Text("Choose Category")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundColor(.secondary)
+                
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
                     ForEach(TransactionCategory.allCases) { cat in
                         Button(action: {
                             selectedCategory = cat
@@ -529,27 +627,34 @@ struct AddTransactionView: View {
                             iconColorName = cat.color.toHex()
                             iconBackgroundName = cat.color.toHex() + ".opacity15"
                         }) {
-                            VStack(spacing: 6) {
+                            VStack(spacing: 8) {
                                 ZStack {
                                     Circle()
-                                        .fill(cat.color.opacity(0.18))
-                                        .frame(width: 40, height: 40)
+                                        .fill(selectedCategory == cat ? cat.color : cat.color.opacity(0.15))
+                                        .frame(width: 48, height: 48)
+                                    
                                     Image(systemName: cat.symbol)
-                                        .font(.system(size: 22, weight: .semibold))
+                                        .font(.system(size: 20, weight: .semibold))
                                         .foregroundColor(selectedCategory == cat ? .white : cat.color)
                                 }
+                                
                                 Text(cat.label)
-                                    .font(.caption)
-                                    .foregroundColor(selectedCategory == cat ? .white : .primary)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
+                                    .font(.caption.weight(.medium))
+                                    .foregroundColor(selectedCategory == cat ? cat.color : .primary)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.center)
                             }
-                            .frame(width: 72, height: 72)
+                            .frame(height: 80)
+                            .frame(maxWidth: .infinity)
                             .background(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .fill(selectedCategory == cat ? cat.color : Color.clear)
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(selectedCategory == cat ? cat.color.opacity(0.1) : Color.white)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(selectedCategory == cat ? cat.color : Color.clear, lineWidth: 2)
+                                    )
                             )
-                            .contentShape(RoundedRectangle(cornerRadius: 14))
+                            .shadow(color: selectedCategory == cat ? cat.color.opacity(0.2) : Color.black.opacity(0.05), radius: 8, y: 2)
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel(cat.label)
@@ -557,117 +662,261 @@ struct AddTransactionView: View {
                     }
                 }
             }
-            // Icon row for selected category
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppPaddings.small) {
-                    ForEach(selectedCategory.icons, id: \.self) { icon in
-                        Button(action: {
-                            iconName = icon
-                            iconColorName = selectedCategory.color.toHex()
-                            iconBackgroundName = selectedCategory.color.toHex() + ".opacity15"
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .fill(selectedCategory.color.opacity(0.18))
-                                    .frame(width: iconName == icon ? 56 : 48, height: iconName == icon ? 56 : 48)
-                                Image(systemName: icon)
-                                    .font(.system(size: iconName == icon ? 24 : 22, weight: .semibold))
-                                    .foregroundColor(iconName == icon ? .white : selectedCategory.color)
+            
+            // Icon selection for selected category
+            if !selectedCategory.icons.isEmpty {
+                VStack(spacing: 12) {
+                    Text("Choose Icon")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(.secondary)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 16) {
+                            ForEach(selectedCategory.icons, id: \.self) { icon in
+                                Button(action: {
+                                    iconName = icon
+                                    iconColorName = selectedCategory.color.toHex()
+                                    iconBackgroundName = selectedCategory.color.toHex() + ".opacity15"
+                                }) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(iconName == icon ? selectedCategory.color : selectedCategory.color.opacity(0.15))
+                                            .frame(width: iconName == icon ? 56 : 48, height: iconName == icon ? 56 : 48)
+                                        
+                                        Image(systemName: icon)
+                                            .font(.system(size: iconName == icon ? 24 : 20, weight: .semibold))
+                                            .foregroundColor(iconName == icon ? .white : selectedCategory.color)
+                                    }
+                                    .overlay(
+                                        Circle()
+                                            .stroke(iconName == icon ? selectedCategory.color : Color.clear, lineWidth: 3)
+                                    )
+                                    .scaleEffect(iconName == icon ? 1.1 : 1.0)
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: iconName == icon)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel(icon)
+                                .accessibilityAddTraits(iconName == icon ? .isSelected : .isButton)
                             }
-                            .frame(width: iconName == icon ? 56 : 64, height: iconName == icon ? 56 : 64)
-                            .background(
-                                Circle()
-                                    .fill(iconName == icon ? selectedCategory.color : Color.clear)
-                            )
-                            .overlay(
-                                Circle()
-                                    .stroke(selectedCategory.color, lineWidth: iconName == icon ? 2 : 0)
-                            )
                         }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(icon)
-                        .accessibilityAddTraits(iconName == icon ? .isSelected : .isButton)
+                        .padding(.horizontal, 4)
                     }
                 }
-                .padding(.top, 4)
-                .padding(.vertical, 8)
             }
         }
     }
-    private var incomeOrExpenseSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Type of Transaction").font(.headline)
-            BrandSegmentedPicker(selection: $incomeOrExpense, options: IncomeOrExpense.allCases, accessibilityLabel: "Income or Expense")
-        }
-    }
+    
     private var typeSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Type").font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "repeat.circle.fill")
+                    .foregroundColor(AppColors.brandTeal)
+                    .font(.title2)
+                Text("Transaction Type")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
             BrandSegmentedPicker(selection: isRecurringBinding, options: [BoolOption(false), BoolOption(true)], accessibilityLabel: "Transaction Type")
+                .padding(.horizontal, 4)
         }
     }
+    
     private var frequencySection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Frequency").font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "calendar.circle.fill")
+                    .foregroundColor(AppColors.brandIndigo)
+                    .font(.title2)
+                Text("Recurring Frequency")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
             BrandSegmentedPicker(selection: $recurringFrequency, options: RecurringFrequency.allCases, accessibilityLabel: "Recurring Frequency")
+                .padding(.horizontal, 4)
         }
     }
+    
     private var dateSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Date").font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "calendar.badge.clock")
+                    .foregroundColor(AppColors.brandPink)
+                    .font(.title2)
+                Text("Date")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
             DatePicker("", selection: $date, displayedComponents: .date)
                 .datePickerStyle(.compact)
                 .labelsHidden()
         }
     }
+    
     private var notificationSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Toggle(isOn: $notifyMe) {
-                Text("Notify me").font(.headline)
-            }
-            .tint(AppColors.brandGreen)
-        }
-    }
-    private var goalLinkSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Link to Saving Goal (optional)").font(.headline)
-            if availableGoals.isEmpty {
-                Text("No goals available").font(.subheadline).foregroundColor(.secondary)
-            } else {
-                Picker("Select a goal", selection: $selectedGoal) {
-                    Text("None").tag(Optional<GoalFormData>.none)
-                    ForEach(availableGoals, id: \.name) { goal in
-                        HStack {
-                            Image(systemName: goal.iconName)
-                                .foregroundColor(goal.iconColor)
-                            Text(goal.name)
-                        }.tag(Optional(goal))
-                    }
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "bell.badge.fill")
+                    .foregroundColor(AppColors.brandYellow)
+                    .font(.title2)
+                Text("Notifications")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Toggle(isOn: $notifyMe) {
+                    EmptyView()
                 }
-                .pickerStyle(.menu)
+                .tint(AppColors.brandGreen)
+                .scaleEffect(0.9)
+            }
+            
+            if notifyMe {
+                Text("You'll be notified about this transaction")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 32)
             }
         }
     }
-    private var notesSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Notes").font(.headline)
-            TextField("Add a note...", text: $notes, axis: .vertical)
-                .padding(AppPaddings.inputField)
-                .background(Color.white)
-                .cornerRadius(12)
+    
+    private var goalLinkSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "target")
+                    .foregroundColor(AppColors.brandRed)
+                    .font(.title2)
+                Text("Link to Savings Goal")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
+            if availableGoals.isEmpty {
+                HStack {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(.secondary)
+                        .font(.body)
+                    Text("No savings goals available")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(.systemGray6))
+                )
+            } else {
+                Menu {
+                    Button("None") {
+                        selectedGoal = nil
+                    }
+                    
+                    ForEach(availableGoals, id: \.name) { goal in
+                        Button(action: { selectedGoal = goal }) {
+                            HStack {
+                                Image(systemName: goal.iconName)
+                                    .foregroundColor(goal.iconColor)
+                                Text(goal.name)
+                            }
+                        }
+                    }
+                } label: {
+                    HStack {
+                        if let selectedGoal = selectedGoal {
+                            HStack(spacing: 8) {
+                                Image(systemName: selectedGoal.iconName)
+                                    .foregroundColor(selectedGoal.iconColor)
+                                    .font(.body)
+                                Text(selectedGoal.name)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                            }
+                        } else {
+                            HStack(spacing: 8) {
+                                Image(systemName: "target")
+                                    .foregroundColor(.secondary)
+                                    .font(.body)
+                                Text("Select a goal (optional)")
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(.secondary)
+                            .font(.caption)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.white)
+                            .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                    )
+                }
+            }
         }
     }
-    private var saveButtonSection: some View {
-        Button(action: save) {
-            Text("Save Transaction")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(title.isEmpty || amount.isEmpty ? Color(.systemGray4) : AppColors.brandBlack)
-                .foregroundColor(.white)
-                .cornerRadius(12)
+    
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "note.text")
+                    .foregroundColor(AppColors.brandCyan)
+                    .font(.title2)
+                Text("Notes")
+                    .font(.headline.weight(.semibold))
+                    .foregroundColor(.primary)
+            }
+            
+            TextField("Add a note about this transaction...", text: $notes, axis: .vertical)
+                .font(.body)
+                .lineLimit(3...6)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+                )
         }
-        .disabled(title.isEmpty || amount.isEmpty)
+    }
+    
+    private var saveButtonSection: some View {
+        VStack(spacing: 16) {
+            Button(action: save) {
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title2)
+                    Text("Save Transaction")
+                        .font(.headline.weight(.semibold))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 18)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(title.isEmpty || amount.isEmpty ? Color(.systemGray4) : AppColors.brandBlack)
+                        .shadow(color: title.isEmpty || amount.isEmpty ? Color.clear : AppColors.brandBlack.opacity(0.3), radius: 8, y: 4)
+                )
+                .foregroundColor(.white)
+            }
+            .disabled(title.isEmpty || amount.isEmpty)
+            .scaleEffect(title.isEmpty || amount.isEmpty ? 0.98 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: title.isEmpty || amount.isEmpty)
+            
+            if title.isEmpty || amount.isEmpty {
+                Text("Please fill in the title and amount to continue")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
         .padding(.top, 8)
     }
 

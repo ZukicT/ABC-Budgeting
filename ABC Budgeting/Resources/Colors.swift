@@ -12,6 +12,10 @@ struct AppColors {
     static var brandPurple: Color { return safeColor(Color(red: 157.0/255.0, green: 167.0/255.0, blue: 208.0/255.0), name: "brandPurple") }
     static var brandPink: Color { return safeColor(Color(red: 231.0/255.0, green: 140.0/255.0, blue: 157.0/255.0), name: "brandPink") }
     static var brandRed: Color { return safeColor(Color(red: 224.0/255.0, green: 83.0/255.0, blue: 61.0/255.0), name: "brandRed") }
+    static var brandOrange: Color { return safeColor(Color(red: 255.0/255.0, green: 149.0/255.0, blue: 0.0/255.0), name: "brandOrange") }
+    static var brandTeal: Color { return safeColor(Color(red: 90.0/255.0, green: 200.0/255.0, blue: 250.0/255.0), name: "brandTeal") }
+    static var brandIndigo: Color { return safeColor(Color(red: 94.0/255.0, green: 92.0/255.0, blue: 230.0/255.0), name: "brandIndigo") }
+    static var brandCyan: Color { return safeColor(Color(red: 32.0/255.0, green: 200.0/255.0, blue: 220.0/255.0), name: "brandCyan") }
     static var brandWhite: Color { return safeColor(Color(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0), name: "brandWhite") }
     static var white: Color { return safeColor(Color(red: 1, green: 1, blue: 1), name: "white") } // #FFFFFF
     static var background: Color { return safeColor(Color(red: 243.0/255.0, green: 243.0/255.0, blue: 243.0/255.0), name: "background") } // #F3F3F3

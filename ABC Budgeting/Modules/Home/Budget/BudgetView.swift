@@ -11,80 +11,81 @@ struct BudgetView: View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
                 AppColors.background.ignoresSafeArea()
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Savings & Goals")
-                        .font(.title.bold())
-                        .foregroundColor(.primary)
-                        .padding(.top, 20)
-                        .padding(.horizontal)
-                    // Filter Chips Row (dynamic)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
-                            Button(action: { selectedCategory = nil }) {
-                                Text("All")
-                                    .font(.subheadline.bold())
-                                    .foregroundColor(selectedCategory == nil ? .white : AppColors.tagUnselected)
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 18)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(selectedCategory == nil ? AppColors.brandBlack : AppColors.tagUnselectedBackground)
-                                    )
-                            }
-                            .accessibilityLabel("All")
-                            .accessibilityAddTraits(selectedCategory == nil ? .isSelected : .isButton)
-                            ForEach(TransactionCategory.allCases) { cat in
-                                Button(action: { selectedCategory = cat }) {
-                                    HStack(spacing: 6) {
-                                        ZStack {
-                                            Circle()
-                                                .fill(cat.color.opacity(0.18))
-                                                .frame(width: 22, height: 22)
-                                            Image(systemName: cat.symbol)
-                                                .font(.system(size: 13, weight: .semibold))
-                                                .foregroundColor(selectedCategory == cat ? .white : cat.color)
-                                        }
-                                        Text(cat.label)
-                                            .font(.subheadline.weight(.semibold))
-                                            .foregroundColor(selectedCategory == cat ? .white : AppColors.tagUnselected)
-                                    }
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 18)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(selectedCategory == cat ? cat.color : AppColors.tagUnselectedBackground)
-                                    )
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Savings & Goals")
+                            .font(.title.bold())
+                            .foregroundColor(.primary)
+                            .padding(.top, 20)
+                            .padding(.horizontal)
+                        // Filter Chips Row (dynamic)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                Button(action: { selectedCategory = nil }) {
+                                    Text("All")
+                                        .font(.subheadline.bold())
+                                        .foregroundColor(selectedCategory == nil ? .white : AppColors.tagUnselected)
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 18)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(selectedCategory == nil ? AppColors.brandBlack : AppColors.tagUnselectedBackground)
+                                        )
                                 }
-                                .accessibilityLabel(cat.label)
-                                .accessibilityAddTraits(selectedCategory == cat ? .isSelected : .isButton)
+                                .accessibilityLabel("All")
+                                .accessibilityAddTraits(selectedCategory == nil ? .isSelected : .isButton)
+                                ForEach(TransactionCategory.allCases) { cat in
+                                    Button(action: { selectedCategory = cat }) {
+                                        HStack(spacing: 6) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(cat.color.opacity(0.18))
+                                                    .frame(width: 22, height: 22)
+                                                Image(systemName: cat.symbol)
+                                                    .font(.system(size: 13, weight: .semibold))
+                                                    .foregroundColor(selectedCategory == cat ? .white : cat.color)
+                                            }
+                                            Text(cat.label)
+                                                .font(.subheadline.weight(.semibold))
+                                                .foregroundColor(selectedCategory == cat ? .white : AppColors.tagUnselected)
+                                        }
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 18)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(selectedCategory == cat ? cat.color : AppColors.tagUnselectedBackground)
+                                        )
+                                    }
+                                    .accessibilityLabel(cat.label)
+                                    .accessibilityAddTraits(selectedCategory == cat ? .isSelected : .isButton)
+                                }
                             }
+                            .padding(.horizontal)
+                            .padding(.top, 12)
                         }
-                        .padding(.horizontal)
-                        .padding(.top, 12)
-                    }
-                    let filteredGoals = selectedCategory == nil ? goals : goals.filter { goal in
-                        selectedCategory?.icons.contains(goal.iconName) ?? true
-                    }
-                    if filteredGoals.isEmpty {
-                        VStack {
-                            Image("Saving Money")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(maxWidth: 220, maxHeight: 220)
-                                .accessibilityLabel("No savings goals yet")
-                            Text("No savings goals yet")
-                                .font(.title3.weight(.semibold))
-                                .foregroundColor(.secondary)
-                                .padding(.top, AppPaddings.small)
-                            Text("Tap the + button to add your first goal.")
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, AppPaddings.section)
+                        let filteredGoals = selectedCategory == nil ? goals : goals.filter { goal in
+                            selectedCategory?.icons.contains(goal.iconName) ?? true
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    } else {
-                        ScrollView {
+                        if filteredGoals.isEmpty {
+                            VStack {
+                                Image("Saving Money")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: 220, maxHeight: 220)
+                                    .accessibilityLabel("No savings goals yet")
+                                Text("No savings goals yet")
+                                    .font(.title3.weight(.semibold))
+                                    .foregroundColor(.secondary)
+                                    .padding(.top, AppPaddings.small)
+                                Text("Tap the + button to add your first goal.")
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, AppPaddings.section)
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                            .padding(.bottom, 100) // For FAB spacing
+                        } else {
                             VStack(spacing: AppPaddings.medium) {
                                 ForEach(filteredGoals.indices, id: \ .self) { idx in
                                     let goal = filteredGoals[idx]

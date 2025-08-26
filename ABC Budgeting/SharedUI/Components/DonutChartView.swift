@@ -94,7 +94,7 @@ public struct DonutChartView: View {
 
     // Helper to compute the center angle for a segment
     private func centerAngle(for index: Int, in categories: [DonutChartCategory], total: Double) -> Double {
-        let sum = categories.prefix(index).reduce(0) { $0 + $1.value }
+        let sum = categories.prefix(index).reduce(0) { sum, category in sum + category.value }
         let sweep = categories[index].value / total * 2 * .pi
         return (sum / total * 2 * .pi + sweep / 2) - .pi/2
     }
@@ -152,7 +152,7 @@ private struct DonutSegment: View {
         }
     }
     private func angle(for index: Int, in categories: [DonutChartCategory], total: Double, isStart: Bool) -> Double {
-        let sum = categories.prefix(index).reduce(0) { $0 + $1.value }
+        let sum = categories.prefix(index).reduce(0) { sum, category in sum + category.value }
         let sweep = categories[index].value / total * 2 * .pi
         return isStart ? sum / total * 2 * .pi - .pi/2 : (sum / total * 2 * .pi + sweep) - .pi/2
     }
@@ -223,7 +223,7 @@ public struct DonutChartCategory: Identifiable, Equatable {
 public final class DonutChartViewModel: ObservableObject {
     @Published public var categories: [DonutChartCategory]
     @Published public var selectedCategory: DonutChartCategory?
-    public var total: Double { categories.reduce(0) { $0 + $1.value } }
+    public var total: Double { categories.reduce(0) { sum, category in sum + category.value } }
     public init(categories: [DonutChartCategory], selected: DonutChartCategory? = nil) {
         self.categories = categories
         self.selectedCategory = selected ?? categories.first

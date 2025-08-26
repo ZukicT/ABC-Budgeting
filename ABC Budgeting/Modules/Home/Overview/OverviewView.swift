@@ -44,7 +44,7 @@ private func calculateIncomeExpenseTableData(transactions: [Transaction]) -> [(l
     let oneTimeMonthly = transactions.filter {
         !$0.isIncome && !$0.subtitle.localizedCaseInsensitiveContains("recurring") &&
         $0.date >= monthStart && $0.date < monthEnd
-    }.reduce(0) { $0 + $0.amount }
+    }.reduce(0) { sum, transaction in sum + transaction.amount }
     let monthlyExpenses = recurringMonthly + oneTimeMonthly
     let yearlyExpenses = monthlyExpenses * 12.0
     let biWeeklyExpenses = yearlyExpenses / 26.0
@@ -52,19 +52,21 @@ private func calculateIncomeExpenseTableData(transactions: [Transaction]) -> [(l
     let hourlyExpenses = yearlyExpenses / 2080.0
     // Table rows: Hour, Week, Bi-Week, Month, Year
     return [
-        (label: "Hour", spending: hourlyExpenses, income: hourlyExpenses),
-        (label: "Week", spending: weeklyExpenses, income: weeklyExpenses),
-        (label: "Bi-Week", spending: biWeeklyExpenses, income: biWeeklyExpenses),
-        (label: "Month", spending: monthlyExpenses, income: monthlyExpenses),
-        (label: "Year", spending: yearlyExpenses, income: yearlyExpenses)
+        (label: "Hour", expense: hourlyExpenses, income: hourlyExpenses),
+        (label: "Week", expense: weeklyExpenses, income: weeklyExpenses),
+        (label: "Bi-Week", expense: biWeeklyExpenses, income: biWeeklyExpenses),
+        (label: "Month", expense: monthlyExpenses, income: monthlyExpenses),
+        (label: "Year", expense: yearlyExpenses, income: yearlyExpenses)
     ]
 }
 
 struct OverviewView: View {
     let transactions: [Transaction]
     let goals: [GoalFormData]
+    let onSeeAllGoals: () -> Void
+    let onSeeAllTransactions: () -> Void
     @State private var spendingPeriod: SpendingPeriod = .monthly
-    @AppStorage("startingBalance") private var startingBalance: Double = 0
+    @AppStorage("baselineBalance") private var startingBalance: Double = 0
     @AppStorage("preferredCurrency") private var preferredCurrency: String = "USD"
     
     // Debug: Print goals when they change
@@ -75,8 +77,8 @@ struct OverviewView: View {
     // Calculate total balance from starting balance and all transactions
     // Use isIncome property to determine if it's income or expense
     private var totalBalance: Double {
-        let allIncome = transactions.filter { $0.isIncome }.reduce(0) { $0 + $0.amount }
-        let allExpenses = transactions.filter { !$0.isIncome }.reduce(0) { $0 + $0.amount }
+        let allIncome = transactions.filter { $0.isIncome }.reduce(0) { sum, transaction in sum + transaction.amount }
+        let allExpenses = transactions.filter { !$0.isIncome }.reduce(0) { sum, transaction in sum + transaction.amount }
         return startingBalance + allIncome - allExpenses
     }
     
@@ -87,14 +89,14 @@ struct OverviewView: View {
         let calendar = Calendar.current
         return transactions.filter {
             $0.isIncome && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
-        }.reduce(0) { $0 + $0.amount }
+        }.reduce(0) { sum, transaction in sum + transaction.amount }
     }
     private var currentMonthExpenses: Double {
         let now = Date()
         let calendar = Calendar.current
         return transactions.filter {
             !$0.isIncome && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
-        }.reduce(0) { $0 + $0.amount }
+        }.reduce(0) { sum, transaction in sum + transaction.amount }
     }
     
     // Computed property for chart data (real user data)
@@ -128,7 +130,7 @@ struct OverviewView: View {
         // Group transactions by category and calculate totals
         let categoryTotals = Dictionary(grouping: periodTxs) { $0.category }
             .mapValues { transactions in
-                transactions.reduce(0) { $0 + $0.amount }
+                transactions.reduce(0) { sum, transaction in sum + transaction.amount }
             }
         
         // Map categories to their display properties
@@ -355,9 +357,7 @@ struct OverviewView: View {
                                 .foregroundColor(.primary)
                                 .padding(.leading, 4)
                             Spacer()
-                            Button(action: {
-                                // Navigation logic to switch to Budget tab goes here
-                            }) {
+                            Button(action: onSeeAllGoals) {
                                 Text("See All")
                                     .font(.subheadline.bold())
                                     .foregroundColor(AppColors.brandBlue)
@@ -368,32 +368,30 @@ struct OverviewView: View {
                         .padding(.bottom, AppPaddings.sectionTitleBottom)
                         
                         if goals.isEmpty {
-                            VStack(spacing: 16) {
+                            VStack(spacing: 20) {
                                 Image(systemName: "target")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.secondary)
-                                Text("No savings goals yet")
-                                    .font(.body.weight(.semibold))
-                                    .foregroundColor(.secondary)
-                                Text("Create your first savings goal in the Budget tab to see it here.")
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
-                                    .multilineTextAlignment(.center)
-                                
-                                // Debug info
-                                Text("Debug: goals count = \(goals.count)")
-                                    .font(.caption)
-                                    .foregroundColor(.red)
-                                    .padding(.top, 8)
-                                Text(debugGoals)
-                                    .font(.caption)
-                                    .foregroundColor(.red)
-                                    .padding(.top, 4)
+                                    .frame(width: 64, height: 64)
+                                    .foregroundColor(.secondary.opacity(0.6))
+                                VStack(spacing: 8) {
+                                    Text("No savings goals yet")
+                                        .font(.title3.weight(.semibold))
+                                        .foregroundColor(.secondary)
+                                    Text("Create your first savings goal in the Budget tab to see it here.")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary.opacity(0.8))
+                                        .multilineTextAlignment(.center)
+                                        .lineLimit(3)
+                                }
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, AppPaddings.large)
+                            .padding(.vertical, 32)
+                            .padding(.horizontal, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(.systemGray6))
+                            )
                         } else {
                             VStack(spacing: 12) {
                                 ForEach(goals.prefix(3), id: \.id) { goal in
@@ -412,9 +410,7 @@ struct OverviewView: View {
                             .foregroundColor(.primary)
                             .padding(.leading, 4)
                         Spacer()
-                        Button(action: {
-                            // Navigation logic to switch to Transactions tab goes here
-                        }) {
+                        Button(action: onSeeAllTransactions) {
                             Text("See All")
                                 .font(.subheadline.bold())
                                 .foregroundColor(AppColors.brandBlue)
@@ -425,22 +421,30 @@ struct OverviewView: View {
                     .padding(.bottom, AppPaddings.sectionTitleBottom)
                     // Transaction List (separate from title)
                     if transactions.isEmpty {
-                        VStack(spacing: 16) {
+                        VStack(spacing: 20) {
                             Image(systemName: "tray")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 60, height: 60)
-                                .foregroundColor(.secondary)
-                            Text("No recent transactions yet")
-                                .font(.body.weight(.semibold))
-                                .foregroundColor(.secondary)
-                            Text("Your recent transactions will appear here once you add them.")
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
+                                .frame(width: 64, height: 64)
+                                .foregroundColor(.secondary.opacity(0.6))
+                            VStack(spacing: 8) {
+                                Text("No recent transactions yet")
+                                    .font(.title3.weight(.semibold))
+                                    .foregroundColor(.secondary)
+                                Text("Your recent transactions will appear here once you add them.")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary.opacity(0.8))
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(3)
+                            }
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, AppPaddings.large)
+                        .padding(.vertical, 32)
+                        .padding(.horizontal, 20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color(.systemGray6))
+                        )
                     } else {
                         VStack(spacing: 12) {
                             ForEach(transactions.prefix(5), id: \ .id) { transaction in
@@ -455,7 +459,7 @@ struct OverviewView: View {
             }
         }
         .onAppear {
-            print("DEBUG: OverviewView appeared with \(goals.count) goals: \(goals.map { $0.name })")
+            print("DEBUG: OverviewView appeared with \(goals.count) goals")
         }
     }
 }
@@ -690,107 +694,134 @@ struct SavingsGoalRow: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             // Header with icon, name, and progress
-            HStack(spacing: 12) {
-                // Icon
-                Image(systemName: goal.iconName)
-                    .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(goal.iconColor)
-                    .frame(width: 48, height: 48)
-                    .background(goal.iconColor.opacity(0.15))
-                    .clipShape(Circle())
+            HStack(spacing: 16) {
+                // Icon with enhanced styling
+                ZStack {
+                    Circle()
+                        .fill(goal.iconColor.opacity(0.15))
+                        .frame(width: 48, height: 48)
+                    Image(systemName: goal.iconName)
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(goal.iconColor)
+                }
                 
                 // Goal info
                 VStack(alignment: .leading, spacing: 4) {
                     Text(goal.name)
-                        .font(.headline)
+                        .font(.headline.weight(.semibold))
                         .foregroundColor(.primary)
                         .lineLimit(1)
                     
-                    if let notes = goal.notes, !notes.isEmpty {
-                        Text(notes)
-                            .font(.caption)
+                    if let subtitle = goal.subtitle, !subtitle.isEmpty {
+                        Text(subtitle)
+                            .font(.subheadline)
                             .foregroundColor(.secondary)
-                            .lineLimit(2)
+                            .lineLimit(1)
                     }
                 }
                 
                 Spacer()
                 
-                // Progress percentage
+                // Progress percentage with enhanced styling
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("\(Int(progressPercentage * 100))%")
-                        .font(.title3.bold())
+                        .font(.title2.weight(.bold))
                         .foregroundColor(goal.iconColor)
                     Text("Complete")
-                        .font(.caption2)
+                        .font(.caption.weight(.medium))
                         .foregroundColor(.secondary)
                 }
             }
             
-            // Progress bar
+            // Progress bar with enhanced styling
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     // Background bar
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(.systemGray5))
-                        .frame(height: 8)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color(.systemGray6))
+                        .frame(height: 10)
                     
                     // Progress bar
-                    RoundedRectangle(cornerRadius: 4)
+                    RoundedRectangle(cornerRadius: 6)
                         .fill(goal.iconColor)
-                        .frame(width: geometry.size.width * progressPercentage, height: 8)
-                        .animation(.easeInOut(duration: 0.3), value: progressPercentage)
+                        .frame(width: geometry.size.width * progressPercentage, height: 10)
+                        .animation(.easeInOut(duration: 0.5), value: progressPercentage)
                 }
             }
-            .frame(height: 8)
+            .frame(height: 10)
             
-            // Financial details
-            HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 2) {
+            // Financial details with enhanced layout
+            HStack(spacing: 20) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Saved")
-                        .font(.caption2)
+                        .font(.caption.weight(.medium))
                         .foregroundColor(.secondary)
                     Text(goal.savedAmount, format: .currency(code: currencyCode))
-                        .font(.subheadline.bold())
-                        .foregroundColor(.primary)
+                        .font(.subheadline.weight(.bold))
+                        .foregroundColor(AppColors.brandGreen)
                 }
                 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Target")
-                        .font(.caption2)
+                        .font(.caption.weight(.medium))
                         .foregroundColor(.secondary)
                     Text(goal.targetAmount, format: .currency(code: currencyCode))
-                        .font(.subheadline.bold())
+                        .font(.subheadline.weight(.bold))
                         .foregroundColor(.primary)
                 }
                 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Remaining")
-                        .font(.caption2)
+                        .font(.caption.weight(.medium))
                         .foregroundColor(.secondary)
                     Text(remainingAmount, format: .currency(code: currencyCode))
-                        .font(.subheadline.bold())
-                        .foregroundColor(.primary)
+                        .font(.subheadline.weight(.bold))
+                        .foregroundColor(AppColors.brandRed)
                 }
                 
                 Spacer()
                 
-                // Days remaining
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("\(daysRemaining)")
-                        .font(.title3.bold())
-                        .foregroundColor(daysRemaining < 30 ? .red : .primary)
+                // Days remaining with enhanced styling
+                VStack(alignment: .trailing, spacing: 4) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "clock")
+                            .font(.caption)
+                            .foregroundColor(daysRemaining < 30 ? .red : .secondary)
+                        Text("\(daysRemaining)")
+                            .font(.title3.weight(.bold))
+                            .foregroundColor(daysRemaining < 30 ? .red : .primary)
+                    }
                     Text("days left")
-                        .font(.caption2)
+                        .font(.caption.weight(.medium))
                         .foregroundColor(.secondary)
                 }
             }
+            
+            // Notes section if available
+            if let notes = goal.notes, !notes.isEmpty {
+                HStack(spacing: 8) {
+                    Image(systemName: "note.text")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(notes)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                    Spacer()
+                }
+                .padding(.top, 4)
+            }
         }
-        .padding(16)
-        .background(AppColors.card)
-        .cornerRadius(AppPaddings.cardRadius)
-        .shadow(color: AppColors.cardShadow, radius: 2, y: 1)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
+        )
+        .accessibilityElement(children: .combine)
     }
 }
+
