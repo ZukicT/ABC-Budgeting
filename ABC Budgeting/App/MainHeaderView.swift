@@ -3,6 +3,7 @@ import SwiftUI
 struct MainHeaderView: View {
     let userName: String
     let showNotificationDot: Bool
+    let onNotificationTap: () -> Void
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -33,16 +34,18 @@ struct MainHeaderView: View {
                                 .foregroundColor(.primary)
                         }
                         Spacer()
-                        ZStack(alignment: .topTrailing) {
-                            Image(systemName: "bell")
-                                .font(.system(size: 24, weight: .regular))
-                                .foregroundColor(.primary)
-                                .alignmentGuide(.firstTextBaseline) { d in d[.top] }
-                            if showNotificationDot {
-                                Circle()
-                                    .fill(Color.red)
-                                    .frame(width: 10, height: 10)
-                                    .offset(x: -1, y: 2)
+                        Button(action: onNotificationTap) {
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: "bell")
+                                    .font(.system(size: 24, weight: .regular))
+                                    .foregroundColor(.primary)
+                                    .alignmentGuide(.firstTextBaseline) { d in d[.top] }
+                                if showNotificationDot {
+                                    Circle()
+                                        .fill(Color.red)
+                                        .frame(width: 10, height: 10)
+                                        .offset(x: -1, y: 2)
+                                }
                             }
                         }
                         .accessibilityLabel("Notifications")
@@ -67,9 +70,13 @@ struct MainHeaderView: View {
 #if DEBUG
 struct MainHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        MainHeaderView(userName: "C Muthu Krishnan", showNotificationDot: true)
-            .previewLayout(.sizeThatFits)
-            .padding()
+        MainHeaderView(
+            userName: "C Muthu Krishnan", 
+            showNotificationDot: true,
+            onNotificationTap: {}
+        )
+        .previewLayout(.sizeThatFits)
+        .padding()
     }
 }
 #endif 

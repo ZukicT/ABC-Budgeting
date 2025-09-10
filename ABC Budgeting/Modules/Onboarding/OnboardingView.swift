@@ -55,11 +55,11 @@ struct OnboardingView: View {
                     // Title & Subtitle
                     Text("Tell us about you")
                         .font(.system(size: 34, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(AppColors.primary)
                         .padding(.bottom, 4)
                     Text("we will use this to personalize your expences.")
                         .font(.body)
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(AppColors.white.opacity(0.7))
                         .padding(.bottom, 32)
 
                     // Form Fields
@@ -71,7 +71,7 @@ struct OnboardingView: View {
                                 .background(Color(.secondarySystemBackground))
                                 .cornerRadius(16)
                                 .font(.body)
-                                .foregroundColor(.primary)
+                                .foregroundColor(AppColors.primary)
                         }
                         .padding(.bottom, 20)
 
@@ -82,7 +82,7 @@ struct OnboardingView: View {
                                 .background(Color(.secondarySystemBackground))
                                 .cornerRadius(16)
                                 .font(.body)
-                                .foregroundColor(.primary)
+                                .foregroundColor(AppColors.primary)
                                 .multilineTextAlignment(.leading)
                                 .onChange(of: balanceRaw) { _, newValue in
                                     let currencyCode = currency.components(separatedBy: " ").first ?? "USD"
@@ -118,13 +118,13 @@ struct OnboardingView: View {
                             .background(Color(.secondarySystemBackground))
                             .cornerRadius(16)
                             .font(.body)
-                            .foregroundColor(.primary)
+                            .foregroundColor(AppColors.primary)
                         }
                         .padding(.bottom, 20)
 
                         FormField(label: "Enable Notifications") {
                             Toggle("", isOn: $notificationsEnabled)
-                                .toggleStyle(SwitchToggleStyle(tint: AppColors.brandGreen))
+                                .toggleStyle(SwitchToggleStyle(tint: AppColors.secondary))
                                 .labelsHidden()
                         }
                     }
@@ -146,7 +146,7 @@ struct OnboardingView: View {
                 HStack(spacing: 10) {
                     ForEach(0..<totalPages, id: \.self) { i in
                         Circle()
-                            .fill(i == currentPage ? AppColors.brandWhite : AppColors.brandWhite.opacity(0.3))
+                            .fill(i == currentPage ? AppColors.white : AppColors.white.opacity(0.3))
                             .frame(width: 10, height: 10)
                             .scaleEffect(i == currentPage ? 1.2 : 1)
                             .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentPage)
@@ -175,7 +175,7 @@ struct OnboardingView: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(AppColors.brandWhite)
+                            .fill(AppColors.white)
                             .frame(width: 56, height: 56)
                             .shadow(radius: 4, y: 2)
                         Image(systemName: currentPage < totalPages - 1 ? "arrow.right" : "checkmark")
@@ -189,7 +189,7 @@ struct OnboardingView: View {
             }
             .padding(.bottom, AppPaddings.large)
         }
-        .background(AppColors.brandBlack.ignoresSafeArea())
+        .background(AppColors.black.ignoresSafeArea())
         .onTapGesture { self.hideKeyboard() }
         .alert(isPresented: $showNotificationAlert) {
             Alert(
@@ -230,14 +230,14 @@ private struct OnboardingPageView: View {
                 Spacer(minLength: AppPaddings.large)
                 Text(title)
                     .font(.largeTitle.bold())
-                    .foregroundColor(AppColors.brandWhite)
+                    .foregroundColor(AppColors.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, AppPaddings.section)
                 Spacer(minLength: AppPaddings.small)
                 Text(description)
                     .font(.title3)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(AppColors.brandWhite.opacity(0.7))
+                    .foregroundColor(AppColors.white.opacity(0.7))
                     .padding(.horizontal, AppPaddings.large)
                 Spacer()
             }
@@ -278,7 +278,7 @@ private struct ModernTextField: View {
                     .stroke(Color(.separator), lineWidth: 1)
             )
             .font(.body)
-            .foregroundColor(.primary)
+            .foregroundColor(AppColors.primary)
             .accessibilityLabel(accessibilityLabel)
             .accessibilityHint(placeholder)
     }
@@ -355,7 +355,7 @@ private struct FormSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
-                .foregroundColor(Color.primary)
+                .foregroundColor(AppColors.primary)
                 .accessibilityAddTraits(.isHeader)
             content
         }
@@ -374,7 +374,7 @@ private struct FormField<Content: View>: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
                 .font(.headline)
-                .foregroundColor(.white)
+                .foregroundColor(AppColors.white)
             content
         }
     }

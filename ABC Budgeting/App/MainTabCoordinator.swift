@@ -3,6 +3,8 @@ import SwiftUI
 struct MainTabCoordinator: View {
     @State private var displayName: String = UserDefaults.standard.string(forKey: "displayName") ?? "Display Name"
     @State private var selectedTab: Int = 0 // Track selected tab
+    @StateObject private var notificationService = NotificationService()
+    @State private var showNotifications = false
     @State private var goals: [GoalFormData] = [
         // Hardcoded mock goal to ensure it's always there
         GoalFormData(
@@ -72,9 +74,25 @@ struct MainTabCoordinator: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            MainHeaderView(userName: displayName, showNotificationDot: hasUpcomingRecurringReminders)
+            MainHeaderView(
+                userName: displayName, 
+                showNotificationDot: notificationService.unreadCount > 0,
+                onNotificationTap: {
+                    showNotifications = true
+                }
+            )
             TabView(selection: $selectedTab) {
-                OverviewView(transactions: transactions, goals: goals, onSeeAllGoals: { selectedTab = 2 }, onSeeAllTransactions: { selectedTab = 1 })
+                OverviewView(
+                    transactions: transactions, 
+                    goals: goals, 
+                    onSeeAllGoals: { selectedTab = 2 }, 
+                    onSeeAllTransactions: { selectedTab = 1 },
+                    onAddTransaction: { newTransaction in
+                        transactions.insert(newTransaction, at: 0)
+                        // Add notification for new transaction
+                        notificationService.addNewTransactionNotification(for: newTransaction)
+                    }
+                )
                     .onAppear {
                         print("DEBUG: OverviewView appeared with \(goals.count) goals")
                     }
@@ -98,7 +116,8 @@ struct MainTabCoordinator: View {
                     }
                     .tag(3)
             }
-            .accentColor(AppColors.brandBlack)
+            .accentColor(AppColors.primary)
+            .tint(AppColors.primary)
             .ignoresSafeArea(.keyboard)
             .background(AppColors.background)
         }
@@ -106,17 +125,49 @@ struct MainTabCoordinator: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             displayName = UserDefaults.standard.string(forKey: "displayName") ?? "Display Name"
         }
+        .sheet(isPresented: $showNotifications) {
+            NotificationView(notificationService: notificationService)
+        }
+        .onAppear {
+            // Add some demo notifications on first launch
+            if notificationService.notifications.isEmpty {
+                notificationService.addDemoNotifications()
+            }
+            
+            // Check for upcoming transactions and create notifications
+            checkForUpcomingTransactions()
+        }
     }
 
-    // Returns true if there are recurring transactions (expenses or incomes) with reminders enabled and due soon
-    private var hasUpcomingRecurringReminders: Bool {
+    // Check for upcoming transactions and create notifications
+    private func checkForUpcomingTransactions() {
         let now = Date()
-        // For demo: consider a transaction as 'recurring with reminder' if its subtitle contains 'remind' or 'recurring', and its date is within the next 7 days
-        // In production, this should check explicit recurring/reminder properties
-        return transactions.contains { tx in
-            let isRecurring = tx.subtitle.localizedCaseInsensitiveContains("recurring") || tx.subtitle.localizedCaseInsensitiveContains("remind")
-            let isUpcoming = tx.date > now && tx.date < Calendar.current.date(byAdding: .day, value: 7, to: now)!
-            return isRecurring && isUpcoming
+        let calendar = Calendar.current
+        let nextWeek = calendar.date(byAdding: .day, value: 7, to: now) ?? now
+        
+        // Check for recurring transactions due soon
+        for transaction in transactions {
+            let isRecurring = transaction.subtitle.localizedCaseInsensitiveContains("recurring") || 
+                            transaction.subtitle.localizedCaseInsensitiveContains("monthly") ||
+                            transaction.subtitle.localizedCaseInsensitiveContains("weekly") ||
+                            transaction.subtitle.localizedCaseInsensitiveContains("daily")
+            
+            if isRecurring {
+                // For demo purposes, create upcoming notifications for recurring transactions
+                // In production, this would calculate the next occurrence date
+                let nextOccurrence = calendar.date(byAdding: .day, value: 3, to: now) ?? now
+                
+                if nextOccurrence <= nextWeek {
+                    notificationService.addUpcomingTransactionNotification(for: transaction)
+                }
+            }
+        }
+        
+        // Check for transactions due in the next few days
+        for transaction in transactions {
+            if transaction.date > now && transaction.date <= nextWeek {
+                notificationService.addUpcomingTransactionNotification(for: transaction)
+            }
         }
     }
 } 

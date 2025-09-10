@@ -1,13 +1,6 @@
 import SwiftUI
 import Charts
 
-enum SpendingPeriod: String, CaseIterable, Identifiable {
-    case weekly = "Weekly"
-    case biweekly = "Bi-Weekly"
-    case monthly = "Monthly"
-    case yearly = "Yearly"
-    var id: String { rawValue }
-}
 
 // Dynamically calculate income and expense breakdowns from user data
 private func calculateIncomeExpenseTableData(transactions: [Transaction]) -> [(label: String, expense: Double, income: Double)] {
@@ -60,14 +53,27 @@ private func calculateIncomeExpenseTableData(transactions: [Transaction]) -> [(l
     ]
 }
 
+private func createShortLabel(for label: String) -> String {
+    switch label {
+    case "Hour": return "Hr"
+    case "Week": return "Wk"
+    case "Bi-Week": return "2Wk"
+    case "Month": return "Mo"
+    case "Year": return "Yr"
+    default: return label
+    }
+}
+
 struct OverviewView: View {
     let transactions: [Transaction]
     let goals: [GoalFormData]
     let onSeeAllGoals: () -> Void
     let onSeeAllTransactions: () -> Void
-    @State private var spendingPeriod: SpendingPeriod = .monthly
+    let onAddTransaction: (Transaction) -> Void
     @AppStorage("baselineBalance") private var startingBalance: Double = 0
     @AppStorage("preferredCurrency") private var preferredCurrency: String = "USD"
+    @State private var showAddTransaction = false
+    @State private var preSelectedTransactionType: IncomeOrExpense = .expense
     
     // Debug: Print goals when they change
     private var debugGoals: String {
@@ -91,6 +97,16 @@ struct OverviewView: View {
             $0.isIncome && calendar.isDate($0.date, equalTo: now, toGranularity: .month)
         }.reduce(0) { sum, transaction in sum + transaction.amount }
     }
+    
+    // Calculate this week's income
+    private var thisWeekIncome: Double {
+        let now = Date()
+        let calendar = Calendar.current
+        let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) ?? now
+        return transactions.filter {
+            $0.isIncome && $0.date >= weekStart && $0.date <= now
+        }.reduce(0) { sum, transaction in sum + transaction.amount }
+    }
     private var currentMonthExpenses: Double {
         let now = Date()
         let calendar = Calendar.current
@@ -99,255 +115,92 @@ struct OverviewView: View {
         }.reduce(0) { sum, transaction in sum + transaction.amount }
     }
     
-    // Computed property for chart data (real user data)
-    private var spendingDiversityData: [SpendingDiversityDonutChartView.CategoryData] {
-        let now = Date()
-        let calendar = Calendar.current
-        let (start, end): (Date, Date) = {
-            switch spendingPeriod {
-            case .weekly:
-                let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) ?? now
-                return (weekStart, now)
-            case .biweekly:
-                let biweekStart = calendar.date(byAdding: .day, value: -13, to: now) ?? now
-                return (biweekStart, now)
-            case .monthly:
-                let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) ?? now
-                return (monthStart, now)
-            case .yearly:
-                let yearStart = calendar.date(from: calendar.dateComponents([.year], from: now)) ?? now
-                return (yearStart, now)
-            }
-        }()
-        
-        // Filter transactions for the period and exclude income
-        let periodTxs = transactions.filter { 
-            $0.date >= start && 
-            $0.date < end && 
-            !$0.isIncome 
-        }
-        
-        // Group transactions by category and calculate totals
-        let categoryTotals = Dictionary(grouping: periodTxs) { $0.category }
-            .mapValues { transactions in
-                transactions.reduce(0) { sum, transaction in sum + transaction.amount }
-            }
-        
-        // Map categories to their display properties
-        let categoryData: [SpendingDiversityDonutChartView.CategoryData] = TransactionCategory.allCases
-            .filter { $0 != .income } // Exclude income category
-            .map { category in
-                let value = categoryTotals[category] ?? 0
-                
-                // Get the most used icon for this category from the transactions
-                let categoryTransactions = periodTxs.filter { $0.category == category }
-                let iconCounts = Dictionary(grouping: categoryTransactions) { $0.iconName }
-                    .mapValues { $0.count }
-                let mostUsedIcon = iconCounts.max(by: { $0.value < $1.value })?.key ?? category.symbol
-                
-                // Calculate average spent per month for this category
-                let avgSpent = value / Double(calendar.dateComponents([.day], from: start, to: end).day ?? 30) * 30
-                
-                return SpendingDiversityDonutChartView.CategoryData(
-                    category: category.label,
-                    value: value,
-                    color: category.color,
-                    symbol: mostUsedIcon,
-                    avgSpent: avgSpent
-                )
-            }
-            .filter { $0.value > 0 } // Only include categories with transactions
-        
-        return categoryData
-    }
     var body: some View {
         let currencyCode = preferredCurrency.components(separatedBy: " ").first ?? "USD"
         ZStack {
-            AppColors.background.ignoresSafeArea()
+            // Subtle light gray gradient background
+            LinearGradient(
+                colors: [Color(hex: "f8fafc"), Color(hex: "e2e8f0")],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Section Title
-                    Text("Overview")
-                        .font(.title.bold())
-                        .foregroundColor(.primary)
-                        .padding(.top, AppPaddings.sectionTitleTop)
-                        .padding(.bottom, AppPaddings.sectionTitleBottom)
-                    // Combined Balance/Income/Expenses Card (vertical stack)
+                    // Curved blue gradient balance card
                     ZStack {
-                        RoundedRectangle(cornerRadius: AppPaddings.cardRadius, style: .continuous)
-                            .fill(AppColors.brandBlack)
-                        VStack(alignment: .leading, spacing: 0) {
-                            // Total Balance (top row)
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Total Balance")
-                                    .font(.headline)
-                                    .foregroundColor(.white.opacity(0.85))
-                                Text(totalBalance, format: .currency(code: currencyCode).precision(.fractionLength(2)))
-                                    .font(.system(size: 36, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color(hex: "0a38c3"), Color(hex: "0a38c3"), Color(hex: "1e40af")],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                        
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Current Balance")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            Text(totalBalance, format: .currency(code: currencyCode).precision(.fractionLength(2)))
+                                .font(.system(size: 48, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            if thisWeekIncome > 0 {
+                                Text("+\(thisWeekIncome, format: .currency(code: currencyCode).precision(.fractionLength(2))) this week")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundColor(.white.opacity(0.9))
                             }
-                            .padding(.top, 32)
-                            .padding(.horizontal, 32)
-                            // Divider between balance and income/expenses
-                            Divider()
-                                .frame(height: 1)
-                                .background(Color.white.opacity(0.18))
-                                .padding(.vertical, 16)
-                                .padding(.horizontal, 32)
-                            // Income & Expenses (vertical stack)
-                            VStack(alignment: .leading, spacing: 12) {
-                                // Income
-                                VStack(alignment: .leading, spacing: 6) {
-                                    HStack(spacing: 4) {
-                                        Text("Income")
-                                            .font(.caption)
-                                            .foregroundColor(.white.opacity(0.85))
-                                        Text("(This Month)")
-                                            .font(.caption2)
-                                            .foregroundColor(.white.opacity(0.65))
-                                    }
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "arrow.up")
-                                            .font(.system(size: 16, weight: .bold))
-                                            .foregroundColor(AppColors.brandGreen)
-                                        Text(currentMonthIncome, format: .currency(code: currencyCode).precision(.fractionLength(2)))
-                                            .font(.title3.bold())
-                                            .foregroundColor(.white)
-                                    }
-                                }
-                                
-                                // Divider between income and expenses
-                                Divider()
-                                    .frame(height: 1)
-                                    .background(Color.white.opacity(0.18))
-                                
-                                // Expenses
-                                VStack(alignment: .leading, spacing: 6) {
-                                    HStack(spacing: 4) {
-                                        Text("Expenses")
-                                            .font(.caption)
-                                            .foregroundColor(.white.opacity(0.85))
-                                        Text("(This Month)")
-                                            .font(.caption2)
-                                            .foregroundColor(.white.opacity(0.65))
-                                    }
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "arrow.down")
-                                            .font(.system(size: 16, weight: .bold))
-                                            .foregroundColor(AppColors.brandRed)
-                                        Text(currentMonthExpenses, format: .currency(code: currencyCode).precision(.fractionLength(2)))
-                                            .font(.title3.bold())
-                                            .foregroundColor(.white)
-                                    }
-                                }
-                            }
-                            .padding(.bottom, 32)
-                            .padding(.horizontal, 32)
                         }
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 32)
                     }
-                    .frame(height: 240)
-                    .clipShape(RoundedRectangle(cornerRadius: AppPaddings.cardRadius, style: .continuous))
-                    // Insights Section
-                    VStack(alignment: .leading, spacing: 16) {
-                        HStack {
-                            Text("Insights")
-                                .font(.title2.bold())
-                                .foregroundColor(.primary)
-                                .padding(.leading, 4)
-                            Spacer()
+                    .frame(height: 160)
+                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    .shadow(color: Color(hex: "0a38c3").opacity(0.25), radius: 12, y: 6)
+                    .padding(.top, AppPaddings.sectionTitleTop)
+                    
+                    // Quick action buttons
+                    HStack(spacing: 16) {
+                        // Income button
+                        Button(action: {
+                            preSelectedTransactionType = .income
+                            showAddTransaction = true
+                        }) {
+                            Text("+ Income")
+                                .font(.headline.weight(.bold))
+                                .foregroundColor(Color(hex: "065f46"))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 18)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                        .fill(Color(hex: "07e95e"))
+                                )
                         }
-                        .padding(.top, AppPaddings.sectionTitleTop)
-                        VStack(spacing: 16) {
-                            let incomeExpenseTableData = calculateIncomeExpenseTableData(transactions: transactions)
-                            ChartCard(title: "Income Required", subtitle: "Minimum income needed for each period.", chartHeight: 510, titleAlignment: .leading) {
-                                VStack(spacing: 12) {
-                                    IncomeRequiredChartView(
-                                        data: incomeExpenseTableData.map { .init(label: $0.label, value: $0.income) },
-                                        barColor: AppColors.brandGreen
-                                    )
-                                    // Table below the chart
-                                    VStack(spacing: 0) {
-                                        HStack {
-                                            Text("Period")
-                                                .font(.caption.bold())
-                                                .frame(minWidth: 60, alignment: .leading)
-                                            Spacer()
-                                            Text("Income Required")
-                                                .font(.caption.bold())
-                                                .frame(minWidth: 80, alignment: .trailing)
-                                        }
-                                        .padding(.vertical, 6)
-                                        .padding(.horizontal, 8)
-                                        .background(Color(.systemGray6))
-                                        ForEach(incomeExpenseTableData.indices, id: \ .self) { idx in
-                                            let row = incomeExpenseTableData[idx]
-                                            HStack {
-                                                Text(row.label)
-                                                    .font(.caption)
-                                                    .frame(minWidth: 60, alignment: .leading)
-                                                Spacer()
-                                                Text(row.income, format: .currency(code: currencyCode).precision(.fractionLength(2)))
-                                                    .font(.caption)
-                                                    .foregroundColor(AppColors.brandGreen)
-                                                    .frame(minWidth: 80, alignment: .trailing)
-                                            }
-                                            .padding(.vertical, 6)
-                                            .padding(.horizontal, 8)
-                                            .background(Color.white.opacity(idx % 2 == 0 ? 0.95 : 0.85))
-                                            if idx < incomeExpenseTableData.count - 1 {
-                                                Divider()
-                                                    .padding(.leading, 4)
-                                            }
-                                        }
-                                    }
-                                    .background(
-                                        RoundedRectangle(cornerRadius: AppPaddings.cardRadius, style: .continuous)
-                                            .stroke(Color(.systemGray4), lineWidth: 1)
-                                    )
-                                    .padding(.top, 8)
-                                }
-                            }
-                            ChartCard(title: "Spending Diversity", subtitle: "Distribution of spending by category.", chartHeight: 340, titleAlignment: .leading) {
-                                VStack(spacing: 16) {
-                                    Picker("Period", selection: $spendingPeriod) {
-                                        ForEach(SpendingPeriod.allCases) { period in
-                                            Text(period.rawValue).tag(period)
-                                        }
-                                    }
-                                    .pickerStyle(.segmented)
-                                    .tint(AppColors.brandBlack)
-                                    .padding(.top, 48)
-                                    .padding(.horizontal, 16)
-                                    .padding(.bottom, 8)
-                                    ZStack(alignment: .bottom) {
-                                        if spendingDiversityData.allSatisfy({ $0.value == 0 }) {
-                                            ZStack {
-                                                GeometryReader { geo in
-                                                    let size = min(geo.size.width, geo.size.height)
-                                                    ZStack {
-                                                        Circle()
-                                                            .strokeBorder(AppColors.brandBlack.opacity(0.18), lineWidth: 38)
-                                                            .frame(width: size, height: size)
-                                                        Image(systemName: "chart.pie")
-                                                            .font(.system(size: 36, weight: .regular))
-                                                            .foregroundColor(.secondary)
-                                                    }
-                                                    .frame(width: size, height: size)
-                                                    .position(x: geo.size.width/2, y: geo.size.height/2)
-                                                }
-                                                .frame(height: 220)
-                                            }
-                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                        } else {
-                                            SpendingDiversityDonutChartView(data: spendingDiversityData, preferredCurrency: currencyCode)
-                                        }
-                                    }
-                                    .padding(.bottom, 24)
-                                }
-                            }
+                        .accessibilityLabel("Add income transaction")
+                        
+                        // Expense button
+                        Button(action: {
+                            preSelectedTransactionType = .expense
+                            showAddTransaction = true
+                        }) {
+                            Text("- Expense")
+                                .font(.headline.weight(.bold))
+                                .foregroundColor(Color(hex: "dc2626"))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 18)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                        .fill(Color(hex: "fecaca"))
+                                )
                         }
+                        .accessibilityLabel("Add expense transaction")
                     }
+                    .padding(.top, 24)
+                    .padding(.bottom, 8)
                     
                     // Savings Goals Section
                     VStack(alignment: .leading, spacing: 16) {
@@ -393,9 +246,12 @@ struct OverviewView: View {
                                     .fill(Color(.systemGray6))
                             )
                         } else {
-                            VStack(spacing: 12) {
-                                ForEach(goals.prefix(3), id: \.id) { goal in
-                                    SavingsGoalRow(goal: goal, currencyCode: preferredCurrency)
+                            LazyVGrid(columns: [
+                                GridItem(.flexible()),
+                                GridItem(.flexible())
+                            ], spacing: 12) {
+                                ForEach(goals.prefix(4), id: \.id) { goal in
+                                    CompactSavingsGoalCard(goal: goal, currencyCode: preferredCurrency)
                                 }
                             }
                             .padding(.bottom, AppPaddings.large)
@@ -403,60 +259,111 @@ struct OverviewView: View {
                     }
                     
                     // Recent Transactions Section
-                    // Section Title (detached from list)
-                    HStack {
-                        Text("Recent Transactions")
-                            .font(.title2.bold())
-                            .foregroundColor(.primary)
-                            .padding(.leading, 4)
-                        Spacer()
-                        Button(action: onSeeAllTransactions) {
-                            Text("See All")
-                                .font(.subheadline.bold())
-                                .foregroundColor(AppColors.brandBlue)
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text("Recent Transactions")
+                                .font(.title2.bold())
+                                .foregroundColor(.primary)
+                                .padding(.leading, 4)
+                            Spacer()
+                            Button(action: onSeeAllTransactions) {
+                                Text("See All")
+                                    .font(.subheadline.bold())
+                                    .foregroundColor(AppColors.brandBlue)
+                            }
+                            .accessibilityLabel("See all transactions")
                         }
-                        .accessibilityLabel("See all transactions")
+                        .padding(.top, AppPaddings.sectionTitleTop)
+                        .padding(.bottom, AppPaddings.sectionTitleBottom)
+                        
+                        // Transaction List
+                        if transactions.isEmpty {
+                            VStack(spacing: 20) {
+                                Image(systemName: "tray")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 64, height: 64)
+                                    .foregroundColor(.secondary.opacity(0.6))
+                                VStack(spacing: 8) {
+                                    Text("No recent transactions yet")
+                                        .font(.title3.weight(.semibold))
+                                        .foregroundColor(.secondary)
+                                    Text("Your recent transactions will appear here once you add them.")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary.opacity(0.8))
+                                        .multilineTextAlignment(.center)
+                                        .lineLimit(3)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 32)
+                            .padding(.horizontal, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(.systemGray6))
+                            )
+                        } else {
+                            VStack(spacing: 12) {
+                                ForEach(transactions.prefix(5), id: \ .id) { transaction in
+                                    TransactionRow(transaction: transaction)
+                                }
+                            }
+                            .padding(.bottom, AppPaddings.large)
+                        }
                     }
-                    .padding(.top, AppPaddings.sectionTitleTop)
-                    .padding(.bottom, AppPaddings.sectionTitleBottom)
-                    // Transaction List (separate from title)
-                    if transactions.isEmpty {
-                        VStack(spacing: 20) {
-                            Image(systemName: "tray")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 64, height: 64)
-                                .foregroundColor(.secondary.opacity(0.6))
-                            VStack(spacing: 8) {
-                                Text("No recent transactions yet")
-                                    .font(.title3.weight(.semibold))
-                                    .foregroundColor(.secondary)
-                                Text("Your recent transactions will appear here once you add them.")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary.opacity(0.8))
-                                    .multilineTextAlignment(.center)
-                                    .lineLimit(3)
+                    
+                    // Insights Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text("Insights")
+                                .font(.title2.bold())
+                                .foregroundColor(.primary)
+                                .padding(.leading, 4)
+                            Spacer()
+                        }
+                        .padding(.top, AppPaddings.sectionTitleTop)
+                        .padding(.bottom, AppPaddings.sectionTitleBottom)
+                        VStack(spacing: 16) {
+                            let incomeExpenseTableData = calculateIncomeExpenseTableData(transactions: transactions)
+                            // Income Required Card
+                            ChartCard(title: "Income Required", subtitle: "How much you need to earn to cover your expenses.", chartHeight: 430, titleAlignment: .leading) {
+                                IncomeRequiredChartWithTableView(
+                                    data: incomeExpenseTableData.map { 
+                                        .init(
+                                            label: $0.label, 
+                                            value: $0.income,
+                                            shortLabel: createShortLabel(for: $0.label)
+                                        ) 
+                                    },
+                                    barColor: AppColors.secondary,
+                                    currencyCode: currencyCode
+                                )
+                            }
+                            
+                            // Spending Breakdown Card
+                            ChartCard(title: "Spending Breakdown", subtitle: "Your monthly expenses by category.", chartHeight: 400, titleAlignment: .leading) {
+                                SpendingBreakdownChartView(
+                                    transactions: transactions,
+                                    currencyCode: currencyCode
+                                )
                             }
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 32)
-                        .padding(.horizontal, 20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(.systemGray6))
-                        )
-                    } else {
-                        VStack(spacing: 12) {
-                            ForEach(transactions.prefix(5), id: \ .id) { transaction in
-                                TransactionRow(transaction: transaction)
-                            }
-                        }
-                        .padding(.bottom, AppPaddings.large)
                     }
                     Spacer()
                 }
                 .padding(.horizontal, 16)
             }
+        }
+        .sheet(isPresented: $showAddTransaction) {
+            PreSelectedAddTransactionView(
+                availableGoals: goals,
+                preSelectedType: preSelectedTransactionType
+            ) { newTransaction in
+                onAddTransaction(newTransaction)
+                showAddTransaction = false
+            }
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
         }
         .onAppear {
             print("DEBUG: OverviewView appeared with \(goals.count) goals")
@@ -514,137 +421,220 @@ struct ChartCard<Content: View>: View {
     }
 }
 
-// MARK: - SwiftCharts Bar Chart for Income Required
+// MARK: - Income Required Chart with Table
+struct IncomeRequiredChartWithTableView: View {
+    let data: [IncomeRequiredChartView.IncomeData]
+    let barColor: Color
+    let currencyCode: String
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            // Chart
+            IncomeRequiredChartView(
+                data: data,
+                barColor: barColor,
+                currencyCode: currencyCode
+            )
+            
+            // Table
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    Text("Period")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(.secondary)
+                        .frame(minWidth: 50, alignment: .leading)
+                    Spacer()
+                    Text("Income Required")
+                        .font(.caption.weight(.semibold))
+                        .foregroundColor(.secondary)
+                        .frame(minWidth: 70, alignment: .trailing)
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .background(AppColors.background.opacity(0.5))
+                
+                // Data rows
+                ForEach(data.indices, id: \.self) { idx in
+                    let row = data[idx]
+                    HStack {
+                        Text(row.label)
+                            .font(.caption.weight(.medium))
+                            .foregroundColor(.primary)
+                            .frame(minWidth: 50, alignment: .leading)
+                        Spacer()
+                        Text(row.value, format: .currency(code: currencyCode).precision(.fractionLength(0)))
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(AppColors.secondary)
+                            .frame(minWidth: 70, alignment: .trailing)
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12)
+                    .background(
+                        idx % 2 == 0 
+                            ? Color.clear 
+                            : AppColors.background.opacity(0.3)
+                    )
+                    
+                    if idx < data.count - 1 {
+                        Divider()
+                            .background(AppColors.chartAxis.opacity(0.3))
+                            .padding(.leading, 12)
+                    }
+                }
+            }
+            .padding(.top, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(AppColors.card)
+                    .stroke(AppColors.chartAxis.opacity(0.2), lineWidth: 1)
+            )
+        }
+    }
+}
+
+// MARK: - Enhanced Income Required Chart
 struct IncomeRequiredChartView: View {
     struct IncomeData: Identifiable {
         let id = UUID()
         let label: String
         let value: Double // income required
+        let shortLabel: String // for better display
     }
     let data: [IncomeData]
     let barColor: Color
+    let currencyCode: String
+    
+    @State private var showAverageInfo = false
+    @State private var showHighestInfo = false
+    
     var body: some View {
-        Chart(data, id: \.id) { item in
-            BarMark(
-                x: .value("Period", item.label),
-                y: .value("Income Required", item.value)
-            )
-            .foregroundStyle(barColor)
-            .cornerRadius(4)
-        }
-        .chartYAxis {
-            let maxValue = data.map { $0.value }.max() ?? 1
-            let step = maxValue > 10000 ? 5000.0 : (maxValue > 1000 ? 1000.0 : (maxValue > 100 ? 100.0 : 10.0))
-            let ticks = Array(stride(from: 0.0, through: maxValue, by: step))
-            AxisMarks(position: .leading, values: ticks) {
-                AxisGridLine()
-                AxisTick()
-                AxisValueLabel(format: FloatingPointFormatStyle<Double>().precision(.fractionLength(2)))
+        VStack(spacing: 8) {
+            // Chart with enhanced styling
+            Chart(data, id: \.id) { item in
+                BarMark(
+                    x: .value("Period", item.shortLabel),
+                    y: .value("Income Required", item.value)
+                )
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [barColor.opacity(0.8), barColor],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .cornerRadius(6)
+                .opacity(0.9)
             }
-        }
-        .chartXAxis {
-            AxisMarks(values: .automatic) { value in
-                AxisGridLine()
-                AxisTick()
-                AxisValueLabel()
-            }
-        }
-        .chartYScale(domain: 0...(data.map { $0.value }.max() ?? 1))
-        .frame(height: 280)
-        .accessibilityElement(children: .contain)
-    }
-}
-
-// MARK: - SwiftCharts Donut Chart for Spending Diversity
-struct SpendingDiversityDonutChartView: View {
-    struct CategoryData: Identifiable, Equatable {
-        let id = UUID()
-        let category: String
-        let value: Double
-        let color: Color
-        let symbol: String
-        let avgSpent: Double
-    }
-    let data: [CategoryData]
-    let preferredCurrency: String
-    @StateObject private var viewModel: DonutChartViewModel
-
-    init(data: [CategoryData], preferredCurrency: String) {
-        self.data = data
-        self.preferredCurrency = preferredCurrency
-        let categories = data.map { DonutChartCategory(
-            name: $0.category,
-            value: $0.value,
-            color: $0.color,
-            symbol: $0.symbol
-        )}
-        _viewModel = StateObject(wrappedValue: DonutChartViewModel(categories: categories))
-    }
-
-    var body: some View {
-        VStack(spacing: 0) {
-            GeometryReader { geo in
-                let size = min(geo.size.width, geo.size.height)
-                HStack {
-                    Spacer()
-            DonutChartView(
-                        viewModel: viewModel,
-                        currencyCode: preferredCurrency
-            )
-                    .frame(width: size, height: size)
-                    Spacer()
-                }
-            }
-            .frame(height: 220)
-            legend
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
-        .onChange(of: data) { _, _ in }
-    }
-
-    private var legend: some View {
-        if data.allSatisfy({ $0.value == 0 }) {
-            return AnyView(
-                HStack {
-                    Image(systemName: "info.circle")
-                        .foregroundColor(.secondary)
-                    Text("No spending data for this period")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical, 16)
-            )
-        } else {
-            let selected = viewModel.selectedCategory ?? viewModel.categories.first
-            let avgSpentString = data.first(where: { $0.category == selected?.name })?.avgSpent.formatted(.currency(code: preferredCurrency).precision(.fractionLength(2))) ?? ""
-            let legendText = avgSpentString.isEmpty ? "" : "Avg spent: \(avgSpentString)/mo"
-            return AnyView(
-                VStack(alignment: .leading, spacing: 6) {
-                    if let selected {
-                        HStack(spacing: 8) {
-                            Circle()
-                                .fill(selected.color)
-                                .frame(width: 16, height: 16)
-                            Text(selected.name)
-                                .font(.subheadline.bold())
-                                .foregroundColor(.primary)
+            .chartYAxis {
+                let maxValue = data.map { $0.value }.max() ?? 1
+                let step = maxValue > 10000 ? 5000.0 : (maxValue > 1000 ? 1000.0 : (maxValue > 100 ? 100.0 : 10.0))
+                let ticks = Array(stride(from: 0.0, through: maxValue, by: step))
+                AxisMarks(position: .leading, values: ticks) { value in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
+                        .foregroundStyle(AppColors.chartAxis)
+                    AxisTick()
+                        .foregroundStyle(AppColors.chartAxis)
+                    AxisValueLabel {
+                        if let doubleValue = value.as(Double.self) {
+                            Text(doubleValue.formatted(.currency(code: currencyCode).precision(.fractionLength(0))))
+                                .font(.caption2.weight(.medium))
+                                .foregroundStyle(.secondary)
                         }
                     }
-                    if !legendText.isEmpty {
-                        Text(legendText)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                }
+            }
+            .chartXAxis {
+                AxisMarks(values: .automatic) { value in
+                    AxisGridLine()
+                        .foregroundStyle(AppColors.chartAxis.opacity(0.3))
+                    AxisTick()
+                        .foregroundStyle(AppColors.chartAxis)
+                    AxisValueLabel {
+                        if let stringValue = value.as(String.self) {
+                            Text(stringValue)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.primary)
+                        }
                     }
                 }
-                .padding(.vertical, 10)
-                .padding(.top, 8)
+            }
+            .chartYScale(domain: 0...(data.map { $0.value }.max() ?? 1))
+            .frame(height: 160)
+            .padding(.horizontal, 4)
+            
+            // Summary statistics
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Text("Average")
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(.secondary)
+                        Button(action: {
+                            showAverageInfo = true
+                        }) {
+                            Image(systemName: "info.circle")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    Text(calculateAverage().formatted(.currency(code: currencyCode).precision(.fractionLength(0))))
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(barColor)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Button(action: {
+                            showHighestInfo = true
+                        }) {
+                            Image(systemName: "info.circle")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        Text("Highest")
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
+                    Text(calculateHighest().formatted(.currency(code: currencyCode).precision(.fractionLength(0))))
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(barColor)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(barColor.opacity(0.08))
             )
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Income required chart showing \(data.count) periods")
+        .alert("Average Income Required", isPresented: $showAverageInfo) {
+            Button("Got it") { }
+        } message: {
+            Text("The average amount you need to earn across all time periods (hourly, weekly, monthly, yearly) to cover your expenses.")
+        }
+        .alert("Highest Income Required", isPresented: $showHighestInfo) {
+            Button("Got it") { }
+        } message: {
+            Text("The highest income requirement among all time periods, typically your yearly income need. This helps you plan your annual income goals.")
+        }
+    }
+    
+    private func calculateAverage() -> Double {
+        data.map { $0.value }.reduce(0, +) / Double(data.count)
+    }
+    
+    private func calculateHighest() -> Double {
+        data.map { $0.value }.max() ?? 0
     }
 }
+
 
 // MARK: - SwiftCharts Area Chart for Total Balance Over Time
 // (Remove the entire TotalBalanceOverTimeChartView struct)
@@ -666,7 +656,7 @@ struct TotalBalanceOverTimeSection: View {
                     Text("1Y").tag("1Y")
                 }
                 .pickerStyle(.segmented)
-                .tint(AppColors.brandBlack)
+                .tint(AppColors.black)
             }
         }
     }
@@ -760,7 +750,7 @@ struct SavingsGoalRow: View {
                         .foregroundColor(.secondary)
                     Text(goal.savedAmount, format: .currency(code: currencyCode))
                         .font(.subheadline.weight(.bold))
-                        .foregroundColor(AppColors.brandGreen)
+                        .foregroundColor(AppColors.secondary)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -778,7 +768,7 @@ struct SavingsGoalRow: View {
                         .foregroundColor(.secondary)
                     Text(remainingAmount, format: .currency(code: currencyCode))
                         .font(.subheadline.weight(.bold))
-                        .foregroundColor(AppColors.brandRed)
+                        .foregroundColor(AppColors.primary)
                 }
                 
                 Spacer()
@@ -822,6 +812,350 @@ struct SavingsGoalRow: View {
                 .shadow(color: Color.black.opacity(0.05), radius: 8, y: 2)
         )
         .accessibilityElement(children: .combine)
+    }
+}
+
+// MARK: - Compact Savings Goal Card for Overview
+struct CompactSavingsGoalCard: View {
+    let goal: GoalFormData
+    let currencyCode: String
+    
+    private var progressPercentage: Double {
+        guard goal.targetAmount > 0 else { return 0 }
+        return min(goal.savedAmount / goal.targetAmount, 1.0)
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header with icon and name
+            HStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(goal.iconColor.opacity(0.15))
+                        .frame(width: 32, height: 32)
+                    Image(systemName: goal.iconName)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(goal.iconColor)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(goal.name)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    
+                    Text("\(Int(progressPercentage * 100))%")
+                        .font(.caption.weight(.bold))
+                        .foregroundColor(goal.iconColor)
+                }
+                
+                Spacer()
+            }
+            
+            // Progress bar
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color(.systemGray6))
+                        .frame(height: 6)
+                    
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(goal.iconColor)
+                        .frame(width: geometry.size.width * progressPercentage, height: 6)
+                        .animation(.easeInOut(duration: 0.5), value: progressPercentage)
+                }
+            }
+            .frame(height: 6)
+            
+            // Amount info
+            VStack(alignment: .leading, spacing: 4) {
+                Text(goal.savedAmount, format: .currency(code: currencyCode))
+                    .font(.caption.weight(.bold))
+                    .foregroundColor(Color(hex: "07e95e"))
+                
+                Text("of \(goal.targetAmount, format: .currency(code: currencyCode))")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.05), radius: 4, y: 2)
+        )
+        .accessibilityElement(children: .combine)
+    }
+}
+
+// MARK: - Spending Breakdown Chart View
+struct SpendingBreakdownChartView: View {
+    let transactions: [Transaction]
+    let currencyCode: String
+    
+    private var spendingData: [SpendingCategory] {
+        let expenseTransactions = transactions.filter { !$0.isIncome }
+        let categoryGroups = Dictionary(grouping: expenseTransactions) { $0.category }
+        
+        let allCategories: [SpendingCategory] = categoryGroups.compactMap { (category, transactions) in
+            // Only include non-income categories and ensure we have transactions
+            guard !transactions.isEmpty else { return nil }
+            
+            let totalAmount = transactions.reduce(0) { $0 + $1.amount }
+            // Only include categories with positive amounts and minimum threshold for visibility
+            guard totalAmount > 0.01 else { return nil }
+            
+            return SpendingCategory(
+                name: getSimplifiedCategoryName(category),
+                amount: totalAmount,
+                transactionCount: transactions.count
+            )
+        }
+        
+        let totalAmount = allCategories.reduce(0) { $0 + $1.amount }
+        let minThreshold = totalAmount * 0.02 // 2% of total spending
+        
+        var mainCategories = allCategories.filter { $0.amount >= minThreshold }
+        let smallCategories = allCategories.filter { $0.amount < minThreshold }
+        
+        // Combine small categories into "Other" if there are any
+        if !smallCategories.isEmpty {
+            let otherAmount = smallCategories.reduce(0) { $0 + $1.amount }
+            let otherCount = smallCategories.reduce(0) { $0 + $1.transactionCount }
+            mainCategories.append(SpendingCategory(
+                name: "Other",
+                amount: otherAmount,
+                transactionCount: otherCount
+            ))
+        }
+        
+        return mainCategories.sorted { $0.amount > $1.amount }
+    }
+    
+    private var totalSpending: Double {
+        spendingData.reduce(0) { $0 + $1.amount }
+    }
+    
+    private func getSimplifiedCategoryName(_ category: TransactionCategory) -> String {
+        switch category {
+        case .essentials: return "Food"
+        case .leisure: return "Leisure"
+        case .savings: return "Savings"
+        case .income: return "Income"
+        case .bills: return "Bills"
+        case .other: return "Other"
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            if spendingData.isEmpty {
+                VStack(spacing: 16) {
+                    Image(systemName: "chart.pie")
+                        .font(.system(size: 48))
+                        .foregroundColor(.secondary.opacity(0.6))
+                    Text("No spending data yet")
+                        .font(.title3.weight(.semibold))
+                        .foregroundColor(.secondary)
+                    Text("Add some expense transactions to see your spending breakdown")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(height: 200)
+            } else {
+                
+                // iOS Standard Donut Chart
+                ZStack {
+                    // Background circle - thicker towards center
+                    GeometryReader { geometry in
+                        let outerRadius: CGFloat = 120
+                        let innerRadius: CGFloat = 80
+                        
+                        Circle()
+                            .fill(Color.gray.opacity(0.15))
+                            .frame(width: outerRadius * 2, height: outerRadius * 2)
+                            .overlay(
+                                Circle()
+                                    .fill(Color.clear)
+                                    .frame(width: innerRadius * 2, height: innerRadius * 2)
+                                    .blendMode(.destinationOut)
+                            )
+                    }
+                    .frame(width: 240, height: 240)
+                    
+                    // Data segments with iOS-optimized colors and animations
+                    ForEach(Array(spendingData.enumerated()), id: \.offset) { index, category in
+                        let startAngle = calculateStartAngle(for: index)
+                        let endAngle = calculateEndAngle(for: index)
+                        let color = getCategoryColor(for: category.name)
+                        
+                        // Ensure we have a valid segment to draw with minimum size for visibility
+                        let segmentSize = endAngle - startAngle
+                        let minSegmentSize = 0.01 // Minimum 1% of circle for visibility
+                        
+                        if segmentSize >= minSegmentSize && category.amount > 0 {
+                            // Create a thicker donut by using a filled arc instead of stroke
+                            GeometryReader { geometry in
+                                let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                                let outerRadius: CGFloat = 120
+                                let innerRadius: CGFloat = 80 // Thicker towards center
+                                
+                                Path { path in
+                                    path.addArc(
+                                        center: center,
+                                        radius: outerRadius,
+                                        startAngle: .radians(startAngle * 2 * .pi),
+                                        endAngle: .radians(endAngle * 2 * .pi),
+                                        clockwise: false
+                                    )
+                                    path.addArc(
+                                        center: center,
+                                        radius: innerRadius,
+                                        startAngle: .radians(endAngle * 2 * .pi),
+                                        endAngle: .radians(startAngle * 2 * .pi),
+                                        clockwise: true
+                                    )
+                                    path.closeSubpath()
+                                }
+                                .fill(color)
+                                .rotationEffect(.degrees(-90))
+                            }
+                            .frame(width: 240, height: 240)
+                            .animation(.easeInOut(duration: 0.6).delay(Double(index) * 0.05), value: spendingData)
+                        }
+                    }
+                    
+                    // Center content with total spending
+                    VStack(spacing: 4) {
+                        Text(totalSpending, format: .currency(code: currencyCode).precision(.fractionLength(0)))
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundColor(.primary)
+                            .dynamicTypeSize(.large)
+                        
+                        Text("Monthly Spending")
+                            .font(.caption.weight(.medium))
+                            .foregroundColor(.secondary)
+                            .dynamicTypeSize(.medium)
+                    }
+                }
+                .frame(height: 250)
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel("Spending breakdown chart with \(spendingData.count) categories")
+                
+                // Category Table
+                VStack(spacing: 0) {
+                    // Header
+                    HStack {
+                        Text("Category")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondary)
+                            .frame(minWidth: 50, alignment: .leading)
+                        Spacer()
+                        Text("Amount")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.secondary)
+                            .frame(minWidth: 70, alignment: .trailing)
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12)
+                    .background(AppColors.background.opacity(0.5))
+                    
+                    // Data rows
+                    ForEach(Array(spendingData.enumerated()), id: \.offset) { index, category in
+                        HStack {
+                            Text(category.name)
+                                .font(.caption.weight(.medium))
+                                .foregroundColor(.primary)
+                                .frame(minWidth: 50, alignment: .leading)
+                            Spacer()
+                            Text(category.amount, format: .currency(code: currencyCode).precision(.fractionLength(0)))
+                                .font(.caption.weight(.semibold))
+                                .foregroundColor(.red)
+                                .frame(minWidth: 70, alignment: .trailing)
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(
+                            index % 2 == 0 
+                                ? Color.clear 
+                                : AppColors.background.opacity(0.3)
+                        )
+                        
+                        if index < spendingData.count - 1 {
+                            Divider()
+                                .background(AppColors.chartAxis.opacity(0.3))
+                                .padding(.leading, 12)
+                        }
+                    }
+                }
+                .padding(.top, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(AppColors.card)
+                        .stroke(AppColors.chartAxis.opacity(0.2), lineWidth: 1)
+                )
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Spending breakdown chart showing \(spendingData.count) categories")
+    }
+    
+    private func getCategoryColor(for categoryName: String) -> Color {
+        switch categoryName {
+        case "Food": return .orange
+        case "Leisure": return .purple
+        case "Savings": return .green
+        case "Income": return .mint
+        case "Bills": return .red
+        case "Other": return .gray
+        default: return .gray
+        }
+    }
+    
+    private func getCategorySymbol(for categoryName: String) -> String {
+        switch categoryName {
+        case "Food": return "fork.knife"
+        case "Leisure": return "gamecontroller"
+        case "Savings": return "banknote"
+        case "Income": return "dollarsign.circle"
+        case "Bills": return "doc.text"
+        case "Other": return "ellipsis"
+        default: return "questionmark.circle"
+        }
+    }
+    
+    private func calculateStartAngle(for index: Int) -> Double {
+        let previousTotal = spendingData.prefix(index).reduce(0) { $0 + ($1.amount / totalSpending) }
+        return previousTotal
+    }
+    
+    private func calculateEndAngle(for index: Int) -> Double {
+        let currentTotal = spendingData.prefix(index + 1).reduce(0) { $0 + ($1.amount / totalSpending) }
+        return currentTotal
+    }
+}
+
+// MARK: - Spending Category Model
+struct SpendingCategory: Equatable {
+    let name: String
+    let amount: Double
+    let transactionCount: Int
+}
+
+// MARK: - PreSelected Add Transaction View
+struct PreSelectedAddTransactionView: View {
+    let availableGoals: [GoalFormData]
+    let preSelectedType: IncomeOrExpense
+    let onSave: (Transaction) -> Void
+    
+    var body: some View {
+        AddTransactionViewWithPreselection(
+            availableGoals: availableGoals,
+            preSelectedType: preSelectedType
+        ) { transaction in
+            onSave(transaction)
+        }
     }
 }
 

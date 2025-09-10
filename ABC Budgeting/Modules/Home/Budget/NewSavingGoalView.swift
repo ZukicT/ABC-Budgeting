@@ -22,7 +22,7 @@ struct NewSavingGoalView: View {
                 // Enhanced Sheet Header with gradient background
                 ZStack(alignment: .topLeading) {
                     LinearGradient(
-                        colors: [AppColors.brandBlack, AppColors.brandBlack.opacity(0.9)],
+                        colors: [AppColors.black, AppColors.black.opacity(0.9)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -106,7 +106,7 @@ struct NewSavingGoalView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "textformat")
-                    .foregroundColor(AppColors.brandBlue)
+                    .foregroundColor(AppColors.primary)
                     .font(.title2)
                 Text("Goal Name")
                     .font(.headline.weight(.semibold))
@@ -129,7 +129,7 @@ struct NewSavingGoalView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "text.badge.plus")
-                    .foregroundColor(AppColors.brandPurple)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Description")
                     .font(.headline.weight(.semibold))
@@ -157,7 +157,7 @@ struct NewSavingGoalView: View {
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "target")
-                    .foregroundColor(AppColors.brandGreen)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Target Amount")
                     .font(.headline.weight(.semibold))
@@ -196,7 +196,7 @@ struct NewSavingGoalView: View {
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "banknote")
-                    .foregroundColor(AppColors.brandOrange)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Current Saved")
                     .font(.headline.weight(.semibold))
@@ -230,7 +230,7 @@ struct NewSavingGoalView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "calendar.circle.fill")
-                    .foregroundColor(AppColors.brandCyan)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Target Date")
                     .font(.headline.weight(.semibold))
@@ -247,7 +247,7 @@ struct NewSavingGoalView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "paintbrush.circle.fill")
-                    .foregroundColor(AppColors.brandPink)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Icon & Category")
                     .font(.headline.weight(.semibold))
@@ -333,7 +333,7 @@ struct NewSavingGoalView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "bell.circle.fill")
-                    .foregroundColor(AppColors.brandYellow)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Reminders")
                     .font(.headline.weight(.semibold))
@@ -345,7 +345,7 @@ struct NewSavingGoalView: View {
                     .font(.body)
                     .foregroundColor(.primary)
             }
-            .tint(AppColors.brandGreen)
+            .tint(AppColors.secondary)
             
             if notifyMe {
                 VStack(alignment: .leading, spacing: 8) {
@@ -363,7 +363,7 @@ struct NewSavingGoalView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "note.text")
-                    .foregroundColor(AppColors.brandCyan)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Notes")
                     .font(.headline.weight(.semibold))
@@ -392,7 +392,7 @@ struct NewSavingGoalView: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(goalName.isEmpty || targetAmount.isEmpty ? Color(.systemGray4) : AppColors.brandBlack)
+                        .fill(goalName.isEmpty || targetAmount.isEmpty ? Color(.systemGray4) : AppColors.black)
                 )
         }
         .disabled(goalName.isEmpty || targetAmount.isEmpty)

@@ -21,7 +21,7 @@ struct SplashScreenView: View {
 
     var body: some View {
         ZStack {
-            AppColors.brandBlack.ignoresSafeArea()
+            AppColors.black.ignoresSafeArea()
             VStack(spacing: 0) {
                 Spacer()
                 // MARK: - Spinning Shapes in a Circle (Perfectly Centered)

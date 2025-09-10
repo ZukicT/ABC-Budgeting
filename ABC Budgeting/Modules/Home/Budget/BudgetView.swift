@@ -29,7 +29,7 @@ struct BudgetView: View {
                                         .padding(.horizontal, 18)
                                         .background(
                                             RoundedRectangle(cornerRadius: 8)
-                                                .fill(selectedCategory == nil ? AppColors.brandBlack : AppColors.tagUnselectedBackground)
+                                                .fill(selectedCategory == nil ? AppColors.black : AppColors.tagUnselectedBackground)
                                         )
                                 }
                                 .accessibilityLabel("All")

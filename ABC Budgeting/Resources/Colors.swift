@@ -2,37 +2,85 @@ import SwiftUI
 
 // MARK: - App Color Palette
 struct AppColors {
-    private static func safeColor(_ color: @autoclosure () -> Color, fallback: Color = .black, name: String) -> Color {
-        return color()
-    }
-    static var brandBlack: Color { return safeColor(Color(red: 36.0/255.0, green: 36.0/255.0, blue: 36.0/255.0), name: "brandBlack") }
-    static var brandBlue: Color { return safeColor(Color(red: 55.0/255.0, green: 124.0/255.0, blue: 200.0/255.0), name: "brandBlue") }
-    static var brandYellow: Color { return safeColor(Color(red: 255.0/255.0, green: 203.0/255.0, blue: 86.0/255.0), name: "brandYellow") }
-    static var brandGreen: Color { return safeColor(Color(red: 70.0/255.0, green: 155.0/255.0, blue: 136.0/255.0), name: "brandGreen") }
-    static var brandPurple: Color { return safeColor(Color(red: 157.0/255.0, green: 167.0/255.0, blue: 208.0/255.0), name: "brandPurple") }
-    static var brandPink: Color { return safeColor(Color(red: 231.0/255.0, green: 140.0/255.0, blue: 157.0/255.0), name: "brandPink") }
-    static var brandRed: Color { return safeColor(Color(red: 224.0/255.0, green: 83.0/255.0, blue: 61.0/255.0), name: "brandRed") }
-    static var brandOrange: Color { return safeColor(Color(red: 255.0/255.0, green: 149.0/255.0, blue: 0.0/255.0), name: "brandOrange") }
-    static var brandTeal: Color { return safeColor(Color(red: 90.0/255.0, green: 200.0/255.0, blue: 250.0/255.0), name: "brandTeal") }
-    static var brandIndigo: Color { return safeColor(Color(red: 94.0/255.0, green: 92.0/255.0, blue: 230.0/255.0), name: "brandIndigo") }
-    static var brandCyan: Color { return safeColor(Color(red: 32.0/255.0, green: 200.0/255.0, blue: 220.0/255.0), name: "brandCyan") }
-    static var brandWhite: Color { return safeColor(Color(red: 255.0/255.0, green: 255.0/255.0, blue: 255.0/255.0), name: "brandWhite") }
-    static var white: Color { return safeColor(Color(red: 1, green: 1, blue: 1), name: "white") } // #FFFFFF
-    static var background: Color { return safeColor(Color(red: 243.0/255.0, green: 243.0/255.0, blue: 243.0/255.0), name: "background") } // #F3F3F3
+    // Primary Colors
+    static var primary: Color { Color(hex: "0a38c3") }      // #0a38c3 - Main brand color
+    static var secondary: Color { Color(hex: "07e95e") }    // #07e95e - Accent color
+    static var background: Color { Color(hex: "daeaf3") }   // #daeaf3 - Background color
+    
+    // Semantic Colors
+    static var brandBlue: Color { primary }
+    static var brandGreen: Color { secondary }
+    static var brandBlack: Color { Color.black }
+    static var brandWhite: Color { Color.white }
     
     // Backgrounds
-    static var card: Color { return safeColor(Color.white, name: "card") }
-    static var cardShadow: Color { return safeColor(Color.black.opacity(0.05), name: "cardShadow") }
-
+    static var card: Color { Color.white }
+    static var cardShadow: Color { Color.black.opacity(0.05) }
+    
     // Semantic
-    static var income: Color { return brandGreen }
-    static var expense: Color { return brandRed }
-    static var accent: Color { return brandBlue }
-    static var savings: Color { return brandYellow }
-    static var earnings: Color { return brandPink }
-    static var chartBar: Color { return brandGreen }
-    static var chartAxis: Color { return safeColor(Color.gray.opacity(0.5), name: "chartAxis") }
-    static var tagUnselected: Color { return safeColor(Color(red: 128.0/255.0, green: 128.0/255.0, blue: 128.0/255.0), name: "tagUnselected") } // #8C8F98
-    static var tagUnselectedBackground: Color { return safeColor(Color(red: 226.0/255.0, green: 226.0/255.0, blue: 226.0/255.0), name: "tagUnselectedBackground") } // #F0F0F0
+    static var income: Color { secondary }
+    static var expense: Color { primary }
+    static var accent: Color { primary }
+    static var savings: Color { secondary }
+    static var earnings: Color { secondary }
+    static var chartBar: Color { secondary }
+    static var chartAxis: Color { Color.gray.opacity(0.5) }
+    static var tagUnselected: Color { Color.gray }
+    static var tagUnselectedBackground: Color { Color.gray.opacity(0.1) }
+    
+    // Utility Colors
+    static var white: Color { Color.white }
+    static var black: Color { Color.black }
+    static var gray: Color { Color.gray }
+    static var red: Color { primary }      // Use primary for error/expense
+    static var yellow: Color { secondary } // Use secondary for warnings
+    static var purple: Color { primary }   // Use primary for special elements
+    static var pink: Color { secondary }   // Use secondary for highlights
+    static var orange: Color { secondary } // Use secondary for alerts
+    static var teal: Color { primary }     // Use primary for info
+    static var indigo: Color { primary }   // Use primary for navigation
+    static var cyan: Color { secondary }   // Use secondary for success
+}
+
+// MARK: - Color Extension for Hex Support
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+        
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue:  Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+    
+    func toHex() -> String {
+        let uiColor = UIColor(self)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        let rgb = Int(red * 255) << 16 | Int(green * 255) << 8 | Int(blue * 255) << 0
+        
+        return String(format: "#%06x", rgb)
+    }
 }
 

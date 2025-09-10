@@ -43,7 +43,7 @@ struct GoalCard: View {
             HStack {
                 Text("$\(Int(savedAmount)) saved")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color(hex: "07e95e"))
                 Spacer()
                 Text("Goal: $\(Int(goalAmount))")
                     .font(.subheadline)

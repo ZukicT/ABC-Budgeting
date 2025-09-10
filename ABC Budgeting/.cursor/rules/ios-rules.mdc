@@ -1,0 +1,33 @@
+---
+description: Core iOS development standards for Swift 6 and iOS 18+
+globs: ["**/*.swift", "**/*.xcodeproj/**", "**/Info.plist"]
+alwaysApply: true
+---
+
+Complete all tasks fully in single response - no TODOs, placeholders, or incomplete implementations. All code must compile without warnings in Xcode 16+. Senior engineer mindset - anticipate edge cases, use proper patterns. Ask for clarification rather than assuming requirements.
+
+Project Structure:
+Sources/Core/ (shared services, networking, models)
+Sources/Features/[Feature]/ (Views/, ViewModels/, Models/)
+Sources/Shared/ (reusable UI components)
+Resources/ (assets, strings, config)
+
+Naming: [Feature][Component].swift (ProfileViewModel.swift)
+Types: PascalCase (UserProfile, AuthManager)
+Variables/functions: camelCase (userName, fetchProfile())
+
+Architecture: Use MVVM with SwiftUI. ViewModels as @Observable (iOS 17+) or ObservableObject. Dependency injection through initializers. Protocol-based service interfaces. Repository pattern for data access.
+
+Swift 6: Use async/await for asynchronous operations. No force unwrapping (!) except in tests with justification. Handle all optionals safely with guard/if let. Use throws for error propagation. Prefer structs over classes when possible.
+
+SwiftUI: SwiftUI-first approach for all UI. Support Light/Dark mode automatically. Enable Dynamic Type for accessibility. Use proper accessibility labels. Responsive layouts for all device sizes.
+
+Code Quality: SwiftLint compliance with zero warnings. Functions under 10 lines when possible. One type per file. Use // MARK: - comments for organization. No magic numbers or hardcoded strings. All user-facing text localized.
+
+Networking & Data: Separate networking layer in Core module. Use Codable for JSON serialization. Keychain for sensitive data storage. Core Data or SwiftData for local persistence. Proper error handling with user-friendly messages.
+
+Forbidden: No global mutable state or uncontrolled singletons. No business logic in Views. No NotificationCenter for core app logic. No print() statements in production. Never leave incomplete implementations or TODO comments. Never generate test files or testing code.
+
+App Store: Handle offline scenarios gracefully. Implement proper error states. Follow App Store guidelines. Include privacy usage descriptions. Bundle identifier follows reverse DNS. Deployment target iOS 18.0 minimum. Swift 6 language mode enabled.
+
+Context for Cursor: When modifying existing files, maintain established patterns. Include complete implementations in first pass. Reference related files in comments when creating new features. Use descriptive names that indicate purpose and type. Follow Apple's recommended project structure and naming conventions. Ensure all generated code passes Xcode static analysis.

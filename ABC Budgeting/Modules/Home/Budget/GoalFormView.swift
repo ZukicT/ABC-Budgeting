@@ -19,7 +19,7 @@ struct GoalFormView: View {
                 // Enhanced Sheet Header with gradient background - matching AddTransactionView
                 ZStack(alignment: .topLeading) {
                     LinearGradient(
-                        colors: [AppColors.brandBlack, AppColors.brandBlack.opacity(0.9)],
+                        colors: [AppColors.black, AppColors.black.opacity(0.9)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -103,7 +103,7 @@ struct GoalFormView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "target")
-                    .foregroundColor(AppColors.brandRed)
+                    .foregroundColor(AppColors.primary)
                     .font(.title2)
                 Text("Goal Name")
                     .font(.headline.weight(.semibold))
@@ -126,7 +126,7 @@ struct GoalFormView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "textformat")
-                    .foregroundColor(AppColors.brandBlue)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Description")
                     .font(.headline.weight(.semibold))
@@ -154,7 +154,7 @@ struct GoalFormView: View {
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "dollarsign.circle.fill")
-                    .foregroundColor(AppColors.brandGreen)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Target Amount")
                     .font(.headline.weight(.semibold))
@@ -185,11 +185,11 @@ struct GoalFormView: View {
             if let doubleValue = Double(targetAmount), doubleValue > 0 {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(AppColors.brandGreen)
+                        .foregroundColor(AppColors.secondary)
                         .font(.caption)
                     Text(doubleValue, format: .currency(code: currencyCode))
                         .font(.caption.weight(.medium))
-                        .foregroundColor(AppColors.brandGreen)
+                        .foregroundColor(AppColors.secondary)
                 }
                 .padding(.leading, 4)
             }
@@ -205,7 +205,7 @@ struct GoalFormView: View {
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "banknote")
-                    .foregroundColor(AppColors.brandYellow)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Currently Saved")
                     .font(.headline.weight(.semibold))
@@ -236,11 +236,11 @@ struct GoalFormView: View {
             if let doubleValue = Double(savedAmount), doubleValue > 0 {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(AppColors.brandYellow)
+                        .foregroundColor(AppColors.secondary)
                         .font(.caption)
                     Text(doubleValue, format: .currency(code: currencyCode))
                         .font(.caption.weight(.medium))
-                        .foregroundColor(AppColors.brandYellow)
+                        .foregroundColor(AppColors.secondary)
                 }
                 .padding(.leading, 4)
             }
@@ -251,7 +251,7 @@ struct GoalFormView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "calendar.badge.clock")
-                    .foregroundColor(AppColors.brandPink)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Target Date")
                     .font(.headline.weight(.semibold))
@@ -280,7 +280,7 @@ struct GoalFormView: View {
                         Spacer()
                         Text("\(Int(progress * 100))%")
                             .font(.caption.weight(.bold))
-                            .foregroundColor(AppColors.brandGreen)
+                            .foregroundColor(AppColors.secondary)
                     }
                     
                     GeometryReader { geometry in
@@ -290,7 +290,7 @@ struct GoalFormView: View {
                                 .frame(height: 8)
                             
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(AppColors.brandGreen)
+                                .fill(AppColors.secondary)
                                 .frame(width: geometry.size.width * progress, height: 8)
                                 .animation(.easeInOut(duration: 0.5), value: progress)
                         }
@@ -306,7 +306,7 @@ struct GoalFormView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "paintbrush.fill")
-                    .foregroundColor(AppColors.brandOrange)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Goal Icon")
                     .font(.headline.weight(.semibold))
@@ -387,7 +387,7 @@ struct GoalFormView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "paintpalette.fill")
-                    .foregroundColor(AppColors.brandPurple)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Icon Color")
                     .font(.headline.weight(.semibold))
@@ -444,7 +444,7 @@ struct GoalFormView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "note.text")
-                    .foregroundColor(AppColors.brandCyan)
+                    .foregroundColor(AppColors.secondary)
                     .font(.title2)
                 Text("Notes")
                     .font(.headline.weight(.semibold))
@@ -477,8 +477,8 @@ struct GoalFormView: View {
                 .padding(.vertical, 18)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(canSave ? AppColors.brandBlack : Color(.systemGray4))
-                        .shadow(color: canSave ? AppColors.brandBlack.opacity(0.3) : Color.clear, radius: 8, y: 4)
+                        .fill(canSave ? AppColors.black : Color(.systemGray4))
+                        .shadow(color: canSave ? AppColors.black.opacity(0.3) : Color.clear, radius: 8, y: 4)
                 )
                 .foregroundColor(.white)
             }
@@ -536,39 +536,7 @@ struct GoalFormView: View {
     }
 }
 
-struct GoalFormData: Hashable, Identifiable {
-    var id: String { name }
-    let name: String
-    let subtitle: String?
-    let targetAmount: Double
-    let savedAmount: Double
-    let targetDate: Date
-    let notes: String?
-    let iconName: String
-    let iconColorName: String
-    var iconColor: Color { Color.fromName(iconColorName) }
-}
 
-extension Color {
-    func toHex() -> String {
-        // This is a simple mapping for system colors. Expand as needed for your palette.
-        switch self {
-        case .orange: return "orange"
-        case .purple: return "purple"
-        case .green: return "green"
-        case .mint: return "mint"
-        case .red: return "red"
-        case .gray: return "gray"
-        case .blue: return "blue"
-        case .teal: return "teal"
-        case .indigo: return "indigo"
-        case .pink: return "pink"
-        case .yellow: return "yellow"
-        case .brown: return "brown"
-        default: return "gray"
-        }
-    }
-}
 
 #if DEBUG
 struct GoalFormView_Previews: PreviewProvider {

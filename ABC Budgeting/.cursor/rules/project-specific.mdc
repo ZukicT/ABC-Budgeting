@@ -1,0 +1,36 @@
+---
+description: ABC Budgeting iOS personal finance app development rules
+globs: ["**/*.swift", "**/*.xcodeproj/**", "**/Info.plist", "**/*.xcdatamodeld/**"]
+alwaysApply: true
+---
+
+You are developing ABC Budgeting, a native iOS personal finance app that helps users take control of their financial wellbeing through intuitive expense tracking, income management, and visual savings goal progress. The app empowers users to make informed financial decisions through clear insights and analytics.
+
+Core Features: Track income/expenses with categorization. Set and monitor savings goals with visual progress. View spending insights through charts. Support 25+ currencies. Import/export CSV data.
+
+Technical Requirements: iOS 18+ only, Swift 6, SwiftUI-only (no UIKit). MVVM-C architecture with Repository pattern. Core Data for persistence, Keychain for sensitive data. Offline-first, no external APIs. Native iOS Charts for visualizations.
+
+Design System: Primary color #0a38c3 (blue), Secondary #07e95e (green). SF Pro Rounded typography, 8pt spacing grid. Spring animations, full accessibility support.
+
+Architecture Structure:
+- Sources/Core/Persistence/ (Core Data stack, repositories)
+- Sources/Core/Services/ (Currency, Import/Export, Analytics)
+- Sources/Features/Dashboard/ (main overview)
+- Sources/Features/Transactions/ (add/edit transactions)
+- Sources/Features/Goals/ (savings goals management)
+- Sources/Features/Insights/ (charts and analytics)
+- Sources/Features/Settings/ (app configuration)
+- Sources/Shared/Components/ (reusable UI)
+- Sources/Shared/Extensions/ (utility extensions)
+
+Entity Models: Transaction (amount, category, date, isIncome, isRecurring, currencyCode). SavingsGoal (name, targetAmount, currentAmount, targetDate, iconName, colorHex). BudgetCategory (name, iconName, colorHex, budgetAmount, isExpenseCategory).
+
+Key Workflows: Onboarding (splash, welcome, currency setup). Add Transaction (FAB, form, validation, save). Create Goals (configure, track progress). View Insights (charts, time periods, export). Budget Review (monthly comparison, adjustments). Import/Export (CSV processing, preview).
+
+UI Standards: Use primary/secondary colors consistently. SF Pro Rounded for all text. 8pt spacing grid for layouts. Spring animations for transitions. Full VoiceOver support. Dynamic Type support. Light/Dark mode adaptation.
+
+Data Persistence: Core Data for all financial data. Keychain for sensitive settings. Repository pattern for data access. Offline-first design. CSV import/export capabilities.
+
+Currency Support: 25+ currencies with proper formatting. User-selectable base currency. Consistent currency display throughout app.
+
+Never generate test files. Complete all implementations fully. Handle all edge cases. Include proper error handling. Follow accessibility guidelines. Implement proper data validation.
