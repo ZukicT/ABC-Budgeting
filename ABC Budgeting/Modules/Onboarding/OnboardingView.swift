@@ -19,7 +19,7 @@ struct OnboardingView: View {
             TabView(selection: $currentPage) {
                 // Feature 1: Group_Shape
                 OnboardingPageView(
-                    illustration: SingleShapeIllustration(assetName: "Group_Shape", height: 240),
+                    illustration: AnyView(SingleShapeIllustration(assetName: "Group_Shape", height: 240)),
                     title: "Track Your Spending",
                     description: "Easily monitor your expenses and stay on top of your finances."
                 )
@@ -27,7 +27,7 @@ struct OnboardingView: View {
                 
                 // Feature 2: PinkCornerCurve
                 OnboardingPageView(
-                    illustration: SingleShapeIllustration(assetName: "PinkCornerCurve"),
+                    illustration: AnyView(SingleShapeIllustration(assetName: "PinkCornerCurve")),
                     title: "Set Budgets & Goals",
                     description: "Create budgets and savings goals to reach your financial dreams."
                 )
@@ -35,7 +35,7 @@ struct OnboardingView: View {
                 
                 // Feature 3: GreenCircle
                 OnboardingPageView(
-                    illustration: SingleShapeIllustration(assetName: "GreenCircle"),
+                    illustration: AnyView(SingleShapeIllustration(assetName: "GreenCircle")),
                     title: "See Insights & Trends",
                     description: "Visualize your spending patterns and make smarter decisions."
                 )
@@ -43,7 +43,7 @@ struct OnboardingView: View {
                 
                 // Welcome / Get Started: ABC_Logo
                 OnboardingPageView(
-                    illustration: SingleShapeIllustration(assetName: "ABC_Logo", height: 120),
+                    illustration: AnyView(SingleShapeIllustration(assetName: "ABC_Logo", height: 120)),
                     title: "Welcome to ABC Budgeting!",
                     description: "Let's start by filling out some basic info to personalize your experience."
                 )
@@ -187,7 +187,7 @@ struct OnboardingView: View {
                 .padding(.trailing, AppPaddings.section)
                 .disabled(showNotificationAlert)
             }
-            .padding(.bottom, AppPaddings.large)
+            .padding(.bottom, AppPaddings.lg)
         }
         .background(AppColors.black.ignoresSafeArea())
         .onTapGesture { self.hideKeyboard() }
@@ -212,52 +212,6 @@ struct OnboardingView: View {
     }
 }
 
-private struct OnboardingPageView: View {
-    let illustration: AnyView
-    let title: String
-    let description: String
-    init<Content: View>(illustration: Content, title: String, description: String) {
-        self.illustration = AnyView(illustration)
-        self.title = title
-        self.description = description
-    }
-    var body: some View {
-        GeometryReader { geo in
-            VStack(spacing: 0) {
-                Spacer(minLength: geo.size.height * 0.08)
-                illustration
-                    .frame(maxWidth: .infinity)
-                Spacer(minLength: AppPaddings.large)
-                Text(title)
-                    .font(.largeTitle.bold())
-                    .foregroundColor(AppColors.white)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, AppPaddings.section)
-                Spacer(minLength: AppPaddings.small)
-                Text(description)
-                    .font(.title3)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(AppColors.white.opacity(0.7))
-                    .padding(.horizontal, AppPaddings.large)
-                Spacer()
-            }
-            .frame(width: geo.size.width, height: geo.size.height)
-        }
-    }
-}
-
-private struct SingleShapeIllustration: View {
-    let assetName: String
-    var height: CGFloat = 180
-    var body: some View {
-        Image(assetName)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(height: height)
-            .shadow(color: Color.black.opacity(0.10), radius: 8, x: 0, y: 4)
-            .padding(.vertical, 16)
-    }
-}
 
 // MARK: - Modern Form Components
 
@@ -292,7 +246,7 @@ private struct ModernPicker: View {
     var body: some View {
         Picker(selection: $selection, label: HStack {
             Text(selection.isEmpty ? placeholder : selection)
-                .foregroundColor(selection.isEmpty ? .secondary : .primary)
+                .foregroundColor(selection.isEmpty ? .secondary : RobinhoodColors.primary)
             Spacer()
             Image(systemName: "chevron.down")
                 .foregroundColor(.secondary)

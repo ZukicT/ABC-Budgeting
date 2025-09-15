@@ -79,6 +79,19 @@ enum NotificationType: String, CaseIterable {
             return 4
         }
     }
+    
+    var category: NotificationCategory {
+        switch self {
+        case .budgetAlert:
+            return .alerts
+        case .newTransaction:
+            return .transactions
+        case .goalMilestone:
+            return .goals
+        case .upcomingTransaction, .upcomingIncome:
+            return .upcoming
+        }
+    }
 }
 
 // MARK: - Notification Service
@@ -153,7 +166,7 @@ class NotificationService: ObservableObject {
     
     // MARK: - Transaction Notifications
     
-    func addNewTransactionNotification(for transaction: Transaction) {
+    func addNewTransactionNotification(for transaction: TransactionItem) {
         let type: NotificationType = transaction.isIncome ? .upcomingIncome : .newTransaction
         let title = transaction.isIncome ? "New Income Added" : "New Expense Added"
         let message = "\(transaction.title) - \(transaction.amount.formatted(.currency(code: "USD")))"
@@ -168,7 +181,7 @@ class NotificationService: ObservableObject {
         addNotification(notification)
     }
     
-    func addUpcomingTransactionNotification(for transaction: Transaction) {
+    func addUpcomingTransactionNotification(for transaction: TransactionItem) {
         let title = transaction.isIncome ? "Upcoming Income" : "Upcoming Expense"
         let message = "\(transaction.title) due soon - \(transaction.amount.formatted(.currency(code: "USD")))"
         
@@ -184,7 +197,7 @@ class NotificationService: ObservableObject {
     
     // MARK: - Goal Notifications
     
-    func addGoalMilestoneNotification(for goal: GoalFormData, milestone: String) {
+    func addGoalMilestoneNotification(for goal: GoalFormItem, milestone: String) {
         let notification = NotificationItem(
             type: .goalMilestone,
             title: "Goal Milestone Reached!",

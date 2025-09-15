@@ -17,16 +17,16 @@ struct SettingsView: View {
     @State private var importText: String = ""
     @State private var importError: String? = nil
     @State private var importPreview: ImportPreview? = nil
-    @Binding var transactions: [Transaction]
-    @Binding var goals: [GoalFormData]
+    @Binding var transactions: [TransactionItem]
+    @Binding var goals: [GoalFormItem]
     let currencies = CurrencyList.all
     
     var body: some View {
         ZStack {
-            AppColors.background.ignoresSafeArea()
+            RobinhoodColors.background.ignoresSafeArea()
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Clean Header - scrolls with content
+                    // Modern Header
                     headerSection
                     
                     // Settings Sections
@@ -36,7 +36,7 @@ struct SettingsView: View {
                     aboutSection
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, AppPaddings.large)
+                .padding(.bottom, 32)
             }
         }
         .alert("Clear All Data", isPresented: $showClearDataAlert) {
@@ -49,27 +49,61 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showBaselineBalanceSheet) {
             baselineBalanceSheet
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.regularMaterial)
+                .presentationCornerRadius(16)
+                .presentationCompactAdaptation(.sheet)
         }
         .sheet(isPresented: $showEditNameSheet) {
             editNameSheet
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.regularMaterial)
+                .presentationCornerRadius(16)
+                .presentationCompactAdaptation(.sheet)
         }
         .sheet(isPresented: $showExportPreview) {
             exportPreviewSheet
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.regularMaterial)
+                .presentationCornerRadius(16)
+                .presentationCompactAdaptation(.sheet)
         }
         .sheet(isPresented: $showImportSheet) {
             importSheet
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.regularMaterial)
+                .presentationCornerRadius(16)
+                .presentationCompactAdaptation(.sheet)
         }
         .sheet(isPresented: $showCurrencyPicker) {
             currencyPickerSheet
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.regularMaterial)
+                .presentationCornerRadius(16)
+                .presentationCompactAdaptation(.sheet)
         }
     }
     
     // MARK: - Header Section
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Spacer for top padding
-            Spacer()
-                .frame(height: AppPaddings.sectionTitleTop)
+        VStack(alignment: .leading, spacing: 24) {
+            // Title and subtitle
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Settings")
+                    .font(RobinhoodTypography.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(RobinhoodColors.textPrimary)
+                
+                Text("Manage your account and preferences")
+                    .font(RobinhoodTypography.body)
+                    .foregroundColor(RobinhoodColors.textSecondary)
+            }
+            .padding(.top, 20)
         }
     }
     
@@ -77,301 +111,193 @@ struct SettingsView: View {
     private var accountSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Section header
-            HStack {
-                Text("Account")
-                    .font(.title2.bold())
-                    .foregroundColor(.primary)
-                    .padding(.leading, 4)
-                Spacer()
+            Text("Account")
+                .font(RobinhoodTypography.title2)
+                .fontWeight(.bold)
+                .foregroundColor(RobinhoodColors.textPrimary)
+                .padding(.bottom, 8)
+            
+            // Account settings card
+            VStack(spacing: 0) {
+                // Display Name
+                RobinhoodSettingRow(
+                    icon: "person.circle.fill",
+                    iconColor: RobinhoodColors.primary,
+                    title: "Display Name",
+                    subtitle: displayName.isEmpty ? "Not set" : displayName,
+                    action: {
+                        tempDisplayName = displayName
+                        showEditNameSheet = true
+                    },
+                    actionIcon: "pencil"
+                )
+                
+                Divider()
+                    .background(RobinhoodColors.border.opacity(0.3))
+                    .padding(.leading, 56)
+                
+                // Starting Balance
+                RobinhoodSettingRow(
+                    icon: "dollarsign.circle.fill",
+                    iconColor: RobinhoodColors.success,
+                    title: "Starting Balance",
+                    subtitle: "$\(String(format: "%.2f", baselineBalance))",
+                    action: {
+                        showBaselineBalanceSheet = true
+                    },
+                    actionIcon: "pencil"
+                )
+                
+                Divider()
+                    .background(RobinhoodColors.border.opacity(0.3))
+                    .padding(.leading, 56)
+                
+                // Currency
+                RobinhoodSettingRow(
+                    icon: "globe",
+                    iconColor: RobinhoodColors.primary,
+                    title: "Currency",
+                    subtitle: selectedCurrency,
+                    action: { showCurrencyPicker = true },
+                    actionIcon: "chevron.right"
+                )
             }
-            .padding(.bottom, AppPaddings.sectionTitleBottom)
-            
-            // Display Name
-            HStack(spacing: 16) {
-                Image(systemName: "person.circle")
-                    .font(.title2)
-                    .foregroundColor(AppColors.primary)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Display Name")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Text(displayName.isEmpty ? "Not set" : displayName)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button(action: {
-                    tempDisplayName = displayName
-                    showEditNameSheet = true
-                }) {
-                    Image(systemName: "pencil")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            
-            Divider()
-            
-            // Starting Balance
-            HStack(spacing: 16) {
-                Image(systemName: "dollarsign.circle")
-                    .font(.title2)
-                    .foregroundColor(AppColors.primary)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Starting Balance")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Text("$\(String(format: "%.2f", baselineBalance))")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button(action: {
-                    showBaselineBalanceSheet = true
-                }) {
-                    Image(systemName: "pencil")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            
-            Divider()
-            
-            // Currency
-            HStack(spacing: 16) {
-                Image(systemName: "globe")
-                    .font(.title2)
-                    .foregroundColor(AppColors.primary)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Currency")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Text(selectedCurrency)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button(action: { showCurrencyPicker = true }) {
-                    Image(systemName: "chevron.right")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RobinhoodColors.cardBackground)
+            )
         }
+        .padding(.bottom, 24)
     }
     
     // MARK: - Preferences Section
     private var preferencesSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Section header
-            HStack {
-                Text("Preferences")
-                    .font(.title2.bold())
-                    .foregroundColor(.primary)
-                    .padding(.leading, 4)
-                Spacer()
-            }
-            .padding(.bottom, AppPaddings.sectionTitleBottom)
+            Text("Preferences")
+                .font(RobinhoodTypography.title2)
+                .fontWeight(.bold)
+                .foregroundColor(RobinhoodColors.textPrimary)
+                .padding(.bottom, 8)
             
-            // Notifications toggle
-            HStack(spacing: 16) {
-                Image(systemName: "bell")
-                    .font(.title2)
-                    .foregroundColor(AppColors.primary)
+            // Preferences card
+            VStack(spacing: 0) {
+                // Notifications toggle
+                RobinhoodToggleRow(
+                    icon: "bell.fill",
+                    iconColor: RobinhoodColors.warning,
+                    title: "Notifications",
+                    subtitle: notificationsEnabled ? "On" : "Off",
+                    isOn: $notificationsEnabled
+                )
                 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Notifications")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Text(notificationsEnabled ? "On" : "Off")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
+                Divider()
+                    .background(RobinhoodColors.border.opacity(0.3))
+                    .padding(.leading, 56)
                 
-                Spacer()
-                
-                Toggle("", isOn: $notificationsEnabled)
-                    .toggleStyle(SwitchToggleStyle(tint: AppColors.primary))
+                // Haptics toggle
+                RobinhoodToggleRow(
+                    icon: "hand.tap.fill",
+                    iconColor: RobinhoodColors.primary,
+                    title: "Haptic Feedback",
+                    subtitle: hapticsEnabled ? "On" : "Off",
+                    isOn: $hapticsEnabled
+                )
             }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            
-            Divider()
-            
-            // Haptics toggle
-            HStack(spacing: 16) {
-                Image(systemName: "hand.tap")
-                    .font(.title2)
-                    .foregroundColor(AppColors.primary)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Haptic Feedback")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Text(hapticsEnabled ? "On" : "Off")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Toggle("", isOn: $hapticsEnabled)
-                    .toggleStyle(SwitchToggleStyle(tint: AppColors.primary))
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RobinhoodColors.cardBackground)
+            )
         }
+        .padding(.bottom, 24)
     }
     
     // MARK: - Data Section
     private var dataSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Section header
-            HStack {
-                Text("Data Management")
-                    .font(.title2.bold())
-                    .foregroundColor(.primary)
-                    .padding(.leading, 4)
-                Spacer()
-            }
-            .padding(.bottom, AppPaddings.sectionTitleBottom)
+            Text("Data Management")
+                .font(RobinhoodTypography.title2)
+                .fontWeight(.bold)
+                .foregroundColor(RobinhoodColors.textPrimary)
+                .padding(.bottom, 8)
             
-            // Import data
-            HStack(spacing: 16) {
-                Image(systemName: "square.and.arrow.down")
-                    .font(.title2)
-                    .foregroundColor(AppColors.primary)
+            // Data management card
+            VStack(spacing: 0) {
+                // Import data
+                RobinhoodSettingRow(
+                    icon: "square.and.arrow.down",
+                    iconColor: RobinhoodColors.success,
+                    title: "Import Data",
+                    subtitle: "Import transactions and goals from CSV",
+                    action: { showImportSheet = true },
+                    actionIcon: "chevron.right"
+                )
                 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Import Data")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Text("Import transactions and goals from CSV")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
+                Divider()
+                    .background(RobinhoodColors.border.opacity(0.3))
+                    .padding(.leading, 56)
                 
-                Spacer()
+                // Export data
+                RobinhoodSettingRow(
+                    icon: "square.and.arrow.up",
+                    iconColor: RobinhoodColors.primary,
+                    title: "Export Data",
+                    subtitle: "Export your data to CSV format",
+                    action: { showExportPreview = true },
+                    actionIcon: "chevron.right"
+                )
                 
-                Button(action: { showImportSheet = true }) {
-                    Image(systemName: "chevron.right")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
+                Divider()
+                    .background(RobinhoodColors.border.opacity(0.3))
+                    .padding(.leading, 56)
+                
+                // Clear data
+                RobinhoodSettingRow(
+                    icon: "trash.fill",
+                    iconColor: RobinhoodColors.error,
+                    title: "Clear All Data",
+                    subtitle: "Permanently delete all data",
+                    action: { showClearDataAlert = true },
+                    actionIcon: "chevron.right"
+                )
             }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            
-            Divider()
-            
-            // Export data
-            HStack(spacing: 16) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.title2)
-                    .foregroundColor(AppColors.primary)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Export Data")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Text("Export your data to CSV format")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button(action: { showExportPreview = true }) {
-                    Image(systemName: "chevron.right")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            
-            // Clear data
-            HStack(spacing: 16) {
-                Image(systemName: "trash")
-                    .font(.title2)
-                    .foregroundColor(.red)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Clear All Data")
-                        .font(.body)
-                        .foregroundColor(.red)
-                    Text("Permanently delete all data")
-                        .font(.subheadline)
-                        .foregroundColor(.red.opacity(0.8))
-                }
-                
-                Spacer()
-                
-                Button(action: { showClearDataAlert = true }) {
-                    Image(systemName: "chevron.right")
-                        .font(.subheadline)
-                        .foregroundColor(.red)
-                }
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RobinhoodColors.cardBackground)
+            )
         }
+        .padding(.bottom, 24)
     }
     
     // MARK: - About Section
     private var aboutSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Section header
-            HStack {
-                Text("About")
-                    .font(.title2.bold())
-                    .foregroundColor(.primary)
-                    .padding(.leading, 4)
-                Spacer()
-            }
-            .padding(.bottom, AppPaddings.sectionTitleBottom)
+            Text("About")
+                .font(RobinhoodTypography.title2)
+                .fontWeight(.bold)
+                .foregroundColor(RobinhoodColors.textPrimary)
+                .padding(.bottom, 8)
             
-            // About app
+            // About card
             NavigationLink(destination: aboutView) {
-                HStack(spacing: 16) {
-                    Image(systemName: "info.circle")
-                        .font(.title2)
-                        .foregroundColor(AppColors.primary)
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("About ABC Budgeting")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                        Text("Version 1.0.0")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.vertical, 12)
-                .padding(.horizontal, 16)
+                RobinhoodSettingRow(
+                    icon: "info.circle.fill",
+                    iconColor: RobinhoodColors.primary,
+                    title: "About ABC Budgeting",
+                    subtitle: "Version 1.0.0",
+                    action: {},
+                    actionIcon: "chevron.right"
+                )
             }
+            .buttonStyle(PlainButtonStyle())
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RobinhoodColors.cardBackground)
+            )
         }
+        .padding(.bottom, 24)
     }
     
     // MARK: - Edit Name Sheet
@@ -382,7 +308,7 @@ struct SettingsView: View {
                 VStack(spacing: 8) {
                     Text("Edit Display Name")
                         .font(.title2.weight(.bold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     Text("Enter your preferred display name")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -393,7 +319,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Display Name")
                         .font(.headline.weight(.semibold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     
                     TextField("Enter your name", text: $tempDisplayName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -450,7 +376,7 @@ struct SettingsView: View {
                 VStack(spacing: 8) {
                     Text("Select Currency")
                         .font(.title2.weight(.bold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     Text("Choose your preferred currency")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -472,7 +398,7 @@ struct SettingsView: View {
                                     
                                     Text(currency)
                                         .font(.body.weight(.medium))
-                                        .foregroundColor(.primary)
+                                        .foregroundColor(RobinhoodColors.primary)
                                     
                                     Spacer()
                                     
@@ -517,7 +443,7 @@ struct SettingsView: View {
                 VStack(spacing: 8) {
                     Text("Set Baseline Balance")
                         .font(.title2.weight(.bold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     Text("Enter your starting account balance")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -528,7 +454,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Baseline Balance")
                         .font(.headline.weight(.semibold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     
                     TextField("0.00", text: $newBaselineBalance)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -586,7 +512,7 @@ struct SettingsView: View {
                 VStack(spacing: 8) {
                     Text("Export Data Preview")
                         .font(.title2.weight(.bold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     Text("Review your data before export")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -608,7 +534,7 @@ struct SettingsView: View {
                                 HStack {
                                     Text("Recent Transactions")
                                         .font(.headline.weight(.semibold))
-                                        .foregroundColor(.primary)
+                                        .foregroundColor(RobinhoodColors.primary)
                                     Spacer()
                                 }
                                 
@@ -625,7 +551,7 @@ struct SettingsView: View {
                                             VStack(alignment: .leading, spacing: 2) {
                                                 Text(transaction.title)
                                                     .font(.subheadline.weight(.medium))
-                                                    .foregroundColor(.primary)
+                                                    .foregroundColor(RobinhoodColors.primary)
                                                 Text(transaction.subtitle)
                                                     .font(.caption)
                                                     .foregroundColor(.secondary)
@@ -635,7 +561,7 @@ struct SettingsView: View {
                                             
                                             Text(transaction.amount, format: .currency(code: selectedCurrency.components(separatedBy: " ").first ?? "USD"))
                                                 .font(.subheadline.weight(.semibold))
-                                                .foregroundColor(transaction.isIncome ? .green : .red)
+                                                .foregroundColor(transaction.isIncome ? RobinhoodColors.primary : .red)
                                         }
                                         .padding(.vertical, 8)
                                         .padding(.horizontal, 12)
@@ -671,7 +597,7 @@ struct SettingsView: View {
                                 HStack {
                                     Text("Savings Goals")
                                         .font(.headline.weight(.semibold))
-                                        .foregroundColor(.primary)
+                                        .foregroundColor(RobinhoodColors.primary)
                                     Spacer()
                                 }
                                 
@@ -688,7 +614,7 @@ struct SettingsView: View {
                                             VStack(alignment: .leading, spacing: 2) {
                                                 Text(goal.name)
                                                     .font(.subheadline.weight(.medium))
-                                                    .foregroundColor(.primary)
+                                                    .foregroundColor(RobinhoodColors.primary)
                                                 Text("Target: \(goal.targetAmount, format: .currency(code: selectedCurrency.components(separatedBy: " ").first ?? "USD"))")
                                                     .font(.caption)
                                                     .foregroundColor(.secondary)
@@ -769,7 +695,7 @@ struct SettingsView: View {
                 VStack(spacing: 8) {
                     Text("Import Data")
                         .font(.title2.weight(.bold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     Text("Paste your CSV data below")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -780,7 +706,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("CSV Data")
                         .font(.headline.weight(.semibold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     
                     TextEditor(text: $importText)
                         .font(.body.monospaced())
@@ -789,7 +715,6 @@ struct SettingsView: View {
                         .background(
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color(.systemGray6))
-                                .stroke(importError != nil ? AppColors.primary : Color.clear, lineWidth: 2)
                         )
                         .frame(height: 200)
                 }
@@ -820,7 +745,6 @@ struct SettingsView: View {
                             .padding(.vertical, 12)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(AppColors.primary, lineWidth: 1)
                             )
                     }
                     
@@ -847,7 +771,7 @@ struct SettingsView: View {
                         HStack {
                             Text("Import Preview")
                                 .font(.headline.weight(.semibold))
-                                .foregroundColor(.primary)
+                                .foregroundColor(RobinhoodColors.primary)
                             Spacer()
                         }
                         
@@ -855,21 +779,21 @@ struct SettingsView: View {
                             HStack {
                                 Text("Transactions: \(preview.transactions.count)")
                                     .font(.subheadline)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(RobinhoodColors.primary)
                                 Spacer()
                             }
                             
                             HStack {
                                 Text("Goals: \(preview.goals.count)")
                                     .font(.subheadline)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(RobinhoodColors.primary)
                                 Spacer()
                             }
                             
                             HStack {
                                 Text("User Settings: \(preview.userSettings.displayName)")
                                     .font(.subheadline)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(RobinhoodColors.primary)
                                 Spacer()
                             }
                         }
@@ -936,7 +860,7 @@ struct SettingsView: View {
             VStack(spacing: 4) {
                 Text("\(count)")
                     .font(.title.weight(.bold))
-                    .foregroundColor(.primary)
+                                        .foregroundColor(RobinhoodColors.primary)
                 Text(title)
                     .font(.caption.weight(.medium))
                     .foregroundColor(.secondary)
@@ -950,7 +874,6 @@ struct SettingsView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
         )
     }
     
@@ -963,7 +886,7 @@ struct SettingsView: View {
             csv += "Transaction,\(transaction.title),\(transaction.subtitle),\(transaction.amount),\(transaction.iconName),\(transaction.iconColorName),\(transaction.iconBackgroundName),\(transaction.category.rawValue),\(transaction.isIncome),\(transaction.linkedGoalName ?? ""),\(date)\n"
         }
         
-        // Export goals - Fixed: GoalFormData doesn't have iconBackgroundName
+        // Export goals - Fixed: GoalFormItem doesn't have iconBackgroundName
         for goal in goals {
             let date = goal.targetDate.formatted(date: .abbreviated, time: .omitted)
             csv += "Goal,\(goal.name),\(goal.subtitle ?? ""),\(goal.targetAmount),\(goal.iconName),\(goal.iconColorName),\(goal.iconColorName),savings,false,\(goal.name),\(date)\n"
@@ -1007,8 +930,8 @@ struct SettingsView: View {
     }
     
     private func parseCSVContent(_ lines: [String]) throws -> ImportPreview {
-        var transactions: [Transaction] = []
-        var goals: [GoalFormData] = []
+        var transactions: [TransactionItem] = []
+        var goals: [GoalFormItem] = []
         var userSettings = ImportPreview.UserSettingsImport(
             displayName: "User Name",
             preferredCurrency: "USD (US Dollar)",
@@ -1025,7 +948,7 @@ struct SettingsView: View {
                 
                 if type == "Transaction" {
                     // Parse transaction
-                    let transaction = Transaction(
+                    let transaction = TransactionItem(
                         id: UUID(),
                         title: columns[1],
                         subtitle: columns[2],
@@ -1033,15 +956,15 @@ struct SettingsView: View {
                         iconName: columns[4],
                         iconColorName: columns[5],
                         iconBackgroundName: columns[6],
-                        category: TransactionCategory(rawValue: columns[7]) ?? .other,
+                        category: TransactionCategoryType(rawValue: columns[7]) ?? .other,
                         isIncome: columns[8] == "true",
                         linkedGoalName: columns[9].isEmpty ? nil : columns[9],
                         date: Date()
                     )
                     transactions.append(transaction)
                 } else if type == "Goal" {
-                    // Parse goal - Fixed: GoalFormData doesn't have iconBackgroundName
-                    let goal = GoalFormData(
+                    // Parse goal - Fixed: GoalFormItem doesn't have iconBackgroundName
+                    let goal = GoalFormItem(
                         name: columns[1],
                         subtitle: columns[2].isEmpty ? nil : columns[2],
                         targetAmount: Double(columns[3]) ?? 0.0,
@@ -1133,7 +1056,7 @@ struct SettingsView: View {
                 VStack(spacing: 16) {
                     Text("ABC Budgeting")
                         .font(.largeTitle.weight(.bold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                     
                     Text("Smart financial planning made simple")
                         .font(.title3)
@@ -1154,7 +1077,6 @@ struct SettingsView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                 )
                 
                 Spacer()
@@ -1181,7 +1103,7 @@ struct SettingsView: View {
             
             Text(title)
                 .font(.body.weight(.medium))
-                .foregroundColor(.primary)
+                                        .foregroundColor(RobinhoodColors.primary)
             
             Spacer()
             
@@ -1189,6 +1111,103 @@ struct SettingsView: View {
                 .font(.body)
                 .foregroundColor(.secondary)
         }
+    }
+}
+
+// MARK: - Robinhood Setting Row Components
+
+struct RobinhoodSettingRow: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let subtitle: String
+    let action: () -> Void
+    let actionIcon: String
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 16) {
+                // Icon
+                ZStack {
+                    Circle()
+                        .fill(iconColor.opacity(0.15))
+                        .frame(width: 40, height: 40)
+                    
+                    Image(systemName: icon)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(iconColor)
+                }
+                
+                // Content
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(RobinhoodTypography.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(RobinhoodColors.textPrimary)
+                        .multilineTextAlignment(.leading)
+                    
+                    Text(subtitle)
+                        .font(RobinhoodTypography.body)
+                        .foregroundColor(RobinhoodColors.textSecondary)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                // Action icon
+                Image(systemName: actionIcon)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(RobinhoodColors.textTertiary)
+            }
+            .padding(.vertical, 16)
+            .padding(.horizontal, 20)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct RobinhoodToggleRow: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let subtitle: String
+    @Binding var isOn: Bool
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            // Icon
+            ZStack {
+                Circle()
+                    .fill(iconColor.opacity(0.15))
+                    .frame(width: 40, height: 40)
+                
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(iconColor)
+            }
+            
+            // Content
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(RobinhoodTypography.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(RobinhoodColors.textPrimary)
+                    .multilineTextAlignment(.leading)
+                
+                Text(subtitle)
+                    .font(RobinhoodTypography.body)
+                    .foregroundColor(RobinhoodColors.textSecondary)
+                    .multilineTextAlignment(.leading)
+            }
+            
+            Spacer()
+            
+            // Toggle
+            Toggle("", isOn: $isOn)
+                .toggleStyle(SwitchToggleStyle(tint: RobinhoodColors.success))
+        }
+        .padding(.vertical, 16)
+        .padding(.horizontal, 20)
     }
 }
 

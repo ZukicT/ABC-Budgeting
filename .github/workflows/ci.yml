@@ -1,0 +1,239 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Code Quality and Linting
+  lint:
+    name: Code Quality
+    runs-on: macos-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+        
+    - name: Install SwiftLint
+      run: |
+        brew install swiftlint
+        
+    - name: Run SwiftLint
+      run: |
+        swiftlint lint --reporter github-actions-logging
+        
+    - name: Check code formatting
+      run: |
+        swiftlint lint --reporter github-actions-logging --strict
+
+  # Build and Test
+  build-and-test:
+    name: Build and Test
+    runs-on: macos-latest
+    needs: lint
+    strategy:
+      matrix:
+        destination: ['platform=iOS Simulator,name=iPhone 15,OS=18.0', 'platform=iOS Simulator,name=iPad Air (5th generation),OS=18.0']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+        
+    - name: Cache Swift Package Manager
+      uses: actions/cache@v3
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+          
+    - name: Install dependencies
+      run: |
+        xcodebuild -resolvePackageDependencies -project "ABC Budgeting.xcodeproj"
+        
+    - name: Build project
+      run: |
+        xcodebuild build \
+          -project "ABC Budgeting.xcodeproj" \
+          -scheme "ABC Budgeting" \
+          -destination "${{ matrix.destination }}" \
+          -configuration Debug
+          
+    - name: Run unit tests
+      run: |
+        xcodebuild test \
+          -project "ABC Budgeting.xcodeproj" \
+          -scheme "ABC Budgeting" \
+          -destination "${{ matrix.destination }}" \
+          -configuration Debug \
+          -enableCodeCoverage YES
+          
+    - name: Generate code coverage report
+      run: |
+        xcrun xccov view --report --json DerivedData/Logs/Test/*.xcresult > coverage.json
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: coverage.json
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  # Security Scan
+  security-scan:
+    name: Security Scan
+    runs-on: macos-latest
+    needs: lint
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+        
+    - name: Install security tools
+      run: |
+        brew install semgrep
+        
+    - name: Run security scan
+      run: |
+        semgrep --config=auto --json --output=semgrep-results.json .
+        
+    - name: Upload security scan results
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-scan-results
+        path: semgrep-results.json
+
+  # Performance Testing
+  performance-test:
+    name: Performance Test
+    runs-on: macos-latest
+    needs: build-and-test
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+        
+    - name: Run performance tests
+      run: |
+        xcodebuild test \
+          -project "ABC Budgeting.xcodeproj" \
+          -scheme "ABC Budgeting" \
+          -destination "platform=iOS Simulator,name=iPhone 15,OS=18.0" \
+          -configuration Release \
+          -testPlan PerformanceTests
+
+  # Deploy to TestFlight (only on main branch)
+  deploy-testflight:
+    name: Deploy to TestFlight
+    runs-on: macos-latest
+    needs: [build-and-test, security-scan, performance-test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+        
+    - name: Install Apple Certificate
+      env:
+        BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+        P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+        KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      run: |
+        # Create variables
+        CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+        KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+        
+        # Import certificate from secrets
+        echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
+        
+        # Create temporary keychain
+        security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+        security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        
+        # Import certificate to keychain
+        security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+        security list-keychain -d user -s $KEYCHAIN_PATH
+        
+    - name: Install Provisioning Profile
+      env:
+        PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+      run: |
+        PROVISIONING_PROFILE_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+        echo -n "$PROVISIONING_PROFILE_BASE64" | base64 --decode --output $PROVISIONING_PROFILE_PATH
+        mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+        cp $PROVISIONING_PROFILE_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+        
+    - name: Build and Archive
+      run: |
+        xcodebuild archive \
+          -project "ABC Budgeting.xcodeproj" \
+          -scheme "ABC Budgeting" \
+          -configuration Release \
+          -archivePath "ABC Budgeting.xcarchive" \
+          -destination "generic/platform=iOS" \
+          CODE_SIGN_STYLE=Manual \
+          PROVISIONING_PROFILE_SPECIFIER="${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}" \
+          CODE_SIGN_IDENTITY="${{ secrets.CODE_SIGN_IDENTITY }}"
+          
+    - name: Export IPA
+      run: |
+        xcodebuild -exportArchive \
+          -archivePath "ABC Budgeting.xcarchive" \
+          -exportPath "ABC Budgeting Export" \
+          -exportOptionsPlist "ExportOptions.plist"
+          
+    - name: Deploy to TestFlight
+      env:
+        APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+        APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+        APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+      run: |
+        xcrun altool --upload-app \
+          --type ios \
+          --file "ABC Budgeting Export/ABC Budgeting.ipa" \
+          --apiKey "$APP_STORE_CONNECT_API_KEY_ID" \
+          --apiIssuer "$APP_STORE_CONNECT_API_ISSUER_ID"
+
+  # Notify on completion
+  notify:
+    name: Notify
+    runs-on: macos-latest
+    needs: [build-and-test, security-scan, performance-test]
+    if: always()
+    
+    steps:
+    - name: Notify success
+      if: needs.build-and-test.result == 'success' && needs.security-scan.result == 'success' && needs.performance-test.result == 'success'
+      run: |
+        echo "✅ All checks passed successfully!"
+        
+    - name: Notify failure
+      if: needs.build-and-test.result == 'failure' || needs.security-scan.result == 'failure' || needs.performance-test.result == 'failure'
+      run: |
+        echo "❌ Some checks failed. Please review the logs."

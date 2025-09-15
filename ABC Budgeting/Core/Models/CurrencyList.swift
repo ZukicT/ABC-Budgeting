@@ -1,31 +1,38 @@
 import Foundation
 
 struct CurrencyList {
-    static let all: [String] = [
+    static let all = [
         "USD (US Dollar)",
         "EUR (Euro)",
         "GBP (British Pound)",
         "JPY (Japanese Yen)",
-        "AUD (Australian Dollar)",
         "CAD (Canadian Dollar)",
+        "AUD (Australian Dollar)",
         "CHF (Swiss Franc)",
         "CNY (Chinese Yuan)",
-        "HKD (Hong Kong Dollar)",
+        "SEK (Swedish Krona)",
         "NZD (New Zealand Dollar)",
-        "SGD (Singapore Dollar)",
-        "INR (Indian Rupee)",
         "MXN (Mexican Peso)",
+        "SGD (Singapore Dollar)",
+        "HKD (Hong Kong Dollar)",
+        "NOK (Norwegian Krone)",
+        "TRY (Turkish Lira)",
+        "RUB (Russian Ruble)",
+        "INR (Indian Rupee)",
         "BRL (Brazilian Real)",
         "ZAR (South African Rand)",
-        "AED (UAE Dirham)",
-        "SAR (Saudi Riyal)",
-        "KRW (South Korean Won)",
-        "PLN (Polish Złoty)",
-        "SEK (Swedish Krona)",
-        "NOK (Norwegian Krone)",
-        "DKK (Danish Krone)",
-        "ILS (Israeli Shekel)",
-        "TRY (Turkish Lira)",
-        "RUB (Russian Ruble)"
+        "KRW (South Korean Won)"
     ]
-} 
+    
+    static func getCurrencyCode(from fullName: String) -> String {
+        let components = fullName.components(separatedBy: " ")
+        return components.first ?? "USD"
+    }
+    
+    static func getCurrencySymbol(for code: String) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = code
+        return formatter.currencySymbol ?? "$"
+    }
+}

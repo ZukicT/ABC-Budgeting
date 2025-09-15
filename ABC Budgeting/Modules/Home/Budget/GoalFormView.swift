@@ -11,7 +11,7 @@ struct GoalFormView: View {
     @State private var notes: String = ""
     @State private var iconName: String = "target"
     @State private var iconColor: Color = .blue
-    var onSave: (GoalFormData) -> Void
+    var onSave: (GoalFormItem) -> Void
 
     var body: some View {
         NavigationStack {
@@ -77,7 +77,7 @@ struct GoalFormView: View {
                         saveButtonSection
                     }
                     .padding(.horizontal, AppPaddings.section)
-                    .padding(.bottom, AppPaddings.large)
+                    .padding(.bottom, AppPaddings.lg)
                 }
                 .background(AppColors.background)
                 .contentShape(Rectangle())
@@ -91,7 +91,7 @@ struct GoalFormView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Savings Goal Details")
                 .font(.title2.weight(.bold))
-                .foregroundColor(.primary)
+                .foregroundColor(RobinhoodColors.primary)
             Text("Create a new savings goal to track your progress")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
@@ -107,7 +107,7 @@ struct GoalFormView: View {
                     .font(.title2)
                 Text("Goal Name")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             TextField("e.g. Vacation, New Car, Emergency Fund", text: $name)
@@ -130,7 +130,7 @@ struct GoalFormView: View {
                     .font(.title2)
                 Text("Description")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             TextField("e.g. Trip to Italy, Down payment for house", text: $subtitle)
@@ -158,7 +158,7 @@ struct GoalFormView: View {
                     .font(.title2)
                 Text("Target Amount")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             ZStack(alignment: .leading) {
@@ -175,7 +175,7 @@ struct GoalFormView: View {
                     TextField("0.00", text: $targetAmount)
                         .keyboardType(.decimalPad)
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                         .multilineTextAlignment(.leading)
                 }
                 .padding(.vertical, 20)
@@ -209,7 +209,7 @@ struct GoalFormView: View {
                     .font(.title2)
                 Text("Currently Saved")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             ZStack(alignment: .leading) {
@@ -226,7 +226,7 @@ struct GoalFormView: View {
                     TextField("0.00", text: $savedAmount)
                         .keyboardType(.decimalPad)
                         .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                         .multilineTextAlignment(.leading)
                 }
                 .padding(.vertical, 16)
@@ -255,7 +255,7 @@ struct GoalFormView: View {
                     .font(.title2)
                 Text("Target Date")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             DatePicker("", selection: $targetDate, displayedComponents: .date)
@@ -310,7 +310,7 @@ struct GoalFormView: View {
                     .font(.title2)
                 Text("Goal Icon")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             // Icon selection grid - matching AddTransactionView style
@@ -337,7 +337,7 @@ struct GoalFormView: View {
                                 
                                 Text(icon)
                                     .font(.caption.weight(.medium))
-                                    .foregroundColor(iconName == icon ? iconColor : .primary)
+                                    .foregroundColor(iconName == icon ? iconColor : RobinhoodColors.primary)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.center)
                             }
@@ -391,7 +391,7 @@ struct GoalFormView: View {
                     .font(.title2)
                 Text("Icon Color")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             VStack(spacing: 16) {
@@ -448,7 +448,7 @@ struct GoalFormView: View {
                     .font(.title2)
                 Text("Notes")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             TextField("Add notes about your goal...", text: $notes, axis: .vertical)
@@ -509,19 +509,19 @@ struct GoalFormView: View {
     
     private var quickColors: [Color] {
         [
-            .blue, .green, .orange, .red, .purple, .pink,
+            .blue, RobinhoodColors.primary, .orange, .red, .purple, .pink,
             .mint, .teal, .indigo, .yellow, .brown, .gray
         ]
     }
     
     // Mock selectedCategory for icon section compatibility
-    private var selectedCategory: TransactionCategory {
+    private var selectedCategory: TransactionCategoryType {
         .savings // Default to savings category for goals
     }
 
     private func save() {
         if let target = Double(targetAmount), let saved = Double(savedAmount) {
-            onSave(GoalFormData(
+            onSave(GoalFormItem(
                 name: name,
                 subtitle: subtitle.isEmpty ? nil : subtitle,
                 targetAmount: target,

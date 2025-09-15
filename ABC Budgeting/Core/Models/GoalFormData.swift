@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct GoalFormData: Hashable, Identifiable {
+struct GoalFormItem: Hashable, Identifiable {
     var id: String { name }
     let name: String
     let subtitle: String?

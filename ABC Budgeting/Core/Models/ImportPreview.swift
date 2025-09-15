@@ -1,8 +1,8 @@
 import Foundation
 
 struct ImportPreview {
-    let transactions: [Transaction]
-    let goals: [GoalFormData]
+    let transactions: [TransactionItem]
+    let goals: [GoalFormItem]
     let userSettings: UserSettingsImport
     
     struct UserSettingsImport {

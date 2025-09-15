@@ -1,13 +1,91 @@
 import SwiftUI
 
+// MARK: - Search Bar Component
+struct SearchBarView: View {
+    @Binding var searchText: String
+    @Binding var isSearching: Bool
+    let onSearch: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.secondary)
+            
+            if isSearching {
+                HStack(spacing: 8) {
+                    TextField("Search transactions", text: $searchText)
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .font(.system(size: 16))
+                        .submitLabel(.search)
+                        .onSubmit {
+                            onSearch()
+                        }
+                        .onTapGesture {
+                            // Ensure the field is focused when tapped
+                        }
+                    
+                    if !searchText.isEmpty {
+                        Button(action: {
+                            searchText = ""
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.secondary)
+                        }
+                        .accessibilityLabel("Clear search")
+                    }
+                    
+                    Button("Cancel") {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            searchText = ""
+                            isSearching = false
+                        }
+                        hideKeyboard()
+                    }
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.accentColor)
+                }
+                .transition(.opacity.combined(with: .scale))
+            } else {
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isSearching = true
+                    }
+                }) {
+                    Text("Search transactions")
+                        .font(.system(size: 16))
+                        .foregroundColor(.secondary)
+                }
+                .transition(.opacity.combined(with: .scale))
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color(.systemGray6).opacity(0.1))
+        )
+        .frame(maxWidth: 350)
+        .animation(.easeInOut(duration: 0.2), value: isSearching)
+    }
+    
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
 struct MainTabCoordinator: View {
     @State private var displayName: String = UserDefaults.standard.string(forKey: "displayName") ?? "Display Name"
     @State private var selectedTab: Int = 0 // Track selected tab
     @StateObject private var notificationService = NotificationService()
     @State private var showNotifications = false
-    @State private var goals: [GoalFormData] = [
+    @State private var showSettings = false
+    @State private var searchText = ""
+    @State private var isSearching = false
+    @State private var goals: [GoalFormItem] = [
         // Hardcoded mock goal to ensure it's always there
-        GoalFormData(
+        GoalFormItem(
             name: "Vacation Fund",
             subtitle: "Save for summer vacation",
             targetAmount: 2000,
@@ -17,7 +95,7 @@ struct MainTabCoordinator: View {
             iconName: "airplane",
             iconColorName: "blue"
         ),
-        GoalFormData(
+        GoalFormItem(
             name: "New Laptop",
             subtitle: "Save for new computer",
             targetAmount: 1500,
@@ -29,9 +107,11 @@ struct MainTabCoordinator: View {
         )
     ]
     
-    @State private var transactions: [Transaction] = [
+    @State private var loans: [LoanItem] = LoanItem.makeMockData()
+    
+    @State private var transactions: [TransactionItem] = [
         // Hardcoded mock transactions
-        Transaction(
+        TransactionItem(
             id: UUID(),
             title: "Salary",
             subtitle: "Monthly income",
@@ -44,7 +124,7 @@ struct MainTabCoordinator: View {
             linkedGoalName: nil,
             date: Date()
         ),
-        Transaction(
+        TransactionItem(
             id: UUID(),
             title: "Groceries",
             subtitle: "Weekly shopping",
@@ -57,7 +137,7 @@ struct MainTabCoordinator: View {
             linkedGoalName: nil,
             date: Date()
         ),
-        Transaction(
+        TransactionItem(
             id: UUID(),
             title: "Netflix",
             subtitle: "Monthly subscription",
@@ -73,15 +153,8 @@ struct MainTabCoordinator: View {
     ]
 
     var body: some View {
-        VStack(spacing: 0) {
-            MainHeaderView(
-                userName: displayName, 
-                showNotificationDot: notificationService.unreadCount > 0,
-                onNotificationTap: {
-                    showNotifications = true
-                }
-            )
-            TabView(selection: $selectedTab) {
+        TabView(selection: $selectedTab) {
+            NavigationView {
                 OverviewView(
                     transactions: transactions, 
                     goals: goals, 
@@ -93,40 +166,217 @@ struct MainTabCoordinator: View {
                         notificationService.addNewTransactionNotification(for: newTransaction)
                     }
                 )
-                    .onAppear {
-                        print("DEBUG: OverviewView appeared with \(goals.count) goals")
+                .onAppear {
+                    // View appeared
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack(spacing: 16) {
+                            // Notification Button
+                            Button(action: {
+                                showNotifications = true
+                            }) {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(systemName: "bell")
+                                        .font(.system(size: 20, weight: .medium))
+                                        .foregroundColor(RobinhoodColors.primary)
+                                    if notificationService.unreadCount > 0 {
+                                        Circle()
+                                            .fill(Color.red)
+                                            .frame(width: 8, height: 8)
+                                            .offset(x: 0, y: 2)
+                                    }
+                                }
+                            }
+                            .accessibilityLabel("Notifications")
+                            .accessibilityAddTraits(.isButton)
+                            
+                            // Settings Button
+                            Button(action: {
+                                showSettings = true
+                            }) {
+                                Image(systemName: "gearshape")
+                                    .font(.system(size: 20, weight: .medium))
+                                    .foregroundColor(RobinhoodColors.primary)
+                            }
+                            .accessibilityLabel("Settings")
+                            .accessibilityAddTraits(.isButton)
+                        }
                     }
-                    .tabItem {
-                        Label("Overview", systemImage: "house")
-                    }
-                    .tag(0)
-                TransactionsView(transactions: $transactions, goals: $goals)
-                    .tabItem {
-                        Label("Transactions", systemImage: "text.rectangle.page")
-                    }
-                    .tag(1)
-                BudgetView(goals: $goals)
-                    .tabItem {
-                        Label("Budget", systemImage: "creditcard")
-                    }
-                    .tag(2)
-                SettingsView(transactions: $transactions, goals: $goals)
-                    .tabItem {
-                        Label("Settings", systemImage: "gearshape")
-                    }
-                    .tag(3)
+                }
             }
-            .accentColor(AppColors.primary)
-            .tint(AppColors.primary)
-            .ignoresSafeArea(.keyboard)
-            .background(AppColors.background)
+            .tabItem {
+                Label("Overview", systemImage: "house")
+            }
+            .tag(0)
+            
+            NavigationView {
+                TransactionsView(searchText: $searchText, isSearching: $isSearching)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        SearchBarView(
+                            searchText: $searchText,
+                            isSearching: $isSearching,
+                            onSearch: performSearch
+                        )
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack(spacing: 16) {
+                            // Notification Button
+                            Button(action: {
+                                showNotifications = true
+                            }) {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(systemName: "bell")
+                                        .font(.system(size: 20, weight: .medium))
+                                        .foregroundColor(RobinhoodColors.primary)
+                                    if notificationService.unreadCount > 0 {
+                                        Circle()
+                                            .fill(Color.red)
+                                            .frame(width: 8, height: 8)
+                                            .offset(x: 0, y: 2)
+                                    }
+                                }
+                            }
+                            .accessibilityLabel("Notifications")
+                            .accessibilityAddTraits(.isButton)
+                            
+                            // Settings Button
+                            Button(action: {
+                                showSettings = true
+                            }) {
+                                Image(systemName: "gearshape")
+                                    .font(.system(size: 20, weight: .medium))
+                                    .foregroundColor(RobinhoodColors.primary)
+                            }
+                            .accessibilityLabel("Settings")
+                            .accessibilityAddTraits(.isButton)
+                        }
+                    }
+                }
+            }
+            .tabItem {
+                Label("Transactions", systemImage: "text.rectangle.page")
+            }
+            .tag(1)
+            
+            NavigationView {
+                BudgetView(goals: $goals)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack(spacing: 16) {
+                            // Notification Button
+                            Button(action: {
+                                showNotifications = true
+                            }) {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(systemName: "bell")
+                                        .font(.system(size: 20, weight: .medium))
+                                        .foregroundColor(RobinhoodColors.primary)
+                                    if notificationService.unreadCount > 0 {
+                                        Circle()
+                                            .fill(Color.red)
+                                            .frame(width: 8, height: 8)
+                                            .offset(x: 0, y: 2)
+                                    }
+                                }
+                            }
+                            .accessibilityLabel("Notifications")
+                            .accessibilityAddTraits(.isButton)
+                            
+                            // Settings Button
+                            Button(action: {
+                                showSettings = true
+                            }) {
+                                Image(systemName: "gearshape")
+                                    .font(.system(size: 20, weight: .medium))
+                                    .foregroundColor(RobinhoodColors.primary)
+                            }
+                            .accessibilityLabel("Settings")
+                            .accessibilityAddTraits(.isButton)
+                        }
+                    }
+                }
+            }
+            .tabItem {
+                Label("Budget", systemImage: "creditcard")
+            }
+            .tag(2)
+            
+            NavigationView {
+                LoansView(searchText: $searchText, isSearching: $isSearching)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        SearchBarView(
+                            searchText: $searchText,
+                            isSearching: $isSearching,
+                            onSearch: performSearch
+                        )
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack(spacing: 16) {
+                            // Notification Button
+                            Button(action: {
+                                showNotifications = true
+                            }) {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(systemName: "bell")
+                                        .font(.system(size: 20, weight: .medium))
+                                        .foregroundColor(RobinhoodColors.primary)
+                                    if notificationService.unreadCount > 0 {
+                                        Circle()
+                                            .fill(Color.red)
+                                            .frame(width: 8, height: 8)
+                                            .offset(x: 0, y: 2)
+                                    }
+                                }
+                            }
+                            .accessibilityLabel("Notifications")
+                            .accessibilityAddTraits(.isButton)
+                            
+                            // Settings Button
+                            Button(action: {
+                                showSettings = true
+                            }) {
+                                Image(systemName: "gearshape")
+                                    .font(.system(size: 20, weight: .medium))
+                                    .foregroundColor(RobinhoodColors.primary)
+                            }
+                            .accessibilityLabel("Settings")
+                            .accessibilityAddTraits(.isButton)
+                        }
+                    }
+                }
+            }
+            .tabItem {
+                Label("Loans", systemImage: "banknote")
+            }
+            .tag(3)
         }
-        .background(Color.white.ignoresSafeArea(edges: .top))
+        .accentColor(AppColors.primary)
+        .tint(AppColors.primary)
+        .ignoresSafeArea(.keyboard)
+        .background(AppColors.background)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             displayName = UserDefaults.standard.string(forKey: "displayName") ?? "Display Name"
         }
         .sheet(isPresented: $showNotifications) {
             NotificationView(notificationService: notificationService)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.regularMaterial)
+                .presentationCornerRadius(16)
+                .presentationCompactAdaptation(.sheet)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView(transactions: $transactions, goals: $goals)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.regularMaterial)
+                .presentationCornerRadius(16)
+                .presentationCompactAdaptation(.sheet)
         }
         .onAppear {
             // Add some demo notifications on first launch
@@ -169,5 +419,18 @@ struct MainTabCoordinator: View {
                 notificationService.addUpcomingTransactionNotification(for: transaction)
             }
         }
+    }
+    
+    // Perform search functionality
+    private func performSearch() {
+        // This function will be called when the user submits the search
+        // The actual filtering logic will be implemented in the TransactionsView
+        // For now, we just dismiss the keyboard
+        hideKeyboard()
+    }
+    
+    // Helper function to hide keyboard
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 } 

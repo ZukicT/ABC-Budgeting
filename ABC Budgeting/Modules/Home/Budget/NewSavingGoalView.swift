@@ -9,12 +9,12 @@ struct NewSavingGoalView: View {
     @State private var savedAmount: String = ""
     @State private var targetDate: Date = Date()
     @State private var notes: String = ""
-    @State private var iconName: String = TransactionCategory.essentials.symbol
-    @State private var iconColorName: String = TransactionCategory.essentials.color.toHex()
-    @State private var selectedCategory: TransactionCategory = .essentials
+    @State private var iconName: String = TransactionCategoryType.essentials.symbol
+    @State private var iconColorName: String = TransactionCategoryType.essentials.color.toHex()
+    @State private var selectedCategory: TransactionCategoryType = .essentials
     @State private var notifyMe: Bool = false
     @State private var reminderFrequency: RecurringFrequency = .monthly
-    var onSave: (GoalFormData) -> Void
+    var onSave: (GoalFormItem) -> Void
 
     var body: some View {
         NavigationStack {
@@ -80,7 +80,7 @@ struct NewSavingGoalView: View {
                         saveButtonSection
                     }
                     .padding(.horizontal, AppPaddings.section)
-                    .padding(.bottom, AppPaddings.large)
+                    .padding(.bottom, AppPaddings.lg)
                 }
                 .background(AppColors.background)
                 .contentShape(Rectangle())
@@ -94,7 +94,7 @@ struct NewSavingGoalView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Goal Details")
                 .font(.title2.weight(.bold))
-                .foregroundColor(.primary)
+                .foregroundColor(RobinhoodColors.primary)
             Text("Fill in the details below to create your saving goal")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
@@ -110,7 +110,7 @@ struct NewSavingGoalView: View {
                     .font(.title2)
                 Text("Goal Name")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             TextField("e.g. Vacation, New Car, Emergency Fund", text: $goalName)
@@ -133,7 +133,7 @@ struct NewSavingGoalView: View {
                     .font(.title2)
                 Text("Description")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             TextField("e.g. Trip to Italy, Tesla Model 3", text: $subtitle)
@@ -161,7 +161,7 @@ struct NewSavingGoalView: View {
                     .font(.title2)
                 Text("Target Amount")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             ZStack(alignment: .leading) {
@@ -178,7 +178,7 @@ struct NewSavingGoalView: View {
                     TextField("0.00", text: $targetAmount)
                         .keyboardType(.decimalPad)
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                         .multilineTextAlignment(.leading)
                 }
                 .padding(.vertical, 20)
@@ -200,7 +200,7 @@ struct NewSavingGoalView: View {
                     .font(.title2)
                 Text("Current Saved")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             ZStack(alignment: .leading) {
@@ -217,7 +217,7 @@ struct NewSavingGoalView: View {
                     TextField("0.00", text: $savedAmount)
                         .keyboardType(.decimalPad)
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                         .multilineTextAlignment(.leading)
                 }
                 .padding(.vertical, 20)
@@ -234,7 +234,7 @@ struct NewSavingGoalView: View {
                     .font(.title2)
                 Text("Target Date")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             DatePicker("", selection: $targetDate, displayedComponents: .date)
@@ -251,13 +251,13 @@ struct NewSavingGoalView: View {
                     .font(.title2)
                 Text("Icon & Category")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             // Category row
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppPaddings.small) {
-                    ForEach(TransactionCategory.allCases) { cat in
+                HStack(spacing: AppPaddings.sm) {
+                    ForEach(TransactionCategoryType.allCases) { cat in
                         Button(action: {
                             selectedCategory = cat
                             iconName = cat.symbol
@@ -274,7 +274,7 @@ struct NewSavingGoalView: View {
                                 }
                                 Text(cat.label)
                                     .font(.caption)
-                                    .foregroundColor(selectedCategory == cat ? .white : .primary)
+                                    .foregroundColor(selectedCategory == cat ? .white : RobinhoodColors.primary)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
                             }
@@ -294,7 +294,7 @@ struct NewSavingGoalView: View {
             
             // Icon row for selected category
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppPaddings.small) {
+                HStack(spacing: AppPaddings.sm) {
                     ForEach(selectedCategory.icons, id: \.self) { icon in
                         Button(action: {
                             iconName = icon
@@ -337,13 +337,13 @@ struct NewSavingGoalView: View {
                     .font(.title2)
                 Text("Reminders")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             Toggle(isOn: $notifyMe) {
                 Text("Remind Me")
                     .font(.body)
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             .tint(AppColors.secondary)
             
@@ -352,7 +352,12 @@ struct NewSavingGoalView: View {
                     Text("Frequency")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    BrandSegmentedPicker(selection: $reminderFrequency, options: RecurringFrequency.allCases, accessibilityLabel: "Reminder Frequency")
+                    Picker("Frequency", selection: $reminderFrequency) {
+                        ForEach(RecurringFrequency.allCases) { frequency in
+                            Text(frequency.label).tag(frequency)
+                        }
+                    }
+                    .pickerStyle(.segmented)
                         .padding(.horizontal, 4)
                 }
             }
@@ -367,7 +372,7 @@ struct NewSavingGoalView: View {
                     .font(.title2)
                 Text("Notes")
                     .font(.headline.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(RobinhoodColors.primary)
             }
             
             TextField("Add a note about this goal...", text: $notes, axis: .vertical)
@@ -401,7 +406,7 @@ struct NewSavingGoalView: View {
 
     private func save() {
         if let target = Double(targetAmount), let saved = Double(savedAmount) {
-            onSave(GoalFormData(
+            onSave(GoalFormItem(
                 name: goalName,
                 subtitle: subtitle.isEmpty ? nil : subtitle,
                 targetAmount: target,
@@ -415,4 +420,4 @@ struct NewSavingGoalView: View {
         }
     }
 } 
-// You can reuse GoalFormData from GoalFormView 
+// You can reuse GoalFormItem from GoalFormView 

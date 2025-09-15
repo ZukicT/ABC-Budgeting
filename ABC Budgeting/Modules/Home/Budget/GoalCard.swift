@@ -12,8 +12,8 @@ struct GoalCard: View {
     var iconColor: Color { Color.fromName(iconColorName) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppPaddings.small) {
-            HStack(alignment: .center, spacing: AppPaddings.small) {
+        VStack(alignment: .leading, spacing: AppPaddings.sm) {
+            HStack(alignment: .center, spacing: AppPaddings.sm) {
                 ZStack {
                     Circle()
                         .fill(iconColor.opacity(0.18))
@@ -25,7 +25,7 @@ struct GoalCard: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .foregroundColor(RobinhoodColors.primary)
                         .lineLimit(1)
                     if let subtitle = subtitle {
                         Text(subtitle)
@@ -43,7 +43,7 @@ struct GoalCard: View {
             HStack {
                 Text("$\(Int(savedAmount)) saved")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(Color(hex: "07e95e"))
+                    .foregroundColor(AppColors.secondary)
                 Spacer()
                 Text("Goal: $\(Int(goalAmount))")
                     .font(.subheadline)

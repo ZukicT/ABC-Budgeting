@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct Transaction: Identifiable, Hashable {
+struct TransactionItem: Identifiable, Hashable {
     let id: UUID
     let title: String
     let subtitle: String
@@ -8,7 +8,7 @@ struct Transaction: Identifiable, Hashable {
     let iconName: String
     let iconColorName: String
     let iconBackgroundName: String
-    let category: TransactionCategory
+    let category: TransactionCategoryType
     let isIncome: Bool
     let linkedGoalName: String?
     let date: Date
@@ -16,21 +16,21 @@ struct Transaction: Identifiable, Hashable {
     var iconColor: Color { Color.fromName(iconColorName) }
     var iconBackground: Color { Color.fromName(iconBackgroundName) }
 
-    static func makeMockData() -> [Transaction] {
+    static func makeMockData() -> [TransactionItem] {
         let now = Date()
         let calendar = Calendar.current
         return [
-            Transaction(id: UUID(), title: "Adobe Illustrator", subtitle: "Subscription fee", amount: 32, iconName: "cart", iconColorName: "orange", iconBackgroundName: "orange.opacity15", category: .essentials, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -2, to: now)!),
-            Transaction(id: UUID(), title: "Spotify", subtitle: "Music subscription", amount: 10, iconName: "music.note", iconColorName: "purple", iconBackgroundName: "purple.opacity15", category: .leisure, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -10, to: now)!),
-            Transaction(id: UUID(), title: "Savings Deposit", subtitle: "Monthly savings", amount: 100, iconName: "banknote", iconColorName: "green", iconBackgroundName: "green.opacity15", category: .savings, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -15, to: now)!),
-            Transaction(id: UUID(), title: "Salary", subtitle: "Monthly income", amount: 2000, iconName: "dollarsign.circle", iconColorName: "mint", iconBackgroundName: "mint.opacity15", category: .income, isIncome: true, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -20, to: now)!),
-            Transaction(id: UUID(), title: "Electric Bill", subtitle: "Utilities", amount: 60, iconName: "doc.text", iconColorName: "red", iconBackgroundName: "red.opacity15", category: .bills, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -25, to: now)!),
-            Transaction(id: UUID(), title: "Miscellaneous", subtitle: "Other expense", amount: 25, iconName: "ellipsis", iconColorName: "gray", iconBackgroundName: "gray.opacity15", category: .other, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -30, to: now)!)
+            TransactionItem(id: UUID(), title: "Adobe Illustrator", subtitle: "Subscription fee", amount: 32, iconName: "cart", iconColorName: "orange", iconBackgroundName: "orange.opacity15", category: .essentials, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -2, to: now)!),
+            TransactionItem(id: UUID(), title: "Spotify", subtitle: "Music subscription", amount: 10, iconName: "music.note", iconColorName: "purple", iconBackgroundName: "purple.opacity15", category: .leisure, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -10, to: now)!),
+            TransactionItem(id: UUID(), title: "Savings Deposit", subtitle: "Monthly savings", amount: 100, iconName: "banknote", iconColorName: "green", iconBackgroundName: "green.opacity15", category: .savings, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -15, to: now)!),
+            TransactionItem(id: UUID(), title: "Salary", subtitle: "Monthly income", amount: 2000, iconName: "dollarsign.circle", iconColorName: "mint", iconBackgroundName: "mint.opacity15", category: .income, isIncome: true, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -20, to: now)!),
+            TransactionItem(id: UUID(), title: "Electric Bill", subtitle: "Utilities", amount: 60, iconName: "doc.text", iconColorName: "red", iconBackgroundName: "red.opacity15", category: .bills, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -25, to: now)!),
+            TransactionItem(id: UUID(), title: "Miscellaneous", subtitle: "Other expense", amount: 25, iconName: "ellipsis", iconColorName: "gray", iconBackgroundName: "gray.opacity15", category: .other, isIncome: false, linkedGoalName: nil, date: calendar.date(byAdding: .day, value: -30, to: now)!)
         ]
     }
 }
 
-enum TransactionCategory: String, CaseIterable, Identifiable {
+enum TransactionCategoryType: String, CaseIterable, Identifiable {
     case essentials, leisure, savings, income, bills, other
 
     var id: String { rawValue }
@@ -71,7 +71,7 @@ enum TransactionCategory: String, CaseIterable, Identifiable {
         switch self {
         case .essentials: return .orange
         case .leisure: return .purple
-        case .savings: return .green
+        case .savings: return RobinhoodColors.primary
         case .income: return .mint
         case .bills: return .red
         case .other: return .gray
@@ -79,24 +79,34 @@ enum TransactionCategory: String, CaseIterable, Identifiable {
     }
 }
 
-extension Color {
-    static func fromName(_ name: String) -> Color {
-        switch name {
-        case "orange": return .orange
-        case "purple": return .purple
-        case "green": return .green
-        case "mint": return .mint
-        case "red": return .red
-        case "gray": return .gray
-        case "blue": return .blue
-        case "orange.opacity15": return Color.orange.opacity(0.15)
-        case "purple.opacity15": return Color.purple.opacity(0.15)
-        case "green.opacity15": return Color.green.opacity(0.15)
-        case "mint.opacity15": return Color.mint.opacity(0.15)
-        case "red.opacity15": return Color.red.opacity(0.15)
-        case "gray.opacity15": return Color.gray.opacity(0.15)
-        case "blue.opacity15": return Color.blue.opacity(0.15)
-        default: return .gray
+// MARK: - Supporting Types
+enum RecurringFrequency: String, CaseIterable, Identifiable, CustomStringConvertible {
+    case daily, weekly, monthly, yearly
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .daily: return "Daily"
+        case .weekly: return "Weekly"
+        case .monthly: return "Monthly"
+        case .yearly: return "Yearly"
         }
     }
+    var description: String { label }
 }
+
+enum IncomeOrExpense: String, CaseIterable, Identifiable, CustomStringConvertible {
+    case income = "Income"
+    case expense = "Expense"
+    var id: String { rawValue }
+    var description: String { rawValue }
+}
+
+struct BoolOption: Hashable, Identifiable, CustomStringConvertible {
+    let value: Bool
+    var id: Bool { value }
+    var description: String { value ? "Recurring" : "One Time" }
+    init(_ value: Bool) { self.value = value }
+    static func == (lhs: BoolOption, rhs: BoolOption) -> Bool { lhs.value == rhs.value }
+    func hash(into hasher: inout Hasher) { hasher.combine(value) }
+}
+

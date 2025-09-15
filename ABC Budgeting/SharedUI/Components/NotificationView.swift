@@ -1,188 +1,364 @@
 import SwiftUI
 
-struct NotificationView: View {
-    @ObservedObject var notificationService: NotificationService
-    @Environment(\.dismiss) private var dismiss
-    @State private var selectedFilter: NotificationFilter = .all
+// MARK: - Notification Category Models
+
+enum NotificationCategory: String, CaseIterable {
+    case alerts = "alerts"
+    case transactions = "transactions"
+    case goals = "goals"
+    case upcoming = "upcoming"
     
-    enum NotificationFilter: String, CaseIterable {
-        case all = "All"
-        case unread = "Unread"
-        case newTransactions = "New Transactions"
-        case upcoming = "Upcoming"
-        case goals = "Goals"
-        
-        var iconName: String {
-            switch self {
-            case .all: return "bell"
-            case .unread: return "circle.fill"
-            case .newTransactions: return "plus.circle"
-            case .upcoming: return "clock"
-            case .goals: return "target"
-            }
-        }
-    }
-    
-    private var filteredNotifications: [NotificationItem] {
-        let notifications = notificationService.notifications
-        
-        switch selectedFilter {
-        case .all:
-            return notifications
-        case .unread:
-            return notifications.filter { !$0.isRead }
-        case .newTransactions:
-            return notifications.filter { $0.type == .newTransaction }
-        case .upcoming:
-            return notifications.filter { $0.type == .upcomingTransaction || $0.type == .upcomingIncome }
+    var title: String {
+        switch self {
+        case .alerts:
+            return "Alerts"
+        case .transactions:
+            return "Transactions"
         case .goals:
-            return notifications.filter { $0.type == .goalMilestone }
+            return "Goals & Milestones"
+        case .upcoming:
+            return "Upcoming"
         }
     }
+    
+    var iconName: String {
+        switch self {
+        case .alerts:
+            return "exclamationmark.triangle.fill"
+        case .transactions:
+            return "arrow.left.arrow.right"
+        case .goals:
+            return "target"
+        case .upcoming:
+            return "clock.fill"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .alerts:
+            return RobinhoodColors.error
+        case .transactions:
+            return RobinhoodColors.success
+        case .goals:
+            return RobinhoodColors.primary
+        case .upcoming:
+            return RobinhoodColors.warning
+        }
+    }
+    
+    var priority: Int {
+        switch self {
+        case .alerts:
+            return 1
+        case .upcoming:
+            return 2
+        case .goals:
+            return 3
+        case .transactions:
+            return 4
+        }
+    }
+}
+
+struct NotificationCategoryGroup {
+    let category: NotificationCategory
+    let notifications: [NotificationItem]
+}
+
+// MARK: - Notification Category Section
+
+struct NotificationCategorySection: View {
+    let category: NotificationCategory
+    let notifications: [NotificationItem]
+    let notificationService: NotificationService
+    
+    @State private var isExpanded: Bool = true
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                // Background matching Overview tab
-                LinearGradient(
-                    colors: [Color(hex: "f8fafc"), Color(hex: "e2e8f0")],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                // Filter Picker
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        ForEach(NotificationFilter.allCases, id: \.self) { filter in
-                            FilterChip(
-                                title: filter.rawValue,
-                                iconName: filter.iconName,
-                                isSelected: selectedFilter == filter,
-                                count: getCount(for: filter)
-                            ) {
-                                selectedFilter = filter
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                }
-                .padding(.vertical, 12)
-                .background(AppColors.background.opacity(0.5))
-                
+        VStack(alignment: .leading, spacing: 0) {
+            // Category Header
+            categoryHeader
+            
+            if isExpanded {
                 // Notifications List
-                if filteredNotifications.isEmpty {
-                    EmptyNotificationsView(filter: selectedFilter)
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 8) {
-                            ForEach(filteredNotifications) { notification in
-                                NotificationRow(
-                                    notification: notification,
-                                    onTap: {
+                LazyVStack(spacing: 8) {
+                    ForEach(notifications) { notification in
+                        EnhancedNotificationCard(notification: notification) {
+                            notificationService.markAsRead(notification)
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button("Delete", role: .destructive) {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    notificationService.removeNotification(notification)
+                                }
+                            }
+                            .tint(RobinhoodColors.error)
+                            
+                            if !notification.isRead {
+                                Button("Mark Read") {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
                                         notificationService.markAsRead(notification)
-                                    },
-                                    onDelete: {
-                                        notificationService.removeNotification(notification)
                                     }
-                                )
+                                }
+                                .tint(RobinhoodColors.success)
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            if !notification.isRead {
+                                Button("Mark Read") {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        notificationService.markAsRead(notification)
+                                    }
+                                }
+                                .tint(RobinhoodColors.success)
+                            }
+                        }
                     }
+                }
+                .padding(.top, 12)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding(.bottom, 24)
+    }
+    
+    private var categoryHeader: some View {
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                isExpanded.toggle()
+            }
+        }) {
+            HStack(spacing: 12) {
+                // Category Icon
+                ZStack {
+                    Circle()
+                        .fill(category.color.opacity(0.15))
+                        .frame(width: 32, height: 32)
+                    
+                    Image(systemName: category.iconName)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(category.color)
+                }
+                
+                // Category Title and Count
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(category.title)
+                        .font(RobinhoodTypography.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(RobinhoodColors.textPrimary)
+                    
+                    Text("\(notifications.count) notification\(notifications.count == 1 ? "" : "s")")
+                        .font(RobinhoodTypography.caption)
+                        .foregroundColor(RobinhoodColors.textSecondary)
                 }
                 
                 Spacer()
+                
+                // Expand/Collapse Icon
+                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(RobinhoodColors.textTertiary)
+                    .rotationEffect(.degrees(isExpanded ? 0 : 180))
+                    .animation(.easeInOut(duration: 0.2), value: isExpanded)
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RobinhoodColors.cardBackground)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - NotificationView
+
+struct NotificationView: View {
+    // MARK: - Properties
+    @ObservedObject var notificationService: NotificationService
+    @Environment(\.dismiss) private var dismiss
+    
+    // MARK: - Body
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                if notificationService.notifications.isEmpty {
+                    emptyStateView
+                } else {
+                    headerSection
+                    notificationContent
                 }
             }
-            .navigationTitle("Notifications")
-            .navigationBarTitleDisplayMode(.large)
+            .background(RobinhoodColors.background)
+            .navigationTitle("")
+            .navigationBarHidden(true)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Clear All") {
-                        notificationService.clearAllNotifications()
+                    Button("Done") {
+                        dismiss()
                     }
-                    .disabled(notificationService.notifications.isEmpty)
+                    .font(RobinhoodTypography.callout)
+                    .fontWeight(.semibold)
+                    .foregroundColor(RobinhoodColors.success)
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Mark All Read") {
-                        notificationService.markAllAsRead()
+                    if !notificationService.notifications.isEmpty {
+                        Menu {
+                            Button("Mark All Read") {
+                                notificationService.markAllAsRead()
+                            }
+                            
+                            Button("Clear All", role: .destructive) {
+                                notificationService.clearAllNotifications()
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.system(size: 20, weight: .medium))
+                                .foregroundColor(RobinhoodColors.textSecondary)
+                        }
                     }
-                    .disabled(notificationService.unreadCount == 0)
                 }
             }
         }
     }
     
-    private func getCount(for filter: NotificationFilter) -> Int {
-        let notifications = notificationService.notifications
-        
-        switch filter {
-        case .all:
-            return notifications.count
-        case .unread:
-            return notifications.filter { !$0.isRead }.count
-        case .newTransactions:
-            return notifications.filter { $0.type == .newTransaction }.count
-        case .upcoming:
-            return notifications.filter { $0.type == .upcomingTransaction || $0.type == .upcomingIncome }.count
-        case .goals:
-            return notifications.filter { $0.type == .goalMilestone }.count
-        }
-    }
-}
-
-// MARK: - Filter Chip
-struct FilterChip: View {
-    let title: String
-    let iconName: String
-    let isSelected: Bool
-    let count: Int
-    let action: () -> Void
+    // MARK: - View Components
     
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Image(systemName: iconName)
-                    .font(.caption.weight(.medium))
+    /// Robinhood-style header section
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            // Title and stats
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Notifications")
+                    .font(RobinhoodTypography.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(RobinhoodColors.textPrimary)
                 
-                Text(title)
-                    .font(.caption.weight(.medium))
-                
-                if count > 0 {
-                    Text("\(count)")
-                        .font(.caption2.weight(.bold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                // Unread count and actions
+                HStack {
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(RobinhoodColors.success)
+                            .frame(width: 8, height: 8)
+                        
+                        Text("\(notificationService.unreadCount) unread")
+                            .font(RobinhoodTypography.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(RobinhoodColors.textSecondary)
+                    }
+                    
+                    Spacer()
+                    
+                    if notificationService.unreadCount > 0 {
+                        Button("Mark All Read") {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                notificationService.markAllAsRead()
+                            }
+                        }
+                        .font(RobinhoodTypography.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(RobinhoodColors.success)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
                         .background(
-                            Capsule()
-                                .fill(isSelected ? .white : .primary)
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(RobinhoodColors.success.opacity(0.1))
                         )
+                    }
                 }
             }
-            .foregroundColor(isSelected ? .white : .primary)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                Capsule()
-                    .fill(isSelected ? AppColors.primary : AppColors.background.opacity(0.3))
+        }
+        .padding(.top, 20)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 16)
+        .background(RobinhoodColors.background)
+    }
+    
+    /// Robinhood-style notification list with enhanced hierarchy and categorization
+    private var notificationContent: some View {
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(notificationCategories, id: \.category) { categoryGroup in
+                    NotificationCategorySection(
+                        category: categoryGroup.category,
+                        notifications: categoryGroup.notifications,
+                        notificationService: notificationService
+                    )
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
+        }
+        .background(RobinhoodColors.background)
+        .refreshable {
+            // Add refresh functionality if needed
+            try? await Task.sleep(nanoseconds: 500_000_000) // Simulate refresh
+        }
+    }
+    
+    /// Group notifications by category for better hierarchy
+    private var notificationCategories: [NotificationCategoryGroup] {
+        let grouped = Dictionary(grouping: notificationService.notifications) { notification in
+            notification.type.category
+        }
+        
+        return NotificationCategory.allCases.compactMap { category in
+            guard let notifications = grouped[category], !notifications.isEmpty else { return nil }
+            return NotificationCategoryGroup(
+                category: category,
+                notifications: notifications.sorted { $0.date > $1.date }
             )
         }
-        .buttonStyle(.plain)
     }
+    
+    /// Robinhood-style empty state view
+    private var emptyStateView: some View {
+        VStack(spacing: 32) {
+            Spacer()
+            
+            VStack(spacing: 20) {
+                // Notification icon with background
+                ZStack {
+                    Circle()
+                        .fill(RobinhoodColors.textTertiary.opacity(0.1))
+                        .frame(width: 120, height: 120)
+                    
+                    Image(systemName: "bell.slash")
+                        .font(.system(size: 48, weight: .medium))
+                        .foregroundColor(RobinhoodColors.textTertiary)
+                }
+                
+                VStack(spacing: 12) {
+                    Text("No Notifications")
+                        .font(RobinhoodTypography.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(RobinhoodColors.textPrimary)
+                    
+                    Text("You're all caught up! New notifications will appear here.")
+                        .font(RobinhoodTypography.body)
+                        .foregroundColor(RobinhoodColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(3)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 32)
+        .background(RobinhoodColors.background)
+    }
+    
 }
 
-// MARK: - Notification Row
-struct NotificationRow: View {
+// MARK: - Enhanced Notification Card
+
+struct EnhancedNotificationCard: View {
     let notification: NotificationItem
     let onTap: () -> Void
-    let onDelete: () -> Void
-    
-    @State private var showDeleteConfirmation = false
     
     private var timeAgo: String {
         let formatter = RelativeDateTimeFormatter()
@@ -190,143 +366,151 @@ struct NotificationRow: View {
         return formatter.localizedString(for: notification.date, relativeTo: Date())
     }
     
+    private var priorityColor: Color {
+        switch notification.type {
+        case .budgetAlert:
+            return RobinhoodColors.error
+        case .upcomingTransaction, .upcomingIncome:
+            return RobinhoodColors.warning
+        case .goalMilestone:
+            return RobinhoodColors.primary
+        case .newTransaction:
+            return RobinhoodColors.success
+        }
+    }
+    
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 12) {
-                // Icon
-                ZStack {
-                    Circle()
-                        .fill(notification.type.color.opacity(0.15))
-                        .frame(width: 40, height: 40)
-                    
-                    Image(systemName: notification.type.iconName)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(notification.type.color)
-                }
-                
-                // Content
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text(notification.title)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(.primary)
-                            .lineLimit(1)
+            VStack(alignment: .leading, spacing: 0) {
+                // Main Content
+                HStack(alignment: .top, spacing: 16) {
+                    // Priority Indicator and Icon
+                    VStack(spacing: 8) {
+                        // Priority indicator line
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(priorityColor)
+                            .frame(width: 4, height: 32)
                         
-                        Spacer()
-                        
-                        if !notification.isRead {
+                        // Notification type icon
+                        ZStack {
                             Circle()
-                                .fill(AppColors.primary)
-                                .frame(width: 8, height: 8)
+                                .fill(priorityColor.opacity(0.15))
+                                .frame(width: 36, height: 36)
+                            
+                            Image(systemName: notification.type.iconName)
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(priorityColor)
                         }
                     }
                     
-                    Text(notification.message)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-                    
-                    Text(timeAgo)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+                    // Content
+                    VStack(alignment: .leading, spacing: 8) {
+                        // Title and status
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(notification.title)
+                                    .font(RobinhoodTypography.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(RobinhoodColors.textPrimary)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+                                
+                                Text(notification.message)
+                                    .font(RobinhoodTypography.body)
+                                    .foregroundColor(RobinhoodColors.textSecondary)
+                                    .lineLimit(3)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            
+                            Spacer()
+                            
+                            // Status indicators
+                            VStack(alignment: .trailing, spacing: 8) {
+                                if !notification.isRead {
+                                    Circle()
+                                        .fill(priorityColor)
+                                        .frame(width: 8, height: 8)
+                                }
+                                
+                                Text(timeAgo)
+                                    .font(RobinhoodTypography.caption2)
+                                    .foregroundColor(RobinhoodColors.textTertiary)
+                            }
+                        }
+                        
+                        // Action buttons (for high priority notifications)
+                        if notification.type == .budgetAlert {
+                            HStack(spacing: 12) {
+                                Button("View Details") {
+                                    onTap()
+                                }
+                                .font(RobinhoodTypography.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(priorityColor)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(priorityColor.opacity(0.1))
+                                )
+                                
+                                Spacer()
+                            }
+                            .padding(.top, 4)
+                        }
+                    }
                 }
-                
-                Spacer()
-                
-                // Delete button
-                Button(action: {
-                    showDeleteConfirmation = true
-                }) {
-                    Image(systemName: "trash")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(8)
-                }
-                .buttonStyle(.plain)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(notification.isRead ? AppColors.background.opacity(0.3) : AppColors.card)
-                    .shadow(color: AppColors.cardShadow, radius: 2, y: 1)
+                    .fill(notification.isRead ? RobinhoodColors.cardBackground : priorityColor.opacity(0.03))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                    )
             )
         }
-        .buttonStyle(.plain)
-        .confirmationDialog("Delete Notification", isPresented: $showDeleteConfirmation) {
-            Button("Delete", role: .destructive) {
-                onDelete()
-            }
-            Button("Cancel", role: .cancel) { }
-        } message: {
-            Text("Are you sure you want to delete this notification?")
-        }
+        .buttonStyle(EnhancedNotificationButtonStyle())
     }
 }
 
-// MARK: - Empty State
-struct EmptyNotificationsView: View {
-    let filter: NotificationView.NotificationFilter
-    
-    private var emptyStateContent: (title: String, message: String, iconName: String) {
-        switch filter {
-        case .all:
-            return (
-                title: "No notifications yet",
-                message: "You'll see notifications about new transactions, upcoming payments, and goal milestones here.",
-                iconName: "bell"
-            )
-        case .unread:
-            return (
-                title: "All caught up!",
-                message: "You have no unread notifications.",
-                iconName: "checkmark.circle"
-            )
-        case .newTransactions:
-            return (
-                title: "No new transactions",
-                message: "New transaction notifications will appear here when you add expenses or income.",
-                iconName: "plus.circle"
-            )
-        case .upcoming:
-            return (
-                title: "No upcoming transactions",
-                message: "Upcoming payment and income notifications will appear here.",
-                iconName: "clock"
-            )
-        case .goals:
-            return (
-                title: "No goal notifications",
-                message: "Goal milestone notifications will appear here when you reach savings targets.",
-                iconName: "target"
-            )
-        }
-    }
+// MARK: - Legacy RobinhoodNotificationCard (for backward compatibility)
+
+struct RobinhoodNotificationCard: View {
+    let notification: NotificationItem
+    let onTap: () -> Void
     
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: emptyStateContent.iconName)
-                .font(.system(size: 64, weight: .light))
-                .foregroundColor(.secondary.opacity(0.6))
-            
-            VStack(spacing: 8) {
-                Text(emptyStateContent.title)
-                    .font(.title3.weight(.semibold))
-                    .foregroundColor(.secondary)
-                
-                Text(emptyStateContent.message)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary.opacity(0.8))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(3)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal, 32)
+        EnhancedNotificationCard(notification: notification, onTap: onTap)
     }
 }
 
-#Preview {
-    NotificationView(notificationService: NotificationService())
+// MARK: - Custom Button Styles
+
+struct NotificationButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .opacity(configuration.isPressed ? 0.8 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
+    }
 }
+
+struct EnhancedNotificationButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.99 : 1.0)
+            .opacity(configuration.isPressed ? 0.9 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+    }
+}
+
+#if DEBUG
+struct NotificationView_Previews: PreviewProvider {
+    static var previews: some View {
+        let service = NotificationService()
+        service.addDemoNotifications()
+        return NotificationView(notificationService: service)
+    }
+}
+#endif
