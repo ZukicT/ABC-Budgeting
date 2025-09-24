@@ -173,31 +173,43 @@ This project is **NOT accepting contributions** at this time.
 
 ## 📄 License & Usage Rights
 
-**⚠️ IMPORTANT: STRICT USAGE RESTRICTIONS**
+**⚠️ PROPRIETARY SOFTWARE - STRICT LEGAL RESTRICTIONS**
 
-This project is licensed under a **RESTRICTED MIT License** with additional commercial use prohibitions.
+This project is protected by a **PROPRIETARY SOFTWARE LICENSE AGREEMENT** with extensive legal protections.
 
-### 🚫 **PROHIBITED USES:**
-- **Commercial use** (selling, licensing for profit)
-- **Creating derivative works** for commercial purposes
-- **Redistributing** for commercial gain
-- **Incorporating** into commercial products without permission
+### 🚫 **ABSOLUTELY PROHIBITED:**
+- **App Store Distribution** - No publishing to any app store
+- **Commercial Use** - No selling, licensing, or profit generation
+- **Derivative Works** - No competing applications or modifications
+- **Redistribution** - No sharing, posting, or transferring
+- **Reposting** - No claiming as your own work
+- **Commercial Education** - No use in paid courses or materials
 
-### ✅ **ALLOWED USES:**
-- **Educational purposes** and learning
-- **Personal projects** and portfolio
-- **Code study** and research
-- **Non-commercial modifications**
+### ✅ **ONLY ALLOWED:**
+- **Personal Learning** - Study and understand the code
+- **Educational Research** - Academic study only
+- **Portfolio Display** - Show as example of your learning
+- **Non-commercial Modifications** - Personal experimentation only
 
-### 📋 **Terms:**
-- Attribution required for any use
-- Commercial licensing available upon request
-- Violation results in immediate termination of rights
-- Legal action may be taken for violations
+### ⚖️ **LEGAL PROTECTIONS:**
+- **Copyright Infringement** - Violations are legally actionable
+- **Trade Secret Protection** - Code contains proprietary information
+- **Injunctive Relief** - Court orders to stop violations
+- **Damages Recovery** - Legal fees and financial penalties
+- **Immediate Termination** - Rights revoked for any violation
+
+### 📋 **CRITICAL TERMS:**
+- **Attribution Required** - Must credit Tarik Zukic
+- **No Ownership Transfer** - You own nothing
+- **Revocable License** - Can be terminated at any time
+- **Legal Action** - Violators will be prosecuted
+- **App Store Exclusive** - Only author can publish
+
+**⚠️ WARNING: VIOLATION OF ANY TERM WILL RESULT IN IMMEDIATE LEGAL ACTION**
 
 **For commercial licensing inquiries:** infotarik5@gmail.com
 
-See [LICENSE](LICENSE) file for complete terms and conditions.
+**See [LICENSE](LICENSE) file for complete legal terms and conditions.**
 
 ## 👨‍💻 Author
 

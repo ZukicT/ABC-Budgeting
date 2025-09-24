@@ -1,45 +1,122 @@
-MIT License
+PROPRIETARY SOFTWARE LICENSE AGREEMENT
+Money Manager iOS Application
 
-Copyright (c) 2024 Tarik Zukic
+Copyright (c) 2024 Tarik Zukic. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+IMPORTANT: READ THIS LICENSE AGREEMENT CAREFULLY BEFORE USING THIS SOFTWARE.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This is a proprietary software license agreement ("Agreement") between you ("Licensee") 
+and Tarik Zukic ("Licensor") for the Money Manager iOS application and associated 
+source code, documentation, and materials (collectively, the "Software").
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+BY ACCESSING, DOWNLOADING, OR USING THE SOFTWARE, YOU AGREE TO BE BOUND BY THE 
+TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT USE THE SOFTWARE.
 
-ADDITIONAL RESTRICTIONS:
+1. GRANT OF LICENSE
+   Subject to the terms and conditions of this Agreement, Licensor hereby grants 
+   Licensee a limited, non-exclusive, non-transferable, revocable license to:
+   
+   a) View and study the source code for educational purposes only
+   b) Use the Software for personal, non-commercial learning and development
+   c) Create personal modifications for learning purposes only
 
-1. COMMERCIAL USE PROHIBITED: This software is provided for educational and 
-   personal use only. Commercial use, including but not limited to selling, 
-   licensing for profit, or incorporating into commercial products, is 
-   strictly prohibited without explicit written permission from the author.
+2. STRICT PROHIBITIONS
+   Licensee is expressly PROHIBITED from:
+   
+   a) COMMERCIAL USE: Any commercial use, including but not limited to:
+      - Selling, licensing, or distributing the Software
+      - Incorporating into commercial products or services
+      - Using for profit-generating activities
+      - Creating commercial applications based on this code
+   
+   b) APP STORE DISTRIBUTION: 
+      - Publishing any version of this Software to any app store
+      - Creating derivative works for app store distribution
+      - Reposting or redistributing as your own work
+      - Using the Software's design, functionality, or code structure 
+        in any app store application
+   
+   c) DERIVATIVE WORKS:
+      - Creating derivative works for commercial purposes
+      - Modifying the Software for redistribution
+      - Creating competing applications based on this code
+      - Using the Software's architecture or design patterns 
+        in commercial projects
+   
+   d) REDISTRIBUTION:
+      - Sharing, distributing, or transferring the Software
+      - Posting on public repositories without this license
+      - Making available to third parties for commercial use
+      - Creating tutorials or guides that reproduce substantial portions
 
-2. NO DERIVATIVE WORKS: You may not create derivative works, modifications, 
-   or adaptations of this software for commercial purposes.
+3. INTELLECTUAL PROPERTY RIGHTS
+   a) The Software is and remains the exclusive property of Licensor
+   b) All copyrights, trademarks, and intellectual property rights are reserved
+   c) No ownership rights are transferred to Licensee
+   d) Licensee acknowledges that the Software contains proprietary information
 
-3. NO REDISTRIBUTION: You may not redistribute, sell, or transfer this 
-   software to third parties for commercial gain.
+4. APP STORE EXCLUSIVITY
+   a) Licensor retains exclusive rights to publish this Software on app stores
+   b) No other party may create, publish, or distribute similar applications
+   c) Licensee may not create competing applications using this code
+   d) Any attempt to publish derivative works will result in immediate legal action
 
-4. EDUCATIONAL USE ONLY: This software is intended for learning purposes 
-   and personal projects only.
+5. EDUCATIONAL USE RESTRICTIONS
+   a) Educational use is limited to learning and personal development only
+   b) May not be used in commercial educational products or courses
+   c. May not be used to create educational materials for profit
+   d) Must maintain proper attribution in all educational contexts
 
-5. ATTRIBUTION REQUIRED: Any use of this software must include proper 
-   attribution to the original author.
+6. ATTRIBUTION REQUIREMENTS
+   a) Any use must include clear attribution to Tarik Zukic
+   b) Must include copyright notice: "Copyright (c) 2024 Tarik Zukic"
+   c) Must include link to original repository
+   d) Attribution must be visible and prominent
 
-VIOLATION OF THESE TERMS WILL RESULT IN IMMEDIATE TERMINATION OF YOUR 
-RIGHTS TO USE THIS SOFTWARE AND MAY RESULT IN LEGAL ACTION.
+7. TERMINATION
+   a) This license is revocable at any time by Licensor
+   b) Violation of any term results in immediate termination
+   c) Upon termination, all rights cease immediately
+   d) Licensee must destroy all copies of the Software
 
-For commercial licensing inquiries, contact: infotarik5@gmail.com
+8. LEGAL ENFORCEMENT
+   a) Violation of this Agreement constitutes copyright infringement
+   b) Licensor reserves the right to pursue all legal remedies
+   c) Licensee may be liable for damages, including legal fees
+   d) Injunctive relief may be sought to prevent violations
+
+9. NO WARRANTIES
+   THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+   IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+10. LIMITATION OF LIABILITY
+    IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY DAMAGES ARISING FROM THE USE 
+    OF THIS SOFTWARE, INCLUDING BUT NOT LIMITED TO DIRECT, INDIRECT, INCIDENTAL, 
+    SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES.
+
+11. GOVERNING LAW
+    This Agreement shall be governed by and construed in accordance with the 
+    laws of [Your Jurisdiction], without regard to conflict of law principles.
+
+12. ENTIRE AGREEMENT
+    This Agreement constitutes the entire agreement between the parties and 
+    supersedes all prior agreements relating to the Software.
+
+13. SEVERABILITY
+    If any provision of this Agreement is found to be unenforceable, the 
+    remaining provisions shall remain in full force and effect.
+
+14. CONTACT INFORMATION
+    For questions about this license or commercial licensing inquiries:
+    Email: infotarik5@gmail.com
+    GitHub: https://github.com/ZukicT/ABC-Budgeting
+
+VIOLATION OF ANY TERM OF THIS AGREEMENT WILL RESULT IN IMMEDIATE TERMINATION 
+OF YOUR RIGHTS AND MAY RESULT IN LEGAL ACTION FOR COPYRIGHT INFRINGEMENT, 
+TRADE SECRET MISAPPROPRIATION, AND OTHER LEGAL CLAIMS.
+
+By using this Software, you acknowledge that you have read, understood, and 
+agree to be bound by the terms of this Agreement.
+
+Last Updated: December 2024
