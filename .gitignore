@@ -201,3 +201,12 @@ Docs/
 
 # Cursor IDE folder
 .cursor/
+
+# BMad Core framework
+.bmad-core/
+
+# Claude IDE folder
+.claude/
+
+# GitHub workflows (keep only essential ones)
+.github/
