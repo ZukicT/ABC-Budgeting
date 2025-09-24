@@ -3,6 +3,11 @@ Money Manager iOS Application
 
 Copyright (c) 2024 Tarik Zukic. All rights reserved.
 
+⚠️ LEGAL NOTICE: THIS IS A PROPRIETARY SOFTWARE LICENSE AGREEMENT. 
+BY ACCESSING, DOWNLOADING, OR USING THIS SOFTWARE, YOU ARE ENTERING INTO 
+A LEGALLY BINDING CONTRACT. IF YOU DO NOT AGREE TO ALL TERMS, DO NOT USE 
+THE SOFTWARE. THIS SOFTWARE IS PROTECTED BY COPYRIGHT AND TRADE SECRET LAWS.
+
 IMPORTANT: READ THIS LICENSE AGREEMENT CAREFULLY BEFORE USING THIS SOFTWARE.
 
 This is a proprietary software license agreement ("Agreement") between you ("Licensee") 
@@ -20,14 +25,15 @@ TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT USE THE SOFT
    b) Use the Software for personal, non-commercial learning and development
    c) Create personal modifications for learning purposes only
 
-2. STRICT PROHIBITIONS
-   Licensee is expressly PROHIBITED from:
+2. STRICT PROHIBITIONS AND RESTRICTIONS
+   Licensee is expressly PROHIBITED from, without the prior written consent of Licensor:
    
    a) COMMERCIAL USE: Any commercial use, including but not limited to:
       - Selling, licensing, or distributing the Software
       - Incorporating into commercial products or services
       - Using for profit-generating activities
       - Creating commercial applications based on this code
+      - Using the Software in any revenue-generating capacity
    
    b) APP STORE DISTRIBUTION: 
       - Publishing any version of this Software to any app store
@@ -35,6 +41,7 @@ TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT USE THE SOFT
       - Reposting or redistributing as your own work
       - Using the Software's design, functionality, or code structure 
         in any app store application
+      - Creating similar applications for any app marketplace
    
    c) DERIVATIVE WORKS:
       - Creating derivative works for commercial purposes
@@ -42,18 +49,24 @@ TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT USE THE SOFT
       - Creating competing applications based on this code
       - Using the Software's architecture or design patterns 
         in commercial projects
+      - Reverse engineering, decompiling, or disassembling the Software
    
-   d) REDISTRIBUTION:
+   d) REDISTRIBUTION AND DISCLOSURE:
       - Sharing, distributing, or transferring the Software
       - Posting on public repositories without this license
       - Making available to third parties for commercial use
       - Creating tutorials or guides that reproduce substantial portions
+      - Disclosing any trade secrets or proprietary information
+      - Copying, reproducing, or duplicating the Software in any form
 
-3. INTELLECTUAL PROPERTY RIGHTS
+3. INTELLECTUAL PROPERTY RIGHTS AND OWNERSHIP
    a) The Software is and remains the exclusive property of Licensor
-   b) All copyrights, trademarks, and intellectual property rights are reserved
-   c) No ownership rights are transferred to Licensee
-   d) Licensee acknowledges that the Software contains proprietary information
+   b) All copyrights, trademarks, trade secrets, patents, and intellectual property rights are reserved
+   c) No ownership rights are transferred to Licensee under any circumstances
+   d) Licensee acknowledges that the Software contains proprietary and confidential information
+   e) Any modifications, enhancements, or derivative works made by Licensee shall be promptly disclosed to Licensor and shall be considered the property of Licensor
+   f) Licensee shall not acquire any rights, title, or interest in the Software or any part thereof
+   g) The Software is protected by copyright laws and international treaty provisions
 
 4. APP STORE EXCLUSIVITY
    a) Licensor retains exclusive rights to publish this Software on app stores
@@ -79,11 +92,19 @@ TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT USE THE SOFT
    c) Upon termination, all rights cease immediately
    d) Licensee must destroy all copies of the Software
 
-8. LEGAL ENFORCEMENT
-   a) Violation of this Agreement constitutes copyright infringement
-   b) Licensor reserves the right to pursue all legal remedies
-   c) Licensee may be liable for damages, including legal fees
-   d) Injunctive relief may be sought to prevent violations
+8. LEGAL ENFORCEMENT AND REMEDIES
+   a) Violation of this Agreement constitutes copyright infringement and trade secret misappropriation
+   b) Licensor reserves the right to pursue all legal remedies available under law
+   c) Licensee may be liable for damages, including but not limited to:
+      - Actual damages and lost profits
+      - Statutory damages up to $150,000 per work infringed
+      - Attorney's fees and court costs
+      - Punitive damages for willful infringement
+   d) Injunctive relief may be sought to prevent violations and irreparable harm
+   e) Licensor may seek specific performance to enforce compliance
+   f) Licensee agrees to pay all costs of enforcement, including reasonable attorney's fees
+   g) Licensor reserves the right to audit Licensee's use of the Software
+   h) Any violation shall be considered a material breach of this Agreement
 
 9. NO WARRANTIES
    THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
@@ -95,9 +116,13 @@ TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT USE THE SOFT
     OF THIS SOFTWARE, INCLUDING BUT NOT LIMITED TO DIRECT, INDIRECT, INCIDENTAL, 
     SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES.
 
-11. GOVERNING LAW
+11. GOVERNING LAW AND JURISDICTION
     This Agreement shall be governed by and construed in accordance with the 
-    laws of [Your Jurisdiction], without regard to conflict of law principles.
+    laws of the United States and the State of [Your State], without regard to 
+    conflict of law principles. Any legal action or proceeding arising under 
+    this Agreement shall be brought exclusively in the federal or state courts 
+    located in [Your State], and Licensee hereby consents to the personal 
+    jurisdiction of such courts.
 
 12. ENTIRE AGREEMENT
     This Agreement constitutes the entire agreement between the parties and 
@@ -107,7 +132,28 @@ TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT USE THE SOFT
     If any provision of this Agreement is found to be unenforceable, the 
     remaining provisions shall remain in full force and effect.
 
-14. CONTACT INFORMATION
+14. CONFIDENTIALITY AND NON-DISCLOSURE
+    a) Licensee agrees to maintain the confidentiality of the Software and any 
+       related proprietary information
+    b) Licensee shall implement reasonable security measures to prevent 
+       unauthorized disclosure or use of the Software
+    c) Licensee shall not disclose any trade secrets embodied in the Software 
+       to any person or entity without Licensor's prior written consent
+    d) Licensee acknowledges that the Software contains confidential and 
+       proprietary information of Licensor
+    e) Any breach of confidentiality shall constitute a material breach of this Agreement
+
+15. AUDIT RIGHTS AND COMPLIANCE
+    a) Licensor reserves the right to audit Licensee's use of the Software 
+       to ensure compliance with this Agreement
+    b) Licensee shall provide reasonable access to records and systems 
+       for audit purposes
+    c) Any non-compliance discovered during audit shall be subject to 
+       immediate corrective action
+    d) Licensee shall maintain records of Software use for a minimum of 
+       three (3) years
+
+16. CONTACT INFORMATION
     For questions about this license or commercial licensing inquiries:
     Email: infotarik5@gmail.com
     GitHub: https://github.com/ZukicT/ABC-Budgeting
@@ -119,4 +165,4 @@ TRADE SECRET MISAPPROPRIATION, AND OTHER LEGAL CLAIMS.
 By using this Software, you acknowledge that you have read, understood, and 
 agree to be bound by the terms of this Agreement.
 
-Last Updated: December 2024
+Last Updated: December 2025
