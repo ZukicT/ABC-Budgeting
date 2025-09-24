@@ -4,23 +4,23 @@ A comprehensive iOS personal finance management application built with SwiftUI.
 
 ## 📱 Overview
 
-Money Manager is a modern, intuitive iOS app designed to help users take control of their personal finances. The app provides essential budgeting, loan tracking, and financial insights in a clean, user-friendly interface.
+Money Manager is a modern, intuitive iOS app designed to help users take control of their personal finances. Currently in active development, the app will provide essential budgeting, loan tracking, and financial insights in a clean, user-friendly interface built with SwiftUI.
 
 ## ✨ Features
 
-### Core Functionality
-- **Budget Management** - Create, edit, and track personal budgets
-- **Loan Tracking** - Monitor loans with detailed payment schedules
-- **Financial Overview** - Comprehensive dashboard with key metrics
-- **Transaction Management** - Track income and expenses
-- **Analytics** - Visual charts and financial insights
+### Planned Core Functionality
+- **Budget Management** - Create, edit, and track personal budgets (In Development)
+- **Loan Tracking** - Monitor loans with detailed payment schedules (Planned)
+- **Financial Overview** - Comprehensive dashboard with key metrics (Planned)
+- **Transaction Management** - Track income and expenses (Planned)
+- **Analytics** - Visual charts and financial insights (Planned)
 
 ### Key Highlights
-- Clean, modern SwiftUI interface
-- Intuitive navigation and user experience
-- Real-time financial calculations
-- Comprehensive data visualization
-- Offline-first design
+- Clean, modern SwiftUI interface (Implemented)
+- Intuitive navigation and user experience (In Development)
+- Real-time financial calculations (Planned)
+- Comprehensive data visualization (Planned)
+- Offline-first design (Planned)
 
 ## 🛠️ Technical Stack
 
@@ -64,7 +64,7 @@ Money Manager/
 ### Prerequisites
 - Xcode 26.0 or later
 - iOS 18.0 or later
-- macOS 15.0 or later (for development)
+- macOS 26.0 or later (for development)
 
 ### Installation
 
@@ -179,15 +179,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📈 Roadmap
 
-### Version 1.0 (In Development)
+### Version 1.0 (Function Implementation Phase)
 - [x] Project setup and CI/CD pipeline
 - [x] Basic app structure and navigation
-- [x] Budget management foundation
-- [x] Loan tracking system
-- [x] Transaction management
-- [x] Financial overview dashboard
-- [x] SwiftUI implementation
-- [x] Core Data integration
+- [x] SwiftUI implementation foundation
+- [x] Core Data integration setup
+- [x] Basic UI components and layouts
+- [ ] Budget management functionality
+- [ ] Loan tracking system implementation
+- [ ] Transaction management features
+- [ ] Financial overview dashboard
 - [ ] Advanced analytics and charts
 - [ ] Notification system
 - [ ] Settings and preferences
