@@ -205,14 +205,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - None currently reported
 
-## 📞 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Issues](https://github.com/ZukicT/ABC-Budgeting/issues) page
-2. Create a new issue with detailed information
-3. Contact the maintainer directly
-
 ---
 
 **Built with ❤️ using SwiftUI**
