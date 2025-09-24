@@ -195,3 +195,6 @@ fabric.properties
 # Temporary files
 File.txt
 *.txt.backup
+
+# Documentation folder
+Docs/
