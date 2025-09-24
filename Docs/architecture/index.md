@@ -56,3 +56,6 @@
   - [Next Steps](./next-steps.md)
     - [Story Manager Handoff](./next-steps.md#story-manager-handoff)
     - [Developer Handoff](./next-steps.md#developer-handoff)
+  - [UX Review: Budget and Loan Headers](../ux-review-budget-loan-headers.md)
+    - [Layout Consistency Implementation](../ux-review-budget-loan-headers.md#layout-consistency-achieved)
+    - [Developer Implementation Guide](../ux-review-budget-loan-headers.md#implementation-details)

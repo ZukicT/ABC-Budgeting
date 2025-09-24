@@ -1,0 +1,110 @@
+Unable to Install “Money Manager”
+Domain: MIInstallerErrorDomain
+Code: 13
+Recovery Suggestion: Failed to install embedded profile for com.WebBloomDigital.Money-Manager : 0xe800801a (This provisioning profile does not have a valid signature (or it has a valid, but untrusted signature).)
+User Info: {
+    DVTErrorCreationDateKey = "2025-09-17 04:37:56 +0000";
+    IDERunOperationFailingWorker = IDEInstallCoreDeviceWorker;
+}
+--
+Failed to install the app on the device.
+Domain: com.apple.dt.CoreDeviceError
+Code: 3002
+User Info: {
+    NSURL = "file:///Users/tarikzukic/Library/Developer/Xcode/DerivedData/Money_Manager-buswfxzhtqcbxpeipmuovwddfpjw/Build/Products/Debug-iphoneos/Money%20Manager.app";
+}
+--
+Unable to Install “Money Manager”
+Domain: IXUserPresentableErrorDomain
+Code: 14
+Failure Reason: This app cannot be installed because its integrity could not be verified.
+Recovery Suggestion: Failed to install embedded profile for com.WebBloomDigital.Money-Manager : 0xe800801a (This provisioning profile does not have a valid signature (or it has a valid, but untrusted signature).)
+--
+Failed to install embedded profile for com.WebBloomDigital.Money-Manager : 0xe800801a (This provisioning profile does not have a valid signature (or it has a valid, but untrusted signature).)
+Domain: MIInstallerErrorDomain
+Code: 13
+User Info: {
+    FunctionName = "-[MIInstallableBundle _installEmbeddedProfilesWithError:]";
+    LegacyErrorString = ApplicationVerificationFailed;
+    LibMISErrorNumber = "-402620390";
+    SourceFileLine = 330;
+}
+--
+
+Event Metadata: com.apple.dt.IDERunOperationWorkerFinished : {
+    "device_identifier" = "00008120-000275900E60C01E";
+    "device_isCoreDevice" = 1;
+    "device_model" = "iPhone15,2";
+    "device_osBuild" = "26.0 (23A340)";
+    "device_osBuild_monotonic" = 2300034000;
+    "device_os_variant" = 1;
+    "device_platform" = "com.apple.platform.iphoneos";
+    "device_platform_family" = 2;
+    "device_reality" = 1;
+    "device_thinningType" = "iPhone15,2";
+    "device_transport" = 1;
+    "launchSession_schemeCommand" = Run;
+    "launchSession_schemeCommand_enum" = 1;
+    "launchSession_targetArch" = arm64;
+    "launchSession_targetArch_enum" = 6;
+    "operation_duration_ms" = 1164;
+    "operation_errorCode" = 13;
+    "operation_errorDomain" = MIInstallerErrorDomain;
+    "operation_errorWorker" = IDEInstallCoreDeviceWorker;
+    "operation_error_reportable" = 1;
+    "operation_name" = IDERunOperationWorkerGroup;
+    "param_consoleMode" = 1;
+    "param_debugger_attachToExtensions" = 0;
+    "param_debugger_attachToXPC" = 1;
+    "param_debugger_type" = 3;
+    "param_destination_isProxy" = 0;
+    "param_destination_platform" = "com.apple.platform.iphoneos";
+    "param_diag_MTE_enable" = 0;
+    "param_diag_MainThreadChecker_stopOnIssue" = 0;
+    "param_diag_MallocStackLogging_enableDuringAttach" = 0;
+    "param_diag_MallocStackLogging_enableForXPC" = 1;
+    "param_diag_allowLocationSimulation" = 1;
+    "param_diag_checker_mtc_enable" = 1;
+    "param_diag_checker_tpc_enable" = 1;
+    "param_diag_gpu_frameCapture_enable" = 0;
+    "param_diag_gpu_shaderValidation_enable" = 0;
+    "param_diag_gpu_validation_enable" = 0;
+    "param_diag_guardMalloc_enable" = 0;
+    "param_diag_memoryGraphOnResourceException" = 0;
+    "param_diag_queueDebugging_enable" = 1;
+    "param_diag_runtimeProfile_generate" = 0;
+    "param_diag_sanitizer_asan_enable" = 0;
+    "param_diag_sanitizer_tsan_enable" = 0;
+    "param_diag_sanitizer_tsan_stopOnIssue" = 0;
+    "param_diag_sanitizer_ubsan_enable" = 0;
+    "param_diag_sanitizer_ubsan_stopOnIssue" = 0;
+    "param_diag_showNonLocalizedStrings" = 0;
+    "param_diag_viewDebugging_enabled" = 1;
+    "param_diag_viewDebugging_insertDylibOnLaunch" = 1;
+    "param_install_style" = 2;
+    "param_launcher_UID" = 2;
+    "param_launcher_allowDeviceSensorReplayData" = 0;
+    "param_launcher_kind" = 0;
+    "param_launcher_style" = 99;
+    "param_launcher_substyle" = 0;
+    "param_lldbVersion_component_idx_1" = 0;
+    "param_lldbVersion_monotonic" = 170300310002;
+    "param_runnable_appExtensionHostRunMode" = 0;
+    "param_runnable_productType" = "com.apple.product-type.application";
+    "param_testing_launchedForTesting" = 0;
+    "param_testing_suppressSimulatorApp" = 0;
+    "param_testing_usingCLI" = 0;
+    "sdk_canonicalName" = "iphoneos26.0";
+    "sdk_osVersion" = "26.0";
+    "sdk_platformID" = 2;
+    "sdk_variant" = iphoneos;
+    "sdk_version_monotonic" = 2300033900;
+}
+--
+
+
+System Information
+
+macOS Version 26.0 (Build 25A354)
+Xcode 26.0 (24228) (Build 17A324)
+Timestamp: 2025-09-16T21:37:56-07:00

@@ -1,0 +1,282 @@
+import SwiftUI
+
+/// Monthly Overview Section displaying key financial metrics for the current month
+/// Shows income, expenses, and trend indicators with month-over-month comparison
+struct MonthlyOverviewSection: View {
+    @StateObject private var viewModel = MonthlyOverviewViewModel()
+    
+    /// Date formatter for displaying month abbreviation (e.g., "Sep 2024")
+    private let monthAbbreviationFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM yyyy"
+        return formatter
+    }()
+    
+    var body: some View {
+        VStack(spacing: Constants.UI.Spacing.large) {
+            // MARK: - Section Header
+            HStack {
+                Text("Monthly Overview")
+                    .font(Constants.Typography.H2.font)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                
+                Spacer()
+            }
+            
+            // MARK: - Content Area
+            // Display loading, data, or error state based on view model state
+            if viewModel.isLoading {
+                MonthlyOverviewLoadingView()
+            } else if let data = viewModel.monthlyData {
+                MonthlyOverviewCard(data: data, monthFormatter: monthAbbreviationFormatter)
+            } else if let error = viewModel.errorMessage {
+                MonthlyOverviewErrorView(error: error)
+            }
+        }
+        .onAppear {
+            // TODO: @dev - Consider implementing pull-to-refresh functionality
+            // TODO: @dev - Add error retry mechanism for failed data loads
+            viewModel.refreshData()
+        }
+    }
+}
+
+// MARK: - Monthly Overview Card
+/// Card component displaying monthly financial metrics in a grid layout
+private struct MonthlyOverviewCard: View {
+    let data: MonthlyOverviewData
+    let monthFormatter: DateFormatter
+    
+    var body: some View {
+        VStack(spacing: Constants.UI.Spacing.medium) {
+            // MARK: - Financial Metrics Grid
+            // Two-column grid displaying income and expenses with trend indicators
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: Constants.UI.Spacing.small) {
+                // Monthly Income Card
+                MetricCard(
+                    title: "Income",
+                    value: data.currentMonth.income,
+                    previousValue: data.previousMonth.income,
+                    format: .currency,
+                    color: Constants.Colors.success,
+                    monthDate: data.currentMonth.date,
+                    monthFormatter: monthFormatter
+                )
+                
+                // Monthly Expenses Card
+                MetricCard(
+                    title: "Expenses",
+                    value: data.currentMonth.expenses,
+                    previousValue: data.previousMonth.expenses,
+                    format: .currency,
+                    color: Constants.Colors.error,
+                    monthDate: data.currentMonth.date,
+                    monthFormatter: monthFormatter
+                )
+            }
+        }
+    }
+    
+}
+
+// MARK: - Metric Card
+/// Individual metric card displaying title, value, and trend indicator
+private struct MetricCard: View {
+    let title: String
+    let value: Double
+    let previousValue: Double
+    let format: ValueFormat
+    let color: Color
+    let monthDate: Date
+    let monthFormatter: DateFormatter
+    
+    /// Supported value formats for display
+    enum ValueFormat {
+        case currency
+        case percentage
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
+            // MARK: - Card Title with Month
+            HStack {
+                Text(title)
+                    .font(Constants.Typography.BodySmall.font)
+                    .foregroundColor(Constants.Colors.textSecondary)
+                
+                Spacer()
+                
+                Text(monthFormatter.string(from: monthDate))
+                    .font(Constants.Typography.Caption.font)
+                    .foregroundColor(Constants.Colors.textTertiary)
+            }
+            
+            // MARK: - Card Value with Percentage
+            HStack(alignment: .bottom, spacing: Constants.UI.Spacing.micro) {
+                Text(formattedValue)
+                    .font(Constants.Typography.H3.font)
+                    .foregroundColor(color)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                
+                // Percentage change next to value
+                TrendIndicator(
+                    currentValue: value,
+                    previousValue: previousValue,
+                    color: color
+                )
+                
+                Spacer()
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Constants.UI.Spacing.small)
+        .background(Constants.Colors.textPrimary.opacity(0.05)) // WCAG AA compliant background
+        .cornerRadius(Constants.UI.cornerRadius)
+    }
+    
+    /// Formats the value based on the specified format type
+    private var formattedValue: String {
+        switch format {
+        case .currency:
+            return currencyFormatter.string(from: NSNumber(value: value)) ?? "$0.00"
+        case .percentage:
+            return String(format: "%.1f%%", value)
+        }
+    }
+}
+
+// MARK: - Trend Indicator
+/// Component showing trend direction and percentage change from previous period
+private struct TrendIndicator: View {
+    let currentValue: Double
+    let previousValue: Double
+    let color: Color
+    
+    /// Determines trend direction based on value comparison
+    private var trendDirection: TrendDirection {
+        if currentValue > previousValue {
+            return .up
+        } else if currentValue < previousValue {
+            return .down
+        } else {
+            return .neutral
+        }
+    }
+    
+    /// Calculates percentage change from previous value
+    private var changePercentage: Double {
+        guard previousValue != 0 else { return 0 }
+        return ((currentValue - previousValue) / abs(previousValue)) * 100
+    }
+    
+    var body: some View {
+        HStack(spacing: Constants.UI.Spacing.micro) {
+            // Trend triangle icon
+            Image(systemName: trendDirection.symbol)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(color)
+                .rotationEffect(trendDirection.rotation)
+            
+            // Percentage change text
+            Text("\(String(format: "%.1f", abs(changePercentage)))%")
+                .font(Constants.Typography.Caption.font)
+                .foregroundColor(color)
+        }
+    }
+    
+    /// Trend direction enum with associated symbols and colors
+    enum TrendDirection {
+        case up, down, neutral
+        
+        /// SF Symbol name for trend direction
+        var symbol: String {
+            switch self {
+            case .up: return "triangle.fill"
+            case .down: return "triangle.fill"
+            case .neutral: return "minus"
+            }
+        }
+        
+        
+        /// Rotation angle for triangle direction
+        var rotation: Angle {
+            switch self {
+            case .up: return .degrees(0)
+            case .down: return .degrees(180)
+            case .neutral: return .degrees(0)
+            }
+        }
+    }
+}
+
+
+// MARK: - Loading View
+/// Loading state component displayed while fetching monthly data
+private struct MonthlyOverviewLoadingView: View {
+    var body: some View {
+        VStack(spacing: Constants.UI.Spacing.medium) {
+            HStack {
+                Text("Loading monthly data...")
+                    .font(Constants.Typography.Body.font)
+                    .foregroundColor(Constants.Colors.textSecondary)
+                
+                Spacer()
+            }
+            
+            // Loading spinner with brand color
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: Constants.Colors.success))
+        }
+    }
+}
+
+// MARK: - Error View
+/// Error state component displayed when data loading fails
+private struct MonthlyOverviewErrorView: View {
+    let error: String
+    
+    var body: some View {
+        VStack(spacing: Constants.UI.Spacing.medium) {
+            HStack {
+                // Error icon
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(Constants.Colors.error)
+                
+                Text("Failed to load monthly data")
+                    .font(Constants.Typography.Body.font)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                
+                Spacer()
+            }
+            
+            // Error details
+            Text(error)
+                .font(Constants.Typography.Caption.font)
+                .foregroundColor(Constants.Colors.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+// MARK: - Formatters
+/// Currency formatter for displaying monetary values
+private let currencyFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = "USD"
+    formatter.maximumFractionDigits = 0
+    return formatter
+}()
+
+
+
+#Preview {
+    MonthlyOverviewSection()
+        .padding()
+        .background(Constants.Colors.backgroundPrimary)
+}

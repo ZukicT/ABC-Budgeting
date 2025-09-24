@@ -1,0 +1,131 @@
+import SwiftUI
+
+// MARK: - Base View Protocol
+protocol BaseView: View {
+    associatedtype Content: View
+    var content: Content { get }
+}
+
+extension BaseView {
+    var body: some View {
+        content
+            .background(Constants.Colors.backgroundPrimary)
+            .preferredColorScheme(.none) // Respects system appearance
+    }
+}
+
+// MARK: - Loading State View
+struct LoadingStateView: View {
+    let message: String
+    
+    var body: some View {
+        VStack(spacing: Constants.UI.Spacing.medium) {
+            ProgressView()
+                .scaleEffect(1.2)
+                .accessibilityHidden(true)
+            
+            Text(message)
+                .font(Constants.Typography.Body.font)
+                .foregroundColor(Constants.Colors.textSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Constants.Colors.backgroundPrimary)
+        .accessibilityLabel("Loading: \(message)")
+    }
+}
+
+// MARK: - Empty State View
+struct EmptyStateView: View {
+    let icon: String
+    let title: String
+    let message: String
+    let actionTitle: String?
+    let action: (() -> Void)?
+    
+    init(
+        icon: String,
+        title: String,
+        message: String,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) {
+        self.icon = icon
+        self.title = title
+        self.message = message
+        self.actionTitle = actionTitle
+        self.action = action
+    }
+    
+    var body: some View {
+        VStack(spacing: Constants.UI.Spacing.large) {
+            Image(systemName: icon)
+                .font(.system(size: 64))
+                .foregroundColor(Constants.Colors.textTertiary)
+                .accessibilityHidden(true)
+            
+            VStack(spacing: Constants.UI.Spacing.small) {
+                Text(title)
+                    .font(Constants.Typography.H2.font)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                    .multilineTextAlignment(.center)
+                
+                Text(message)
+                    .font(Constants.Typography.Body.font)
+                    .foregroundColor(Constants.Colors.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            if let actionTitle = actionTitle, let action = action {
+                Button(actionTitle) {
+                    action()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .accessibilityLabel(actionTitle)
+            }
+        }
+        .padding(Constants.UI.Spacing.large)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Constants.Colors.backgroundPrimary)
+    }
+}
+
+// MARK: - Error State View
+struct ErrorStateView: View {
+    let message: String
+    let retryAction: (() -> Void)?
+    
+    var body: some View {
+        VStack(spacing: Constants.UI.Spacing.large) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 64))
+                .foregroundColor(Constants.Colors.error)
+                .accessibilityHidden(true)
+            
+            VStack(spacing: Constants.UI.Spacing.small) {
+                Text("Something went wrong")
+                    .font(Constants.Typography.H2.font)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                    .multilineTextAlignment(.center)
+                
+                Text(message)
+                    .font(Constants.Typography.Body.font)
+                    .foregroundColor(Constants.Colors.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            if let retryAction = retryAction {
+                Button("Try Again") {
+                    retryAction()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .accessibilityLabel("Retry action")
+            }
+        }
+        .padding(Constants.UI.Spacing.large)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Constants.Colors.backgroundPrimary)
+    }
+}
