@@ -149,21 +149,55 @@ The project includes automated CI/CD pipeline via GitHub Actions:
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+**⚠️ CONTRIBUTION RESTRICTIONS**
 
-### Code Style
+This project is **NOT accepting contributions** at this time.
+
+### Why No Contributions?
+- Project is in active development phase
+- Code is proprietary and protected
+- Commercial licensing considerations
+- Intellectual property protection
+
+### Alternative Ways to Engage:
+- **Star the repository** if you find it useful
+- **Open issues** for bug reports or suggestions
+- **Contact the author** for collaboration inquiries
+- **Follow for updates** on project progress
+
+### Code Style (For Reference Only)
 - Follow Swift style guidelines
 - Use SwiftLint for code formatting
 - Write comprehensive tests
 - Document public APIs
 
-## 📄 License
+## 📄 License & Usage Rights
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+**⚠️ IMPORTANT: STRICT USAGE RESTRICTIONS**
+
+This project is licensed under a **RESTRICTED MIT License** with additional commercial use prohibitions.
+
+### 🚫 **PROHIBITED USES:**
+- **Commercial use** (selling, licensing for profit)
+- **Creating derivative works** for commercial purposes
+- **Redistributing** for commercial gain
+- **Incorporating** into commercial products without permission
+
+### ✅ **ALLOWED USES:**
+- **Educational purposes** and learning
+- **Personal projects** and portfolio
+- **Code study** and research
+- **Non-commercial modifications**
+
+### 📋 **Terms:**
+- Attribution required for any use
+- Commercial licensing available upon request
+- Violation results in immediate termination of rights
+- Legal action may be taken for violations
+
+**For commercial licensing inquiries:** infotarik5@gmail.com
+
+See [LICENSE](LICENSE) file for complete terms and conditions.
 
 ## 👨‍💻 Author
 
