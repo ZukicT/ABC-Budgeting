@@ -198,3 +198,6 @@ File.txt
 
 # Documentation folder
 Docs/
+
+# Cursor IDE folder
+.cursor/
