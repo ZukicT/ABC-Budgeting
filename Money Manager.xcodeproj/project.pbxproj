@@ -8,12 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		DC6566912DE6C01200BAEEE0 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = DC6566902DE6C01200BAEEE0 /* AsyncAlgorithms */; };
-		DC8449E52E7A75C7009F2A63 /* File.txt in Resources */ = {isa = PBXBuildFile; fileRef = DC8449E42E7A75C7009F2A63 /* File.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		DC20FE7E2DE16A92006253C1 /* Money Manager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Money Manager.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DC8449E42E7A75C7009F2A63 /* File.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = File.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,7 +37,6 @@
 			children = (
 				DC20FE802DE16A92006253C1 /* Money Manager */,
 				DC20FE7F2DE16A92006253C1 /* Products */,
-				DC8449E42E7A75C7009F2A63 /* File.txt */,
 			);
 			sourceTree = "<group>";
 		};
@@ -116,7 +113,6 @@
 		DC20FE7C2DE16A92006253C1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				DC8449E52E7A75C7009F2A63 /* File.txt in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
