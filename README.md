@@ -24,13 +24,15 @@ Money Manager is a modern, intuitive iOS app designed to help users take control
 
 ## 🛠️ Technical Stack
 
-- **Platform**: iOS 15.0+
+- **Platform**: iOS 18.0+
 - **Framework**: SwiftUI
-- **Language**: Swift 5.7+
+- **Language**: Swift 6.0+
+- **Xcode**: 26.0+
 - **Architecture**: MVVM (Model-View-ViewModel)
 - **Data Persistence**: Core Data
 - **Charts**: Swift Charts
 - **Testing**: XCTest
+- **CI/CD**: GitHub Actions
 
 ## 📁 Project Structure
 
@@ -60,9 +62,9 @@ Money Manager/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Xcode 14.0 or later
-- iOS 15.0 or later
-- macOS 12.0 or later (for development)
+- Xcode 26.0 or later
+- iOS 18.0 or later
+- macOS 15.0 or later (for development)
 
 ### Installation
 
@@ -99,7 +101,7 @@ Money Manager/
 xcodebuild test -project "Money Manager.xcodeproj" -scheme "Money Manager"
 
 # Run specific test target
-xcodebuild test -project "Money Manager.xcodeproj" -scheme "Money Manager" -destination "platform=iOS Simulator,name=iPhone 15"
+xcodebuild test -project "Money Manager.xcodeproj" -scheme "Money Manager" -destination "platform=iOS Simulator,name=iPhone 17,OS=26.0"
 ```
 
 ### Test Coverage
@@ -109,12 +111,13 @@ xcodebuild test -project "Money Manager.xcodeproj" -scheme "Money Manager" -dest
 
 ## 📊 CI/CD
 
-The project includes automated CI/CD pipeline:
+The project includes automated CI/CD pipeline via GitHub Actions:
 
-- **Build Validation** - Automated builds on every commit
-- **Testing** - Comprehensive test suite execution
-- **Code Quality** - SwiftLint integration
-- **Simulator Testing** - Multi-device testing
+- **Build Validation** - Automated builds on every commit to main/develop branches
+- **Testing** - Comprehensive test suite execution on iOS 26.0 simulator
+- **Code Quality** - SwiftLint integration for code standards
+- **Simulator Testing** - iPhone 17 with iOS 26.0 testing
+- **Pull Request Validation** - Automatic checks on PR creation
 
 ## 🎨 Design System
 
@@ -176,18 +179,26 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📈 Roadmap
 
-### Version 1.0 (Current)
-- [x] Basic budget management
-- [x] Loan tracking
+### Version 1.0 (In Development)
+- [x] Project setup and CI/CD pipeline
+- [x] Basic app structure and navigation
+- [x] Budget management foundation
+- [x] Loan tracking system
 - [x] Transaction management
 - [x] Financial overview dashboard
+- [x] SwiftUI implementation
+- [x] Core Data integration
+- [ ] Advanced analytics and charts
+- [ ] Notification system
+- [ ] Settings and preferences
 
 ### Future Versions
-- [ ] Widget support for quick access
+- [ ] iOS Widget support for quick access
 - [ ] Advanced analytics and reporting
 - [ ] Cloud sync capabilities
 - [ ] Export functionality
 - [ ] Multi-currency support
+- [ ] Apple Watch companion app
 
 ## 🐛 Known Issues
 
