@@ -130,13 +130,13 @@ private struct BudgetSummaryCard: View {
                     Rectangle()
                         .fill(Constants.Colors.backgroundSecondary)
                         .frame(height: 12)
-                        .cornerRadius(6)
+                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
                     
                     // Progress Fill
                     Rectangle()
                         .fill(progressColor)
                         .frame(width: geometry.size.width * min(overallProgress, 1.0), height: 12)
-                        .cornerRadius(6)
+                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
                 }
             }
             .frame(height: 12)
@@ -170,7 +170,7 @@ private struct BudgetSummaryCard: View {
         }
         .padding(Constants.UI.Spacing.medium)
         .background(Constants.Colors.textPrimary.opacity(0.05)) // WCAG AA compliant background
-        .cornerRadius(Constants.UI.cornerRadius)
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
     }
 }
 
@@ -199,13 +199,13 @@ private struct CompactBudgetItem: View {
                     Rectangle()
                         .fill(Constants.Colors.backgroundSecondary)
                         .frame(height: 4)
-                        .cornerRadius(2)
+                        .cornerRadius(Constants.UI.CornerRadius.quaternary)
                     
                     // Progress Fill
                     Rectangle()
                         .fill(item.statusColor)
                         .frame(width: geometry.size.width * min(item.progressPercentage, 1.0), height: 4)
-                        .cornerRadius(2)
+                        .cornerRadius(Constants.UI.CornerRadius.quaternary)
                 }
             }
             .frame(height: 4)

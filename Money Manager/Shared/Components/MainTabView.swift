@@ -43,7 +43,7 @@ struct MainTabView: View {
                 .accessibilityLabel("Loans tab")
                 .accessibilityHint("View and manage your loans")
         }
-        .accentColor(Constants.Colors.primaryBlue)
+        .accentColor(Constants.Colors.robinNeonGreen)
         .preferredColorScheme(.none) // Respects system appearance
     }
 }

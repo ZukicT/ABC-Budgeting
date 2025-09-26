@@ -61,7 +61,7 @@ struct BudgetCategoryFilterTag: View {
             .padding(.horizontal, Constants.UI.Spacing.medium)
             .padding(.vertical, Constants.UI.Spacing.small)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                     .fill(isSelected ? Constants.Colors.textPrimary : Constants.Colors.textPrimary.opacity(0.08))
             )
         }

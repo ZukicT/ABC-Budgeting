@@ -17,6 +17,95 @@ struct ChartSegment: Identifiable {
 
 // MARK: - Balance Chart View
 struct BalanceChartView: View {
+    @ObservedObject var transactionViewModel: TransactionViewModel
+    @ObservedObject var budgetViewModel: BudgetViewModel
+    @ObservedObject var loanViewModel: LoanViewModel
+    @State private var selectedTimeRange: TimeRange = .oneMonth
+    
+    enum TimeRange: String, CaseIterable {
+        case oneDay = "1D"
+        case oneWeek = "1W"
+        case oneMonth = "1M"
+        case threeMonths = "3M"
+        case yearToDate = "YTD"
+        case oneYear = "1Y"
+        case all = "All"
+    }
+    
+    // MARK: - Computed Properties for Real Data
+    
+    private var totalBalance: Double {
+        let totalIncome = transactionViewModel.transactions
+            .filter { $0.amount > 0 }
+            .reduce(0) { $0 + $1.amount }
+        
+        let totalExpenses = transactionViewModel.transactions
+            .filter { $0.amount < 0 }
+            .reduce(0) { $0 + abs($1.amount) }
+        
+        return totalIncome - totalExpenses
+    }
+    
+    private var monthlyIncome: Double {
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfMonth = calendar.dateInterval(of: .month, for: now)?.start ?? now
+        
+        return transactionViewModel.transactions
+            .filter { $0.date >= startOfMonth && $0.amount > 0 }
+            .reduce(0) { $0 + $1.amount }
+    }
+    
+    private var monthlyExpenses: Double {
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfMonth = calendar.dateInterval(of: .month, for: now)?.start ?? now
+        
+        return transactionViewModel.transactions
+            .filter { $0.date >= startOfMonth && $0.amount < 0 }
+            .reduce(0) { $0 + abs($1.amount) }
+    }
+    
+    private var currentMonthName: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        return formatter.string(from: Date())
+    }
+    
+    private var incomeChangePercentage: Double {
+        let calendar = Calendar.current
+        let now = Date()
+        let currentMonthStart = calendar.dateInterval(of: .month, for: now)?.start ?? now
+        let previousMonthStart = calendar.date(byAdding: .month, value: -1, to: currentMonthStart) ?? now
+        let previousMonthEnd = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+        
+        let currentIncome = monthlyIncome
+        
+        let previousIncome = transactionViewModel.transactions
+            .filter { $0.date >= previousMonthStart && $0.date < previousMonthEnd && $0.amount > 0 }
+            .reduce(0) { $0 + $1.amount }
+        
+        guard previousIncome > 0 else { return 0 }
+        return ((currentIncome - previousIncome) / previousIncome) * 100
+    }
+    
+    private var expenseChangePercentage: Double {
+        let calendar = Calendar.current
+        let now = Date()
+        let currentMonthStart = calendar.dateInterval(of: .month, for: now)?.start ?? now
+        let previousMonthStart = calendar.date(byAdding: .month, value: -1, to: currentMonthStart) ?? now
+        let previousMonthEnd = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+        
+        let currentExpenses = monthlyExpenses
+        
+        let previousExpenses = transactionViewModel.transactions
+            .filter { $0.date >= previousMonthStart && $0.date < previousMonthEnd && $0.amount < 0 }
+            .reduce(0) { $0 + abs($1.amount) }
+        
+        guard previousExpenses > 0 else { return 0 }
+        return ((currentExpenses - previousExpenses) / previousExpenses) * 100
+    }
+    
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.small) {
             // Header Section (now includes metrics)
@@ -40,7 +129,7 @@ struct BalanceChartView: View {
                 .font(Constants.Typography.Caption.font)
                 .foregroundColor(Constants.Colors.textSecondary)
             
-            Text("$5,500.00")
+            Text(totalBalance.formatted(.currency(code: "USD")))
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundColor(Constants.Colors.textPrimary)
             
@@ -52,15 +141,15 @@ struct BalanceChartView: View {
                         .font(.caption)
                         .foregroundColor(Constants.Colors.success)
                     
-                    Text("$3,500")
+                    Text(monthlyIncome.formatted(.currency(code: "USD")))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.success)
                     
-                    Text("(+12.5%)")
+                    Text("(\(incomeChangePercentage > 0 ? "+" : "")\(String(format: "%.1f", incomeChangePercentage))%)")
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.success)
                     
-                    Text("Jan Income")
+                    Text("\(currentMonthName) Income")
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
@@ -74,15 +163,15 @@ struct BalanceChartView: View {
                         .font(.caption)
                         .foregroundColor(Constants.Colors.error)
                     
-                    Text("$2,800")
+                    Text(monthlyExpenses.formatted(.currency(code: "USD")))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.error)
                     
-                    Text("(-8.3%)")
+                    Text("(\(expenseChangePercentage > 0 ? "+" : "")\(String(format: "%.1f", expenseChangePercentage))%)")
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.error)
                     
-                    Text("Jan Expenses")
+                    Text("\(currentMonthName) Expenses")
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
@@ -101,18 +190,18 @@ struct BalanceChartView: View {
         VStack(spacing: 0) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(["1D", "1W", "1M", "3M", "YTD", "1Y", "All"], id: \.self) { period in
+                    ForEach(TimeRange.allCases, id: \.self) { period in
                         Button(action: {
-                            // Time period selection logic
+                            selectedTimeRange = period
                         }) {
-                            Text(period)
+                            Text(period.rawValue)
                                 .font(Constants.Typography.Caption.font)
-                                .foregroundColor(period == "1M" ? Constants.Colors.backgroundPrimary : Constants.Colors.textPrimary)
+                                .foregroundColor(period == selectedTimeRange ? Constants.Colors.backgroundPrimary : Constants.Colors.textPrimary)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(period == "1M" ? Constants.Colors.textPrimary : Color.clear)
+                                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
+                                        .fill(period == selectedTimeRange ? Constants.Colors.textPrimary : Color.clear)
                                 )
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -136,12 +225,12 @@ struct BalanceChartView: View {
                 
                 Chart {
                     // Baseline reference line (starting balance) - lighter
-                    RuleMark(y: .value("Baseline", 5500.0))
+                    RuleMark(y: .value("Baseline", totalBalance))
                         .foregroundStyle(Constants.Colors.textSecondary.opacity(0.4))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 5]))
                     
                     // Simple line chart with area fill
-                    ForEach(sampleData, id: \.id) { dataPoint in
+                    ForEach(chartData, id: \.id) { dataPoint in
                         // Area fill
                         AreaMark(
                             x: .value("Date", dataPoint.date),
@@ -164,7 +253,7 @@ struct BalanceChartView: View {
                             y: .value("Balance", dataPoint.balance)
                         )
                         .foregroundStyle(Constants.Colors.success)
-                        .lineStyle(StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+                        .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
                         
                         // Data points
                         PointMark(
@@ -192,8 +281,8 @@ struct BalanceChartView: View {
     
     // Chart segments with proper color transitions
     private var chartSegments: [ChartSegment] {
-        let data = sampleData
-        let baseline = 5500.0
+        let data = chartData
+        let baseline = totalBalance
         var segments: [ChartSegment] = []
         var currentSegment: [BalanceDataPoint] = []
         var currentAboveBaseline: Bool? = nil
@@ -236,37 +325,134 @@ struct BalanceChartView: View {
         return segments
     }
     
-    // Sample data for the chart - balanced above/below baseline
-    private var sampleData: [BalanceDataPoint] {
+    // Real calculated data for the chart based on actual transactions
+    private var chartData: [BalanceDataPoint] {
         let calendar = Calendar.current
         let now = Date()
         var data: [BalanceDataPoint] = []
         
-        // Create a clear pattern: start high, dip low, recover high
-        let pattern: [Double] = [
-            6200, 6500, 6800, 7200, 7500,  // High section (green)
-            7000, 6000, 4800, 4200, 3800,  // Drop section (red)
-            3500, 3200, 3000, 2800, 2600,  // Low section (red)
-            3000, 3800, 4500, 5200, 5800,  // Recovery section (green)
-            6200, 6800, 7200, 7500, 7800,  // High section (green)
-            7000, 6500, 6000, 5500, 5000   // Gradual decline (mixed)
-        ]
+        // Get date range based on selected time range
+        let dateRange = getDateRange(for: selectedTimeRange)
+        let startDate = dateRange.start
+        let endDate = dateRange.end
         
-        for i in 0..<30 {
-            let date = calendar.date(byAdding: .day, value: -i, to: now) ?? now
-            let balance = pattern[i]
-            
+        // Generate data points for the selected time range with appropriate granularity
+        let days = calendar.dateComponents([.day], from: startDate, to: endDate).day ?? 1
+        let dataPoints = getOptimalDataPointCount(for: selectedTimeRange, totalDays: days)
+        let stepSize = max(1, days / dataPoints)
+        
+        for i in stride(from: 0, to: days, by: stepSize) {
+            let date = calendar.date(byAdding: .day, value: i, to: startDate) ?? startDate
+            let balance = calculateBalanceForDate(date)
             data.append(BalanceDataPoint(date: date, balance: balance))
         }
         
+        // Always include the end date for completeness
+        if !data.isEmpty && data.last?.date != endDate {
+            let balance = calculateBalanceForDate(endDate)
+            data.append(BalanceDataPoint(date: endDate, balance: balance))
+        }
+        
         return data.sorted { $0.date < $1.date }
+    }
+    
+    // Get optimal number of data points based on time range
+    private func getOptimalDataPointCount(for timeRange: TimeRange, totalDays: Int) -> Int {
+        switch timeRange {
+        case .oneDay:
+            return min(24, totalDays) // Hourly data for 1 day
+        case .oneWeek:
+            return min(7, totalDays) // Daily data for 1 week
+        case .oneMonth:
+            return min(30, totalDays) // Daily data for 1 month
+        case .threeMonths:
+            return min(30, totalDays) // Every 3 days for 3 months
+        case .yearToDate:
+            return min(30, totalDays) // Monthly data for YTD
+        case .oneYear:
+            return min(30, totalDays) // Monthly data for 1 year
+        case .all:
+            return min(30, totalDays) // Monthly data for all time
+        }
+    }
+    
+    // Calculate balance for a specific date
+    private func calculateBalanceForDate(_ date: Date) -> Double {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? startOfDay
+        
+        // Get transactions up to this date
+        let transactionsUpToDate = transactionViewModel.transactions.filter { transaction in
+            transaction.date < endOfDay
+        }
+        
+        // Calculate running balance with proper error handling
+        let totalIncome = transactionsUpToDate
+            .filter { $0.amount > 0 }
+            .reduce(0) { $0 + $1.amount }
+        
+        let totalExpenses = transactionsUpToDate
+            .filter { $0.amount < 0 }
+            .reduce(0) { $0 + abs($1.amount) }
+        
+        // Start with a base balance (this should ideally come from user settings)
+        let baseBalance = getBaseBalance()
+        let calculatedBalance = baseBalance + totalIncome - totalExpenses
+        
+        // Ensure balance is never negative for display purposes
+        return max(0, calculatedBalance)
+    }
+    
+    // Get base balance - this should ideally come from user settings or previous data
+    private func getBaseBalance() -> Double {
+        // For now, use a default base balance
+        // In a real app, this would come from user settings or previous balance data
+        return 1000.0
+    }
+    
+    // Get date range for selected time period
+    private func getDateRange(for timeRange: TimeRange) -> (start: Date, end: Date) {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        switch timeRange {
+        case .oneDay:
+            let start = calendar.startOfDay(for: now)
+            let end = calendar.date(byAdding: .day, value: 1, to: start) ?? now
+            return (start, end)
+        case .oneWeek:
+            let start = calendar.date(byAdding: .weekOfYear, value: -1, to: now) ?? now
+            return (start, now)
+        case .oneMonth:
+            let start = calendar.date(byAdding: .month, value: -1, to: now) ?? now
+            return (start, now)
+        case .threeMonths:
+            let start = calendar.date(byAdding: .month, value: -3, to: now) ?? now
+            return (start, now)
+        case .yearToDate:
+            let start = calendar.dateInterval(of: .year, for: now)?.start ?? now
+            return (start, now)
+        case .oneYear:
+            let start = calendar.date(byAdding: .year, value: -1, to: now) ?? now
+            return (start, now)
+        case .all:
+            // Get the earliest transaction date or 1 year ago
+            let earliestTransaction = transactionViewModel.transactions.min { $0.date < $1.date }
+            let start = earliestTransaction?.date ?? calendar.date(byAdding: .year, value: -1, to: now) ?? now
+            return (start, now)
+        }
     }
     
 }
 
 
 #Preview {
-    BalanceChartView()
+    BalanceChartView(
+        transactionViewModel: TransactionViewModel(),
+        budgetViewModel: BudgetViewModel(),
+        loanViewModel: LoanViewModel()
+    )
         .padding()
 }
 

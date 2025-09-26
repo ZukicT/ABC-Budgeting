@@ -1,9 +1,36 @@
 import Foundation
 import SwiftUI
 
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue:  Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
+}
+
 struct Constants {
     // MARK: - App Configuration
-    static let appName = "ABC Budgeting"
+    static let appName = "Money Manager"
     static let appVersion = "1.0.0"
     
     // MARK: - UI Constants (8pt Grid System)
@@ -64,9 +91,51 @@ struct Constants {
             static let submitButtonMargin: CGFloat = 24 // Submit button margin: 24pt from last field
         }
         
-        // MARK: - Corner Radius
-        static let cornerRadius: CGFloat = 12
-        static let cardCornerRadius: CGFloat = Component.cardCornerRadius
+        // MARK: - Corner Radius System (Global Consistency)
+        /**
+         * Global Corner Radius System
+         * 
+         * Provides consistent corner radius values across the entire application
+         * to maintain visual harmony and design system compliance.
+         * 
+         * Usage Guidelines:
+         * - primary (24pt): Main CTA buttons, large cards, primary UI elements
+         * - secondary (24pt): Standard cards, input fields, secondary buttons
+         * - tertiary (24pt): Small indicators, tags, micro elements
+         * - quaternary (24pt): Progress bars, minimal visual elements
+         * 
+         * Design Philosophy:
+         * - Creates consistent rounded appearance across all UI elements
+         * - Maintains visual harmony with uniform corner radius
+         * - Follows iOS Human Interface Guidelines
+         * - Supports accessibility and touch targets
+         * 
+         * Last Review: 2025-01-26
+         * Status: Production Ready
+         */
+        struct CornerRadius {
+            // Primary corner radius for all UI elements
+            static let primary: CGFloat = 24
+            
+            // Secondary corner radius for smaller elements
+            static let secondary: CGFloat = 24
+            
+            // Tertiary corner radius for micro elements
+            static let tertiary: CGFloat = 24
+            
+            // Quaternary corner radius for minimal elements
+            static let quaternary: CGFloat = 24
+            
+            // Legacy support - map old values to new system
+            static let cardCornerRadius = secondary
+            static let buttonCornerRadius = primary
+            static let inputCornerRadius = secondary
+            static let indicatorCornerRadius = tertiary
+        }
+        
+        // MARK: - Legacy Corner Radius (Deprecated - Use CornerRadius instead)
+        static let cornerRadius: CGFloat = CornerRadius.secondary
+        static let cardCornerRadius: CGFloat = CornerRadius.secondary
         
         // MARK: - Screen Structure
         struct Screen {
@@ -82,14 +151,14 @@ struct Constants {
         }
     }
     
-    // MARK: - Typography Hierarchy & Weights
+    // MARK: - Typography Hierarchy & Weights (Trap Font Family)
     struct Typography {
         // MARK: - H1 - Screen Titles
         struct H1 {
             static let size: CGFloat = 32        // 2rem
             static let weight: Font.Weight = .bold // 700
             static let lineHeight: CGFloat = 38
-            static let font = Font.system(size: size, weight: weight)
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .bold)
             static let usage = "Main screen headers, account balance"
         }
         
@@ -98,7 +167,7 @@ struct Constants {
             static let size: CGFloat = 24        // 1.5rem
             static let weight: Font.Weight = .semibold // 600
             static let lineHeight: CGFloat = 30
-            static let font = Font.system(size: size, weight: weight)
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .semiBold)
             static let usage = "Category titles, card headers"
         }
         
@@ -107,7 +176,7 @@ struct Constants {
             static let size: CGFloat = 18        // 1.125rem
             static let weight: Font.Weight = .semibold // 600
             static let lineHeight: CGFloat = 24
-            static let font = Font.system(size: size, weight: weight)
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .semiBold)
             static let usage = "Transaction categories, settings sections"
         }
         
@@ -116,7 +185,7 @@ struct Constants {
             static let size: CGFloat = 16        // 1rem
             static let weight: Font.Weight = .regular // 400
             static let lineHeight: CGFloat = 22
-            static let font = Font.system(size: size, weight: weight)
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .regular)
             static let usage = "Transaction descriptions, main content"
         }
         
@@ -125,7 +194,7 @@ struct Constants {
             static let size: CGFloat = 14        // 0.875rem
             static let weight: Font.Weight = .regular // 400
             static let lineHeight: CGFloat = 20
-            static let font = Font.system(size: size, weight: weight)
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .regular)
             static let usage = "Dates, helper text, descriptions"
         }
         
@@ -134,7 +203,7 @@ struct Constants {
             static let size: CGFloat = 12        // 0.75rem
             static let weight: Font.Weight = .regular // 400
             static let lineHeight: CGFloat = 16
-            static let font = Font.system(size: size, weight: weight)
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .regular)
             static let usage = "Timestamps, fine print, labels"
         }
         
@@ -143,8 +212,26 @@ struct Constants {
             static let size: CGFloat = 16        // 1rem
             static let weight: Font.Weight = .semibold // 600
             static let lineHeight: CGFloat = 20
-            static let font = Font.system(size: size, weight: weight)
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .semiBold)
             static let usage = "All button labels"
+        }
+        
+        // MARK: - Display Text (Large Numbers)
+        struct Display {
+            static let size: CGFloat = 48        // 3rem
+            static let weight: Font.Weight = .black // 900
+            static let lineHeight: CGFloat = 56
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .black)
+            static let usage = "Large numbers, hero text, account balances"
+        }
+        
+        // MARK: - Display Small (Medium Numbers)
+        struct DisplaySmall {
+            static let size: CGFloat = 36        // 2.25rem
+            static let weight: Font.Weight = .heavy // 800
+            static let lineHeight: CGFloat = 42
+            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .extraBold)
+            static let usage = "Medium numbers, important values"
         }
         
         // MARK: - Legacy Support
@@ -166,36 +253,38 @@ struct Constants {
         static let tertiary = Typography.Button.font.weight(.regular)
     }
     
-    // MARK: - Colors (Modern Fintech iOS sRGB Color Palette - WCAG AA Compliant)
+    // MARK: - Colors (Vibrant Modern Palette)
     struct Colors {
-        // Primary Brand Colors (WCAG AA Compliant)
-        static let robinNeonGreen = Color(red: 0.2, green: 0.7, blue: 0.0) // #339900 - Darker green for better contrast (4.5:1+ on white)
-        static let cleanBlack = Color(red: 0.122, green: 0.129, blue: 0.141) // #1F2123 - Clean black for navigation and primary text (4.5:1+ on white)
-        static let softRed = Color(red: 0.8, green: 0.2, blue: 0.2) // #CC3333 - Darker red for better contrast (4.5:1+ on white)
+        // Primary Brand Colors (From your color palette)
+        static let primaryBlue = Color(red: 0.341, green: 0.455, blue: 0.804) // #5774CD - Blue-Purple
+        static let primaryOrange = Color(red: 0.996, green: 0.643, blue: 0.098) // #FEA419 - Orange
+        static let primaryPink = Color(red: 1.0, green: 0.714, blue: 0.784) // #FFB6C8 - Light Pink
+        static let primaryLightBlue = Color(red: 0.886, green: 0.914, blue: 1.0) // #E2E9FF - Very Light Blue-Purple
+        static let primaryRed = Color(red: 0.996, green: 0.227, blue: 0.004) // #FE3A01 - Vibrant Red
         
-        // Background & Neutral Colors (Minimalist Flat Design)
-        static let backgroundPrimary = Color(red: 1.0, green: 1.0, blue: 1.0) // #FFFFFF - Pure white background
-        static let cardBackground = Color(red: 1.0, green: 1.0, blue: 1.0) // #FFFFFF - Pure white cards (flat, no shadows)
-        static let backgroundSecondary = Color(red: 0.969, green: 0.969, blue: 0.969) // #F7F7F7 - Light gray for subtle separation
-        static let backgroundTertiary = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2 - Inactive states
+        // Background & Neutral Colors
+        static let backgroundPrimary = Color(red: 1.0, green: 1.0, blue: 1.0) // #FFFFFF - White
+        static let cardBackground = Color(red: 1.0, green: 1.0, blue: 1.0) // #FFFFFF - White cards
+        static let backgroundSecondary = Color(red: 0.886, green: 0.914, blue: 1.0) // #E2E9FF - Very Light Blue-Purple
+        static let backgroundTertiary = Color(red: 0.95, green: 0.95, blue: 0.95) // Light gray for subtle separation
         
-        // Text Colors (WCAG AA Compliant - 4.5:1+ contrast ratio)
-        static let textPrimary = Color(red: 0.122, green: 0.129, blue: 0.141) // #1F2123 - Clean black text (4.5:1+ on white)
-        static let textSecondary = Color(red: 0.4, green: 0.4, blue: 0.4) // #666666 - Darker gray for better contrast (4.5:1+ on white)
-        static let textTertiary = Color(red: 0.5, green: 0.5, blue: 0.5) // #808080 - Medium gray (4.5:1+ on white)
-        static let textQuaternary = Color(red: 0.6, green: 0.6, blue: 0.6) // #999999 - Light gray (4.5:1+ on white)
+        // Text Colors
+        static let textPrimary = Color(red: 0.0, green: 0.0, blue: 0.0) // #000000 - Black
+        static let textSecondary = Color(red: 0.341, green: 0.455, blue: 0.804) // #5774CD - Blue-Purple for secondary text
+        static let textTertiary = Color(red: 0.5, green: 0.5, blue: 0.5) // Medium gray for subtle text
+        static let textQuaternary = Color(red: 0.7, green: 0.7, blue: 0.7) // Light gray for disabled states
         
-        // Semantic Colors (WCAG AA Compliant)
-        static let success = robinNeonGreen
-        static let warning = softRed
-        static let error = softRed
-        static let info = cleanBlack
+        // Semantic Colors (Using your palette)
+        static let success = primaryBlue // #5774CD - Blue-Purple for success
+        static let warning = primaryOrange // #FEA419 - Orange for warnings
+        static let error = primaryOrange // #FEA419 - Orange for errors
+        static let info = primaryBlue // #5774CD - Blue-Purple for info
         
-        // Additional WCAG-compliant variants
-        static let successLight = Color(red: 0.8, green: 0.95, blue: 0.8) // Light green background for success states
-        static let warningLight = Color(red: 0.95, green: 0.8, blue: 0.8) // Light red background for warning states
-        static let errorLight = Color(red: 0.95, green: 0.8, blue: 0.8) // Light red background for error states
-        static let infoLight = Color(red: 0.8, green: 0.9, blue: 0.95) // Light blue background for info states
+        // Additional variants using your palette
+        static let successLight = primaryLightBlue // #E2E9FF - Light blue background for success states
+        static let warningLight = primaryPink // #FFB6C8 - Light pink background for warning states
+        static let errorLight = primaryPink // #FFB6C8 - Light pink background for error states
+        static let infoLight = primaryLightBlue // #E2E9FF - Light blue background for info states
         
         // Border & Separator Colors (Minimalist - No borders)
         static let borderPrimary = Color.clear // No borders in minimalist design
@@ -203,14 +292,16 @@ struct Constants {
         static let separator = Color.clear // No separators in minimalist design
         
         // Legacy support (keeping for compatibility)
-        static let primaryBlue = cleanBlack
-        static let primaryBlueDark = cleanBlack.opacity(0.8)
-        static let trustBlue = cleanBlack
-        static let successGreen = robinNeonGreen
-        static let alertRed = softRed
-        static let electricPurple = cleanBlack
-        static let vibrantTeal = robinNeonGreen
-        static let coralOrange = softRed
+        static let robinNeonGreen = primaryBlue // Map old name to new primary color
+        static let cleanBlack = textPrimary
+        static let softRed = primaryOrange
+        static let primaryBlueDark = primaryBlue.opacity(0.8)
+        static let trustBlue = primaryBlue
+        static let successGreen = primaryBlue
+        static let alertRed = primaryOrange
+        static let electricPurple = primaryBlue
+        static let vibrantTeal = primaryBlue
+        static let coralOrange = primaryOrange
     }
     
     // MARK: - Accessibility
@@ -218,6 +309,113 @@ struct Constants {
         static let minimumTouchTarget: CGFloat = 44
         static let minimumContrastRatio: CGFloat = 4.5
     }
+    
+    // MARK: - Onboarding Layout Constants
+    struct Onboarding {
+        // Layout proportions (as percentages)
+        static let illustrationHeightRatio: CGFloat = 0.50  // 50% of screen height
+        static let textHeightRatio: CGFloat = 0.35          // 35% of screen height
+        static let actionHeightRatio: CGFloat = 0.20        // 20% of screen height
+        
+        // Spacing constants
+        static let headlineBodySpacing: CGFloat = 16        // Space between headline and body text
+        static let buttonIndicatorSpacing: CGFloat = 24     // Space between button and page indicators
+        static let indicatorBottomSpacing: CGFloat = 16     // Space below page indicators
+        static let horizontalMargin: CGFloat = 20           // Horizontal margins throughout
+        
+        // Animation constants
+        static let fadeInDuration: Double = 0.8
+        static let scaleAnimationDuration: Double = 0.8
+        static let scaleAnimationDelay: Double = 0.2
+        static let scaleFromValue: CGFloat = 0.9
+        static let scaleToValue: CGFloat = 1.0
+        
+        // Button constants
+        static let buttonHeight: CGFloat = 56
+        static let buttonCornerRadius: CGFloat = 12
+        static let buttonIconSize: CGFloat = 16
+        static let buttonTextSpacing: CGFloat = 12
+        
+        // Page indicator constants
+        static let activeIndicatorWidth: CGFloat = 20
+        static let activeIndicatorHeight: CGFloat = 4
+        static let inactiveIndicatorSize: CGFloat = 6
+        static let indicatorSpacing: CGFloat = 8
+        
+        // Typography constants
+        static let headlineFontSize: CGFloat = 32
+        static let bodyTextOpacity: CGFloat = 0.7
+        
+        // Color constants
+        static let primaryBlueHex = Color(red: 0.341, green: 0.455, blue: 0.804)  // #5774CD
+        static let lightPurpleHex = Color(red: 0.886, green: 0.914, blue: 1.0)    // #E2E9FF
+        static let pinkHex = Color(red: 1.0, green: 0.714, blue: 0.784)           // #FFB6C8
+        static let yellowHex = Color(red: 0.996, green: 0.643, blue: 0.098)       // #FEA419 (Brand Yellow)
+        }
+        
+        // MARK: - Currency Screen Constants
+        struct Currency {
+            static let listHeight: CGFloat = 450
+            static let backButtonHeight: CGFloat = 40
+            static let backButtonCornerRadius: CGFloat = 24
+            static let backButtonHorizontalPadding: CGFloat = 16
+            static let backButtonTopPadding: CGFloat = 10
+            static let headerSpacing: CGFloat = 16
+            static let headerTopPadding: CGFloat = 20
+            static let headerBottomPadding: CGFloat = 20
+            static let headerHorizontalPadding: CGFloat = 20
+            static let currencyItemSpacing: CGFloat = 16
+            static let currencyItemHorizontalPadding: CGFloat = 16
+            static let currencyItemVerticalPadding: CGFloat = 12
+            static let currencySymbolSize: CGFloat = 18
+            static let currencySymbolFrameSize: CGFloat = 40
+            static let currencySymbolCornerRadius: CGFloat = 8
+            static let currencyNameFontSize: CGFloat = 16
+            static let currencyCodeFontSize: CGFloat = 14
+            static let checkmarkSize: CGFloat = 24
+            static let sectionHeaderFontSize: CGFloat = 16
+            static let sectionHeaderPadding: CGFloat = 12
+            static let sectionHeaderHorizontalPadding: CGFloat = 16
+            static let sectionCornerRadius: CGFloat = 12
+            static let sectionBorderWidth: CGFloat = 1
+            static let sectionBottomPadding: CGFloat = 16
+            static let listHorizontalPadding: CGFloat = 20
+            static let listTopPadding: CGFloat = 20
+        }
+        
+        // MARK: - Starting Balance Screen Constants
+        struct StartingBalance {
+            static let backButtonHeight: CGFloat = 40
+            static let backButtonCornerRadius: CGFloat = 24
+            static let backButtonHorizontalPadding: CGFloat = 16
+            static let backButtonTopPadding: CGFloat = 10
+            static let headerSpacing: CGFloat = 16
+            static let headerTopPadding: CGFloat = 20
+            static let headerBottomPadding: CGFloat = 0
+            static let headerHorizontalPadding: CGFloat = 20
+            static let headlineFontSize: CGFloat = 32
+            static let bodyTextFontSize: CGFloat = 14
+            static let inputSectionHeight: CGFloat = 450
+            static let inputSectionSpacing: CGFloat = 20
+            static let inputFieldSpacing: CGFloat = 12
+            static let inputFieldHorizontalPadding: CGFloat = 16
+            static let inputFieldVerticalPadding: CGFloat = 16
+            static let inputFieldCornerRadius: CGFloat = 12
+            static let inputFieldBorderWidth: CGFloat = 1
+            static let currencySymbolWidth: CGFloat = 40
+            static let inputFontSize: CGFloat = 20
+            static let labelFontSize: CGFloat = 16
+            static let errorFontSize: CGFloat = 14
+            static let quickAmountsSpacing: CGFloat = 12
+            static let quickAmountButtonSpacing: CGFloat = 12
+            static let quickAmountButtonVerticalPadding: CGFloat = 12
+            static let quickAmountButtonCornerRadius: CGFloat = 8
+            static let quickAmountFontSize: CGFloat = 14
+            static let quickAmountValues: [Int] = [100, 500, 1000, 5000]
+            static let sectionHorizontalPadding: CGFloat = 20
+            static let sectionTopPadding: CGFloat = 20
+            static let sectionCornerRadius: CGFloat = 12
+        }
     
     // MARK: - Minimalist Design Tokens (Robinhood/Public Style - No Visual Effects)
     struct MinimalistDesign {
@@ -232,11 +430,11 @@ struct Constants {
         static let backgroundTertiary = Colors.backgroundTertiary
         static let borderPrimary = Colors.borderPrimary // Color.clear
         
-        // Tinted Colors for Emphasis (using Robinhood palette)
-        static let tintedNeonGreen = Colors.robinNeonGreen.opacity(0.15)
-        static let tintedBlack = Colors.cleanBlack.opacity(0.15)
-        static let tintedRed = Colors.softRed.opacity(0.15)
-        static let tintedGray = Colors.textSecondary.opacity(0.15)
+        // Tinted Colors for Emphasis (using your vibrant palette)
+        static let tintedBlue = Colors.primaryBlue.opacity(0.15)
+        static let tintedOrange = Colors.primaryOrange.opacity(0.15)
+        static let tintedPink = Colors.primaryPink.opacity(0.15)
+        static let tintedLightBlue = Colors.primaryLightBlue.opacity(0.15)
         
         // Legacy support (disabled for minimalist design)
         static let blurRadius: CGFloat = 0

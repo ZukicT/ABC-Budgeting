@@ -90,12 +90,8 @@ class TimeScaleConverter {
     ///   - timeRange: Time range for formatting
     /// - Returns: Formatted string
     static func formatValue(_ value: Double, timeRange: TimeRange) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        formatter.maximumFractionDigits = timeRange == .hourly ? 2 : 0
-        
-        return formatter.string(from: NSNumber(value: value)) ?? "$0"
+        let fractionDigits = timeRange == .hourly ? 2 : 0
+        return CurrencyUtility.formatAmount(value, fractionDigits: fractionDigits)
     }
     
     /// Get all time ranges as chart data

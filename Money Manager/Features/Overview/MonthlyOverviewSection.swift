@@ -135,7 +135,7 @@ private struct MetricCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Constants.UI.Spacing.small)
         .background(Constants.Colors.textPrimary.opacity(0.05)) // WCAG AA compliant background
-        .cornerRadius(Constants.UI.cornerRadius)
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
     }
     
     /// Formats the value based on the specified format type

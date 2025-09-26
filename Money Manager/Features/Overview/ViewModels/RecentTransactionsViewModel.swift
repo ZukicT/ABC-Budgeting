@@ -68,11 +68,7 @@ class RecentTransactionsViewModel: ObservableObject {
     }
     
     private func formatAmount(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        formatter.currencySymbol = "$"
-        return formatter.string(from: NSNumber(value: amount)) ?? "$0.00"
+        return CurrencyUtility.formatAmount(amount)
     }
     
     private func formatDate(_ date: Date) -> String {

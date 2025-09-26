@@ -11,7 +11,7 @@ struct CardView<Content: View>: View {
     
     init(
         padding: CGFloat = Constants.UI.Spacing.medium,
-        cornerRadius: CGFloat = Constants.UI.cornerRadius,
+        cornerRadius: CGFloat = Constants.UI.CornerRadius.secondary,
         backgroundColor: Color = Constants.Colors.backgroundSecondary,
         borderColor: Color = Constants.Colors.borderPrimary,
         shadowRadius: CGFloat = 0,

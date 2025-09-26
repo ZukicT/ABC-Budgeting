@@ -116,13 +116,13 @@ struct LoanDetailView: View {
                                     Rectangle()
                                         .fill(Constants.Colors.backgroundTertiary)
                                         .frame(height: 6)
-                                        .cornerRadius(3)
+                                        .cornerRadius(Constants.UI.CornerRadius.quaternary)
                                     
                                     // Progress Fill
                                     Rectangle()
                                         .fill(loanTypeColor)
                                         .frame(width: geometry.size.width * progressPercentage, height: 6)
-                                        .cornerRadius(3)
+                                        .cornerRadius(Constants.UI.CornerRadius.quaternary)
                                 }
                             }
                             .frame(height: 6)
@@ -293,7 +293,7 @@ private struct DetailRow: View {
         HStack(spacing: Constants.UI.Spacing.medium) {
             // Icon
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                     .fill(iconColor.opacity(0.1))
                     .frame(width: 40, height: 40)
                 

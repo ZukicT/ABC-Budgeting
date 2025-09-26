@@ -53,7 +53,7 @@ struct IncomeExpenseChart: View {
         }
         .padding(Constants.UI.Spacing.medium)
         .background(Constants.Colors.cardBackground)
-        .cornerRadius(Constants.UI.cornerRadius)
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
         .shadow(color: Constants.Colors.borderPrimary, radius: 0)
     }
 }

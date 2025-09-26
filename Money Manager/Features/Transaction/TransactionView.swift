@@ -48,7 +48,11 @@ struct TransactionView: View {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
-                AddView(loanViewModel: LoanViewModel(), budgetViewModel: BudgetViewModel())
+                AddView(
+                    loanViewModel: LoanViewModel(), 
+                    budgetViewModel: BudgetViewModel(),
+                    transactionViewModel: viewModel
+                )
             }
             .sheet(item: $selectedTransaction) { transaction in
                 TransactionDetailView(transactionId: transaction.id, transactionViewModel: viewModel)
@@ -101,13 +105,10 @@ struct TransactionView: View {
                     viewModel.loadTransactions()
                 }
             } else if viewModel.transactions.isEmpty {
-                EmptyStateView(
-                    icon: "list.bullet",
-                    title: "No Transactions",
-                    message: "Your transaction history will appear here once you start using the app.",
+                TransactionEmptyState(
                     actionTitle: "Add Transaction",
                     action: {
-                        // TODO: Implement add transaction
+                        showAddView = true
                     }
                 )
             } else {
@@ -225,7 +226,7 @@ private struct CategoryTag: View {
             .padding(.horizontal, Constants.UI.Spacing.medium)
             .padding(.vertical, Constants.UI.Spacing.small)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                     .fill(isSelected ? Constants.Colors.textPrimary : Constants.Colors.textPrimary.opacity(0.08))
             )
         }
@@ -255,7 +256,7 @@ private struct MonthHeader: View {
         .padding(.vertical, Constants.UI.Spacing.medium)
         .padding(.horizontal, Constants.UI.Padding.screenMargin)
         .background(Constants.Colors.textPrimary.opacity(0.08))
-        .cornerRadius(12)
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
     }
 }
 

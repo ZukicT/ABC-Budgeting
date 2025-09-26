@@ -4,6 +4,7 @@ struct OverviewView: View {
     @StateObject private var viewModel = OverviewViewModel()
     @StateObject private var loanViewModel = LoanViewModel()
     @StateObject private var budgetViewModel = BudgetViewModel()
+    @StateObject private var transactionViewModel = TransactionViewModel()
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
@@ -31,7 +32,12 @@ struct OverviewView: View {
                 
                 // Scrollable Content Area
                 ScrollView {
-                    OverviewContent(onTabSwitch: onTabSwitch, loanViewModel: loanViewModel, budgetViewModel: budgetViewModel)
+                    OverviewContent(
+                        onTabSwitch: onTabSwitch, 
+                        loanViewModel: loanViewModel, 
+                        budgetViewModel: budgetViewModel,
+                        transactionViewModel: transactionViewModel
+                    )
                         .padding(Constants.UI.Padding.screenMargin)
                 }
             }
@@ -75,7 +81,7 @@ struct OverviewView: View {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
-                AddView(loanViewModel: loanViewModel, budgetViewModel: budgetViewModel)
+                AddView(loanViewModel: loanViewModel, budgetViewModel: budgetViewModel, transactionViewModel: TransactionViewModel())
             }
         }
     }
@@ -86,17 +92,25 @@ private struct OverviewContent: View {
     let onTabSwitch: (Int) -> Void
     @ObservedObject var loanViewModel: LoanViewModel
     @ObservedObject var budgetViewModel: BudgetViewModel
+    @ObservedObject var transactionViewModel: TransactionViewModel
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // Balance Chart Section
-            BalanceChartView()
+            BalanceChartView(
+                transactionViewModel: transactionViewModel,
+                budgetViewModel: budgetViewModel,
+                loanViewModel: loanViewModel
+            )
             
             // Monthly Overview Section
             MonthlyOverviewSection()
             
             // Recent Transactions Section
-            RecentTransactionsSection(onTabSwitch: onTabSwitch)
+            RecentTransactionsSection(
+                transactionViewModel: transactionViewModel,
+                onTabSwitch: onTabSwitch
+            )
             
             // Budgets Overview Section
             BudgetsOverviewSection(budgetViewModel: budgetViewModel, onTabSwitch: onTabSwitch)

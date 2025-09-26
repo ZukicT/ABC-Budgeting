@@ -68,7 +68,7 @@ struct BudgetEditView: View {
                             }) {
                                 HStack {
                                     ZStack {
-                                        RoundedRectangle(cornerRadius: 8)
+                                        RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                                             .fill(budgetCategoryColor.opacity(0.1))
                                             .frame(width: 40, height: 40)
                                         
@@ -183,13 +183,13 @@ struct BudgetEditView: View {
                                         Rectangle()
                                             .fill(Constants.Colors.backgroundSecondary)
                                             .frame(height: 8)
-                                            .cornerRadius(4)
+                                            .cornerRadius(Constants.UI.CornerRadius.quaternary)
                                         
                                         // Progress Fill
                                         Rectangle()
                                             .fill(progressColor)
                                             .frame(width: geometry.size.width * min(budget.spentAmount / budget.allocatedAmount, 1.0), height: 8)
-                                            .cornerRadius(4)
+                                            .cornerRadius(Constants.UI.CornerRadius.quaternary)
                                     }
                                 }
                                 .frame(height: 8)
@@ -279,7 +279,7 @@ private struct CategoryPickerView: View {
                     }) {
                         HStack {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                                     .fill(category.categoryColor.opacity(0.1))
                                     .frame(width: 40, height: 40)
                                 

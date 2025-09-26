@@ -109,7 +109,7 @@ private struct LoanSummaryCard: View {
                 .padding(.horizontal, Constants.UI.Spacing.small)
                 .padding(.vertical, 4)
                 .background(Constants.Colors.error.opacity(0.1))
-                .cornerRadius(8)
+                .cornerRadius(Constants.UI.CornerRadius.tertiary)
             }
         }
     }
@@ -142,27 +142,19 @@ private struct MetricCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Constants.UI.Spacing.small)
         .background(Constants.Colors.textPrimary.opacity(0.05)) // WCAG AA compliant background
-        .cornerRadius(Constants.UI.cornerRadius)
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
     }
     
     private var formattedValue: String {
         switch format {
         case .currency:
-            return currencyFormatter.string(from: NSNumber(value: value)) ?? "$0.00"
+            return CurrencyUtility.formatAmount(value)
         case .percentage:
             return String(format: "%.1f%%", value)
         }
     }
 }
 
-// MARK: - Formatters
-private let currencyFormatter: NumberFormatter = {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .currency
-    formatter.currencyCode = "USD"
-    formatter.maximumFractionDigits = 0
-    return formatter
-}()
 
 
 #Preview {

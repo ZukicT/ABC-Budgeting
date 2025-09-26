@@ -112,7 +112,7 @@ private struct WageCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Constants.UI.Spacing.small)
         .background(Constants.Colors.textPrimary.opacity(0.05))
-        .cornerRadius(Constants.UI.cornerRadius)
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
     }
     
     private func formatValue(_ value: Double) -> String {
@@ -147,7 +147,7 @@ private struct WageChart: View {
                     width: .ratio(0.6)
                 )
                 .foregroundStyle(color)
-                .cornerRadius(4)
+                .cornerRadius(Constants.UI.CornerRadius.quaternary)
             }
             .frame(height: 200)
             .chartYAxis {
@@ -224,7 +224,7 @@ private struct WorkScheduleImpact: View {
         }
         .padding(Constants.UI.Spacing.small)
         .background(Constants.Colors.textPrimary.opacity(0.05))
-        .cornerRadius(Constants.UI.cornerRadius)
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
     }
     
     private func formatValue(_ value: Double) -> String {

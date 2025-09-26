@@ -100,13 +100,13 @@ struct BudgetDetailView: View {
                                     Rectangle()
                                         .fill(Constants.Colors.backgroundSecondary)
                                         .frame(height: 12)
-                                        .cornerRadius(6)
+                                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
                                     
                                     // Progress Fill
                                     Rectangle()
                                         .fill(progressColor)
                                         .frame(width: geometry.size.width * progressPercentage, height: 12)
-                                        .cornerRadius(6)
+                                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
                                 }
                             }
                             .frame(height: 12)
@@ -299,7 +299,7 @@ private struct DetailRow: View {
         HStack(spacing: Constants.UI.Spacing.medium) {
             // Icon
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                     .fill(iconColor.opacity(0.1))
                     .frame(width: 40, height: 40)
                 

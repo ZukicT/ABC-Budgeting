@@ -29,7 +29,7 @@ struct LoanView: View {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
-                AddView(loanViewModel: viewModel, budgetViewModel: BudgetViewModel())
+                AddView(loanViewModel: viewModel, budgetViewModel: BudgetViewModel(), transactionViewModel: TransactionViewModel())
             }
             .sheet(item: $selectedLoan) { loan in
                 LoanDetailView(loan: loan, viewModel: viewModel)
@@ -110,9 +110,9 @@ struct LoanView: View {
             }
         }
         .background(Constants.Colors.backgroundPrimary)
-        .cornerRadius(12)
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                 .stroke(Constants.Colors.textPrimary.opacity(0.1), lineWidth: 1)
         )
     }
@@ -228,10 +228,10 @@ private struct LoanSummarySection: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 24)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                 .fill(Constants.Colors.textPrimary.opacity(0.08))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                         .stroke(Constants.Colors.textPrimary.opacity(0.1), lineWidth: 1)
                 )
         )
@@ -403,7 +403,7 @@ private struct MobileLoanRow: View {
             HStack(spacing: 12) {
                 // Loan Type Icon
                 ZStack {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                         .fill(loanTypeColor)
                         .frame(width: 40, height: 40)
                     

@@ -32,7 +32,7 @@ struct InsightsSection: View {
             }
             .padding(Constants.UI.Padding.cardInternal)
             .background(Constants.Colors.cardBackground)
-            .cornerRadius(Constants.UI.cornerRadius)
+            .cornerRadius(Constants.UI.CornerRadius.secondary)
         }
     }
 }

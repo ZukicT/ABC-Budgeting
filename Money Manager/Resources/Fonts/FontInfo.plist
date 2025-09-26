@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Trap-Black.otf</string>
+		<string>Trap-Bold.otf</string>
+		<string>Trap-ExtraBold.otf</string>
+		<string>Trap-Light.otf</string>
+		<string>Trap-Medium.otf</string>
+		<string>Trap-Regular.otf</string>
+		<string>Trap-SemiBold.otf</string>
+	</array>
+</dict>
+</plist>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

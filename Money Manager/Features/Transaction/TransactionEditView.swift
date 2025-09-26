@@ -147,7 +147,7 @@ struct TransactionEditView: View {
                             }) {
                                 HStack {
                                     ZStack {
-                                        RoundedRectangle(cornerRadius: 8)
+                                        RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                                             .fill(categoryColor(for: selectedCategory).opacity(0.1))
                                             .frame(width: 40, height: 40)
                                         
@@ -269,7 +269,7 @@ private struct CategoryPickerView: View {
                     }) {
                         HStack {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                                     .fill(categoryColor(for: category).opacity(0.1))
                                     .frame(width: 40, height: 40)
                                 

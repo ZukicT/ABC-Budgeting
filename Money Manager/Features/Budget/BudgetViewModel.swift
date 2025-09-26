@@ -37,14 +37,8 @@ class BudgetViewModel: ObservableObject {
         
         // TODO: Implement budget loading logic
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            // Sample data for demonstration
-            self.budgets = [
-                Budget(category: "Food", allocatedAmount: 500.0, spentAmount: 320.45, remainingAmount: 179.55),
-                Budget(category: "Transport", allocatedAmount: 200.0, spentAmount: 156.80, remainingAmount: 43.20),
-                Budget(category: "Entertainment", allocatedAmount: 150.0, spentAmount: 89.30, remainingAmount: 60.70),
-                Budget(category: "Bills", allocatedAmount: 800.0, spentAmount: 800.0, remainingAmount: 0.0),
-                Budget(category: "Shopping", allocatedAmount: 300.0, spentAmount: 156.78, remainingAmount: 143.22)
-            ]
+            // Start with empty budgets for new users
+            self.budgets = []
             self.isLoading = false
             self.hasDataLoaded = true
         }
