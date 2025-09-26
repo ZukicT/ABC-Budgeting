@@ -8,7 +8,7 @@ class LoanViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var selectedCategory: LoanCategory? = nil
     
-    private var hasDataLoaded = false
+    var hasDataLoaded = false
     
     // Counter for tab display
     var loanCount: Int {

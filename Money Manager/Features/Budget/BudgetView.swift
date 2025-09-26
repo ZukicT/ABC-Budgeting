@@ -20,7 +20,7 @@ import SwiftUI
  */
 
 struct BudgetView: View {
-    @StateObject private var viewModel = BudgetViewModel()
+    @ObservedObject var viewModel: BudgetViewModel
     @StateObject private var loanViewModel = LoanViewModel()
     @State private var showSettings = false
     @State private var showNotifications = false
@@ -40,7 +40,10 @@ struct BudgetView: View {
             }
             .background(Constants.Colors.backgroundPrimary)
             .onAppear {
-                viewModel.loadBudgets()
+                // Only load if data hasn't been loaded yet to prevent loading on every tab switch
+                if !viewModel.hasDataLoaded {
+                    viewModel.loadBudgets()
+                }
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
@@ -75,24 +78,26 @@ struct BudgetView: View {
     }
     
     private var contentSection: some View {
-        ScrollView {
-            VStack(spacing: Constants.UI.Spacing.large) {
-                if viewModel.isLoading {
-                    LoadingStateView(message: "Loading budget...")
-                } else if let errorMessage = viewModel.errorMessage {
-                    ErrorStateView(message: errorMessage) {
-                        viewModel.loadBudgets()
+        Group {
+            if viewModel.isLoading {
+                LoadingStateView(message: "Loading budget...")
+            } else if let errorMessage = viewModel.errorMessage {
+                ErrorStateView(message: errorMessage) {
+                    viewModel.loadBudgets()
+                }
+            } else if viewModel.budgets.isEmpty {
+                BudgetEmptyState {
+                    showAddView = true
+                }
+            } else {
+                ScrollView {
+                    VStack(spacing: Constants.UI.Spacing.large) {
+                        BudgetSummaryCard(viewModel: viewModel)
+                        budgetList
                     }
-                } else if viewModel.budgets.isEmpty {
-                    BudgetEmptyState {
-                        showAddView = true
-                    }
-                } else {
-                    BudgetSummaryCard(viewModel: viewModel)
-                    budgetList
+                    .padding(Constants.UI.Padding.screenMargin)
                 }
             }
-            .padding(Constants.UI.Padding.screenMargin)
         }
     }
     
@@ -542,5 +547,5 @@ private struct BudgetSummaryCard: View {
 }
 
 #Preview {
-    BudgetView()
+    BudgetView(viewModel: BudgetViewModel())
 }

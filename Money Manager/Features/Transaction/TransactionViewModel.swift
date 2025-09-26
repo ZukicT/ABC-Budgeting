@@ -7,7 +7,7 @@ class TransactionViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    private var hasDataLoaded = false
+    var hasDataLoaded = false
     
     // Counter for tab display
     var transactionCount: Int {

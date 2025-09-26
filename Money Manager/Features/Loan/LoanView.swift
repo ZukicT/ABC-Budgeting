@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LoanView: View {
-    @StateObject private var viewModel = LoanViewModel()
+    @ObservedObject var viewModel: LoanViewModel
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
@@ -20,7 +20,10 @@ struct LoanView: View {
             }
             .background(Constants.Colors.backgroundPrimary)
             .onAppear {
-                viewModel.loadLoans()
+                // Only load if data hasn't been loaded yet to prevent loading on every tab switch
+                if !viewModel.hasDataLoaded {
+                    viewModel.loadLoans()
+                }
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
@@ -490,5 +493,5 @@ private struct MobileLoanRow: View {
 }
 
 #Preview {
-    LoanView()
+    LoanView(viewModel: LoanViewModel())
 }

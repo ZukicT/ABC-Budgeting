@@ -8,7 +8,7 @@ class BudgetViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var selectedCategory: String? = nil
     
-    private var hasDataLoaded = false
+    var hasDataLoaded = false
     
     // Counter for tab display (Goals equivalent)
     var budgetCount: Int {

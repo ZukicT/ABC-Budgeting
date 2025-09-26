@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TransactionView: View {
-    @StateObject private var viewModel = TransactionViewModel()
+    @ObservedObject var viewModel: TransactionViewModel
     @State private var selectedCategory = "All"
     @State private var showSettings = false
     @State private var showNotifications = false
@@ -39,7 +39,10 @@ struct TransactionView: View {
             }
             .background(Constants.Colors.backgroundPrimary)
             .onAppear {
-                viewModel.loadTransactions()
+                // Only load if data hasn't been loaded yet to prevent loading on every tab switch
+                if !viewModel.hasDataLoaded {
+                    viewModel.loadTransactions()
+                }
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
@@ -261,5 +264,5 @@ private struct MonthHeader: View {
 }
 
 #Preview {
-    TransactionView()
+    TransactionView(viewModel: TransactionViewModel())
 }

@@ -23,7 +23,7 @@ struct BudgetEmptyState: View {
     let action: () -> Void
     
     init(
-        actionTitle: String = "Create Budget",
+        actionTitle: String = "Create A Budget",
         action: @escaping () -> Void
     ) {
         self.actionTitle = actionTitle
@@ -46,12 +46,13 @@ struct BudgetEmptyState: View {
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                 
-                Text("Take control of your finances by creating your first budget. Set spending limits and track your progress towards your financial goals!")
+                Text("Create your first budget to track spending and reach your financial goals.")
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
-                    .accessibilityLabel("Take control of your finances by creating your first budget. Set spending limits and track your progress towards your financial goals!")
+                    .lineLimit(3)
+                    .accessibilityLabel("Create your first budget to track spending and reach your financial goals.")
             }
             
             Button(action: action) {

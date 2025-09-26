@@ -1,15 +1,14 @@
 import SwiftUI
 
 struct OverviewView: View {
-    @StateObject private var viewModel = OverviewViewModel()
-    @StateObject private var loanViewModel = LoanViewModel()
-    @StateObject private var budgetViewModel = BudgetViewModel()
-    @StateObject private var transactionViewModel = TransactionViewModel()
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
     
     let onTabSwitch: (Int) -> Void
+    @ObservedObject var loanViewModel: LoanViewModel
+    @ObservedObject var budgetViewModel: BudgetViewModel
+    @ObservedObject var transactionViewModel: TransactionViewModel
     
     var body: some View {
         NavigationStack {
@@ -127,5 +126,10 @@ private struct OverviewContent: View {
 }
 
 #Preview {
-    OverviewView(onTabSwitch: { _ in })
+    OverviewView(
+        onTabSwitch: { _ in },
+        loanViewModel: LoanViewModel(),
+        budgetViewModel: BudgetViewModel(),
+        transactionViewModel: TransactionViewModel()
+    )
 }

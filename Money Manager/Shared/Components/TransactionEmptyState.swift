@@ -47,12 +47,12 @@ struct TransactionEmptyState: View {
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                 
-                Text("Start tracking your spending by adding your first transaction. Your financial journey begins here!")
+                Text("Add your first transaction to start tracking your spending.")
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
-                    .accessibilityLabel("Start tracking your spending by adding your first transaction. Your financial journey begins here!")
+                    .accessibilityLabel("Add your first transaction to start tracking your spending.")
             }
             
             // Brand yellow call-to-action button
