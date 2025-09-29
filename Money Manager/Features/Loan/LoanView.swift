@@ -166,12 +166,13 @@ struct LoanView: View {
 // MARK: - Enhanced Loan Summary Section
 private struct LoanSummarySection: View {
     let viewModel: LoanViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         VStack(spacing: 20) {
             // Primary Focus: Total Debt
             VStack(spacing: 8) {
-                Text("Total Debt")
+                Text(contentManager.localizedString("loan.total_debt"))
                     .font(Constants.Typography.Caption.font)
                     .fontWeight(.medium)
                     .foregroundColor(Constants.Colors.textSecondary)
@@ -189,7 +190,7 @@ private struct LoanSummarySection: View {
             HStack(spacing: 24) {
                 // Monthly Payment
                 VStack(spacing: 6) {
-                    Text("Monthly Payment")
+                    Text(contentManager.localizedString("loan.monthly_payment"))
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -211,7 +212,7 @@ private struct LoanSummarySection: View {
                 
                 // Next Payment Due
                 VStack(spacing: 6) {
-                    Text("Next Due")
+                    Text(contentManager.localizedString("loan.next_due"))
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -225,7 +226,7 @@ private struct LoanSummarySection: View {
                             .foregroundColor(Constants.Colors.textPrimary)
                             .multilineTextAlignment(.center)
                     } else {
-                        Text("N/A")
+                        Text(contentManager.localizedString("loan.na"))
                             .font(Constants.Typography.Body.font)
                             .fontWeight(.medium)
                             .foregroundColor(Constants.Colors.textTertiary)
@@ -357,17 +358,18 @@ private struct LoanCard: View {
 
 private struct LoanTableHeader: View {
     let loanCount: Int
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         HStack {
-            Text("LOANS")
+            Text(contentManager.localizedString("loan.loans"))
                 .font(Constants.Typography.Caption.font)
                 .fontWeight(.bold)
                 .foregroundColor(Constants.Colors.textSecondary)
             
             Spacer()
             
-            Text("\(loanCount) total")
+            Text("\(loanCount) \(contentManager.localizedString("budget.total"))")
                 .font(Constants.Typography.Caption.font)
                 .fontWeight(.medium)
                 .foregroundColor(Constants.Colors.textSecondary)
