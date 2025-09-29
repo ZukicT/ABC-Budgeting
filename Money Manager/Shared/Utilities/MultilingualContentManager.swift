@@ -309,7 +309,95 @@ class MultilingualContentManager: ObservableObject {
         "font.licensing_title": "Trap Font Family Licensing Information",
         
         // Clear Data Warning
-        "clear_data.warning": "This will permanently delete all your transactions, budgets, and loans. This action cannot be undone. You will be asked to set a new starting balance."
+        "clear_data.warning": "This will permanently delete all your transactions, budgets, and loans. This action cannot be undone. You will be asked to set a new starting balance.",
+        
+        // Button Labels
+        "button.done": "Done",
+        "button.cancel": "Cancel",
+        "button.delete": "Delete",
+        "button.ok": "OK",
+        "button.clear_all_data": "Clear All Data",
+        "button.view_all": "View All",
+        "button.set_starting_balance": "Set Starting Balance",
+        "button.skip": "Skip (Start with $0)",
+        
+        // Navigation Titles
+        "nav.add_new": "Add New",
+        "nav.settings": "Settings",
+        "nav.privacy_policy": "Privacy Policy",
+        "nav.terms_of_service": "Terms of Service",
+        "nav.font_licensing": "Font Licensing",
+        "nav.version_history": "Version History",
+        "nav.export_data": "Export Data",
+        
+        // Chart and Overview Labels
+        "chart.loading": "Loading chart data...",
+        "chart.total_balance": "Total Balance",
+        "chart.new": "New",
+        "chart.monthly_overview": "Monthly Overview",
+        "chart.no_monthly_data": "No Monthly Data",
+        "chart.add_transactions_message": "Add transactions to see your monthly income and expense overview",
+        "chart.loading_monthly": "Loading monthly data...",
+        "chart.failed_load": "Failed to load monthly data",
+        
+        // Loan Labels
+        "loan.total_debt": "Total Debt",
+        "loan.monthly_payment": "Monthly Payment",
+        "loan.next_due": "Next Due",
+        "loan.loans": "LOANS",
+        "loan.apr": "APR",
+        "loan.due_date": "Due Date",
+        "loan.na": "N/A",
+        "loan.mo": "/mo",
+        
+        // Transaction Labels
+        "transaction.count": "transaction",
+        "transaction.count_plural": "transactions",
+        
+        // Budget Labels
+        "budget.budget": "Budget",
+        "budget.spent_colon": "Spent:",
+        "budget.remaining_colon": "Remaining:",
+        "budget.total_monthly_budget": "Total Monthly Budget",
+        "budget.total_spent": "Total Spent",
+        
+        // Frequency Labels
+        "frequency.daily": "Daily",
+        "frequency.weekly": "Weekly",
+        "frequency.monthly": "Monthly",
+        "frequency.yearly": "Yearly",
+        "frequency.day_of_week": "Day of Week",
+        "frequency.day_of_month": "Day of Month",
+        "frequency.month": "Month",
+        "frequency.day": "Day",
+        
+        // Loan Messages
+        "loan.all_paid": "All loans are already paid!",
+        "loan.no_unpaid": "No unpaid loans available to mark as paid",
+        "loan.select_to_pay": "Select Loan to Mark as Paid",
+        "loan.choose_to_pay": "Choose the loan you want to mark as paid",
+        "loan.payment_due_description": "Select the day of the month your payment is due (e.g., 1st, 15th, 30th)",
+        
+        // Success Messages
+        "success.payment_marked": "Payment marked successfully!",
+        
+        // Data Clearing
+        "data_cleared.title": "Data Cleared Successfully",
+        "data_cleared.message": "All your financial data has been cleared. Please set your new starting balance to continue.",
+        "data_cleared.starting_balance": "Starting Balance",
+        "data_cleared.validation_message": "Please enter a valid starting balance (0 or greater) to continue.",
+        
+        // Version History
+        "version.last_updated": "Last updated: January 26, 2025",
+        "version.track_evolution": "Track the evolution of Money Manager",
+        "version.version": "Version",
+        
+        // Font Licensing
+        "font.licensing_title": "Trap Font Family Licensing Information",
+        
+        // Export
+        "export.exporting": "Exporting...",
+        "export.export_type": "Export"
     ]
     
     private let chineseStrings: [String: String] = [

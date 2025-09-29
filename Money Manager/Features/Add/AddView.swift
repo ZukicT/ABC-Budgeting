@@ -107,11 +107,11 @@ struct AddView: View {
                     .padding(.bottom, Constants.UI.Spacing.section)
                 }
             }
-            .navigationTitle("Add New")
+            .navigationTitle(contentManager.localizedString("nav.add_new"))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(contentManager.localizedString("button.done")) {
                         dismiss()
                     }
                     .font(Constants.Typography.Body.font)
@@ -267,7 +267,7 @@ private struct TransactionForm: View {
                 // Recurring Toggle
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     HStack {
-                        Text("Recurring Transaction")
+                        Text(contentManager.localizedString("transaction.recurring"))
                             .font(Constants.Typography.H3.font)
                             .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
@@ -284,16 +284,16 @@ private struct TransactionForm: View {
                         VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
                             // Frequency Selection
                             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                                Text("Frequency")
+                                Text(contentManager.localizedString("transaction.frequency"))
                                     .font(Constants.Typography.Body.font)
                                     .fontWeight(.medium)
                                     .foregroundColor(Constants.Colors.textSecondary)
                                 
                                 Picker("Frequency", selection: $recurringFrequency) {
-                                    Text("Daily").tag("Daily")
-                                    Text("Weekly").tag("Weekly")
-                                    Text("Monthly").tag("Monthly")
-                                    Text("Yearly").tag("Yearly")
+                                    Text(contentManager.localizedString("frequency.daily")).tag("Daily")
+                                    Text(contentManager.localizedString("frequency.weekly")).tag("Weekly")
+                                    Text(contentManager.localizedString("frequency.monthly")).tag("Monthly")
+                                    Text(contentManager.localizedString("frequency.yearly")).tag("Yearly")
                                 }
                                 .pickerStyle(.segmented)
                                 .accentColor(Constants.Colors.cleanBlack)
