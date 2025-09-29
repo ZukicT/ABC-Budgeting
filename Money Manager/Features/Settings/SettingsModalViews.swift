@@ -169,7 +169,7 @@ extension TextToSpeechManager: AVSpeechSynthesizerDelegate {
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var speechManager = TextToSpeechManager()
-    @StateObject private var contentManager = MultilingualContentManager.shared
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var fullText: String {
         """
@@ -305,7 +305,7 @@ struct PrivacyPolicyView: View {
 struct TermsOfServiceView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var speechManager = TextToSpeechManager()
-    @StateObject private var contentManager = MultilingualContentManager.shared
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var fullText: String {
         """
@@ -461,7 +461,7 @@ struct TermsOfServiceView: View {
 struct FontLicensingView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var speechManager = TextToSpeechManager()
-    @StateObject private var contentManager = MultilingualContentManager.shared
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var fullText: String {
         """
@@ -593,7 +593,7 @@ struct FontLicensingView: View {
 struct VersionHistoryView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var speechManager = TextToSpeechManager()
-    @StateObject private var contentManager = MultilingualContentManager.shared
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var fullText: String {
         """

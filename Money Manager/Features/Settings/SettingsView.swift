@@ -4,7 +4,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var dataClearingService: DataClearingService
     @StateObject private var settingsViewModel = SettingsViewModel()
-    @StateObject private var contentManager = MultilingualContentManager.shared
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var showClearDataConfirmation = false
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
