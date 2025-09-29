@@ -163,17 +163,18 @@ struct BudgetView: View {
 
 private struct BudgetTableHeader: View {
     let budgetCount: Int
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         HStack {
-            Text("BUDGETS")
+            Text(contentManager.localizedString("budget.budgets"))
                 .font(Constants.Typography.Caption.font)
                 .fontWeight(.bold)
                 .foregroundColor(Constants.Colors.textSecondary)
             
             Spacer()
             
-            Text("\(budgetCount) total")
+            Text("\(budgetCount) \(contentManager.localizedString("budget.total"))")
                 .font(Constants.Typography.Caption.font)
                 .fontWeight(.medium)
                 .foregroundColor(Constants.Colors.textSecondary)
@@ -266,7 +267,7 @@ private struct MobileBudgetRow: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("Allocated")
+                    Text(contentManager.localizedString("budget.allocated"))
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -282,7 +283,7 @@ private struct MobileBudgetRow: View {
             
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Spent")
+                    Text(contentManager.localizedString("budget.spent"))
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -296,7 +297,7 @@ private struct MobileBudgetRow: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("Remaining")
+                    Text(contentManager.localizedString("budget.remaining"))
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -383,7 +384,7 @@ private struct BudgetCard: View {
                         .accessibilityLabel("Edit budget")
                     }
                     
-                    Text("Allocated")
+                    Text(contentManager.localizedString("budget.allocated"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -524,7 +525,7 @@ private struct BudgetSummaryCard: View {
                     .frame(width: 1, height: 40)
                 
                 VStack(spacing: 6) {
-                    Text("Remaining")
+                    Text(contentManager.localizedString("budget.remaining"))
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)

@@ -211,7 +211,105 @@ class MultilingualContentManager: ObservableObject {
         "export.transactions_desc": "Export all your transaction records",
         "export.budgets_desc": "Export all your budget information",
         "export.loans_desc": "Export all your loan details",
-        "export.all_data_desc": "Export everything in one file"
+        "export.all_data_desc": "Export everything in one file",
+        
+        // Form Fields
+        "form.title": "Title",
+        "form.amount": "Amount",
+        "form.category": "Category",
+        "form.date": "Date",
+        "form.description": "Description",
+        "form.budget_amount": "Budget Amount",
+        "form.period": "Period",
+        "form.loan_name": "Loan Name",
+        "form.principal_amount": "Principal Amount",
+        "form.interest_rate": "Interest Rate",
+        "form.loan_term": "Loan Term",
+        "form.monthly_payment": "Monthly Payment",
+        "form.payment_due_day": "Payment Due Day",
+        
+        // Transaction Types
+        "transaction.expense": "Expense",
+        "transaction.income": "Income",
+        "transaction.recurring": "Recurring Transaction",
+        "transaction.frequency": "Frequency",
+        
+        // Frequency Options
+        "frequency.daily": "Daily",
+        "frequency.weekly": "Weekly",
+        "frequency.monthly": "Monthly",
+        "frequency.yearly": "Yearly",
+        "frequency.day_of_week": "Day of Week",
+        "frequency.day_of_month": "Day of Month",
+        "frequency.month": "Month",
+        "frequency.day": "Day",
+        
+        // Success Messages
+        "success.transaction_added": "Transaction added successfully!",
+        "success.budget_created": "Budget created successfully!",
+        "success.payment_marked": "Payment marked successfully!",
+        
+        // Loan Messages
+        "loan.all_paid": "All loans are already paid!",
+        "loan.no_unpaid": "No unpaid loans available to mark as paid",
+        "loan.select_to_pay": "Select Loan to Mark as Paid",
+        "loan.choose_to_pay": "Choose the loan you want to mark as paid",
+        "loan.payment_due_description": "Select the day of the month your payment is due (e.g., 1st, 15th, 30th)",
+        
+        // Budget Labels
+        "budget.budgets": "BUDGETS",
+        "budget.total": "total",
+        "budget.allocated": "Allocated",
+        "budget.over_by": "Over by",
+        "budget.total_monthly": "Total Monthly Budget",
+        "budget.total_spent": "Total Spent",
+        
+        // Loan Labels
+        "loan.total_debt": "Total Debt",
+        "loan.monthly_payment": "Monthly Payment",
+        "loan.next_due": "Next Due",
+        "loan.loans": "LOANS",
+        "loan.apr": "APR",
+        "loan.due_date": "Due Date",
+        
+        // Transaction Labels
+        "transaction.count": "transaction",
+        "transaction.count_plural": "transactions",
+        
+        // Chart Labels
+        "chart.loading": "Loading chart data...",
+        "chart.total_balance": "Total Balance",
+        "chart.new": "New",
+        
+        // Settings Subtitles
+        "settings.push_notifications_subtitle": "Receive alerts for budget limits and payments",
+        "settings.budget_alerts_subtitle": "Get notified when approaching budget limits",
+        "settings.default_currency_subtitle": "Choose your preferred currency",
+        "settings.budget_period_subtitle": "Set your default budget timeframe",
+        "settings.text_to_speech_subtitle": "Choose language for reading policy documents",
+        "settings.export_data_subtitle": "Download your financial data as CSV",
+        "settings.clear_data_subtitle": "Remove all transactions and budgets",
+        "settings.remove_test_data_subtitle": "Clear all sample data",
+        "settings.add_test_data_subtitle": "Add sample transactions, budgets, and loans",
+        "settings.version_history_subtitle": "View recent updates and changes",
+        "settings.privacy_policy_subtitle": "Read our privacy policy",
+        "settings.terms_subtitle": "Read our terms of service",
+        "settings.font_licensing_subtitle": "Trap font family licensing information",
+        
+        // Export Labels
+        "export.exporting": "Exporting...",
+        "export.export_type": "Export",
+        
+        // Version History
+        "version.track_evolution": "Track the evolution of Money Manager",
+        "version.last_updated": "Last updated: January 26, 2025",
+        "version.version": "Version",
+        
+        // Font Licensing
+        "font.licensing_title": "Trap Font Family Licensing Information",
+        
+        // Clear Data Warning
+        "clear_data.warning": "This will permanently delete all your transactions, budgets, and loans. This action cannot be undone. You will be asked to set a new starting balance."
     ]
     
     private let chineseStrings: [String: String] = [
@@ -394,7 +492,105 @@ class MultilingualContentManager: ObservableObject {
         "export.transactions_desc": "导出所有交易记录",
         "export.budgets_desc": "导出所有预算信息",
         "export.loans_desc": "导出所有贷款详情",
-        "export.all_data_desc": "一次性导出所有内容"
+        "export.all_data_desc": "一次性导出所有内容",
+        
+        // Form Fields
+        "form.title": "标题",
+        "form.amount": "金额",
+        "form.category": "类别",
+        "form.date": "日期",
+        "form.description": "描述",
+        "form.budget_amount": "预算金额",
+        "form.period": "周期",
+        "form.loan_name": "贷款名称",
+        "form.principal_amount": "本金金额",
+        "form.interest_rate": "利率",
+        "form.loan_term": "贷款期限",
+        "form.monthly_payment": "月付款",
+        "form.payment_due_day": "付款到期日",
+        
+        // Transaction Types
+        "transaction.expense": "支出",
+        "transaction.income": "收入",
+        "transaction.recurring": "定期交易",
+        "transaction.frequency": "频率",
+        
+        // Frequency Options
+        "frequency.daily": "每日",
+        "frequency.weekly": "每周",
+        "frequency.monthly": "每月",
+        "frequency.yearly": "每年",
+        "frequency.day_of_week": "星期几",
+        "frequency.day_of_month": "月中日期",
+        "frequency.month": "月份",
+        "frequency.day": "日期",
+        
+        // Success Messages
+        "success.transaction_added": "交易添加成功！",
+        "success.budget_created": "预算创建成功！",
+        "success.payment_marked": "付款标记成功！",
+        
+        // Loan Messages
+        "loan.all_paid": "所有贷款已还清！",
+        "loan.no_unpaid": "没有未还清的贷款可标记",
+        "loan.select_to_pay": "选择要标记为已还的贷款",
+        "loan.choose_to_pay": "选择您要标记为已还的贷款",
+        "loan.payment_due_description": "选择您付款到期的月份日期（例如：1日、15日、30日）",
+        
+        // Budget Labels
+        "budget.budgets": "预算",
+        "budget.total": "总计",
+        "budget.allocated": "已分配",
+        "budget.over_by": "超出",
+        "budget.total_monthly": "月度预算总计",
+        "budget.total_spent": "总花费",
+        
+        // Loan Labels
+        "loan.total_debt": "总债务",
+        "loan.monthly_payment": "月付款",
+        "loan.next_due": "下次到期",
+        "loan.loans": "贷款",
+        "loan.apr": "年利率",
+        "loan.due_date": "到期日",
+        
+        // Transaction Labels
+        "transaction.count": "交易",
+        "transaction.count_plural": "交易",
+        
+        // Chart Labels
+        "chart.loading": "正在加载图表数据...",
+        "chart.total_balance": "总余额",
+        "chart.new": "新增",
+        
+        // Settings Subtitles
+        "settings.push_notifications_subtitle": "接收预算限制和付款提醒",
+        "settings.budget_alerts_subtitle": "接近预算限制时收到通知",
+        "settings.default_currency_subtitle": "选择您偏好的货币",
+        "settings.budget_period_subtitle": "设置您的默认预算时间范围",
+        "settings.text_to_speech_subtitle": "选择阅读政策文档的语言",
+        "settings.export_data_subtitle": "下载您的财务数据为CSV格式",
+        "settings.clear_data_subtitle": "删除所有交易和预算",
+        "settings.remove_test_data_subtitle": "清除所有示例数据",
+        "settings.add_test_data_subtitle": "添加示例交易、预算和贷款",
+        "settings.version_history_subtitle": "查看最近的更新和更改",
+        "settings.privacy_policy_subtitle": "阅读我们的隐私政策",
+        "settings.terms_subtitle": "阅读我们的服务条款",
+        "settings.font_licensing_subtitle": "Trap字体家族许可信息",
+        
+        // Export Labels
+        "export.exporting": "正在导出...",
+        "export.export_type": "导出",
+        
+        // Version History
+        "version.track_evolution": "跟踪Money Manager的演变",
+        "version.last_updated": "最后更新：2025年1月26日",
+        "version.version": "版本",
+        
+        // Font Licensing
+        "font.licensing_title": "Trap字体家族许可信息",
+        
+        // Clear Data Warning
+        "clear_data.warning": "这将永久删除您的所有交易、预算和贷款。此操作无法撤销。您将被要求设置新的起始余额。"
     ]
     
     private let japaneseStrings: [String: String] = [
@@ -577,7 +773,105 @@ class MultilingualContentManager: ObservableObject {
         "export.transactions_desc": "すべての取引記録をエクスポート",
         "export.budgets_desc": "すべての予算情報をエクスポート",
         "export.loans_desc": "すべてのローン詳細をエクスポート",
-        "export.all_data_desc": "すべてを1つのファイルでエクスポート"
+        "export.all_data_desc": "すべてを1つのファイルでエクスポート",
+        
+        // Form Fields
+        "form.title": "タイトル",
+        "form.amount": "金額",
+        "form.category": "カテゴリ",
+        "form.date": "日付",
+        "form.description": "説明",
+        "form.budget_amount": "予算金額",
+        "form.period": "期間",
+        "form.loan_name": "ローン名",
+        "form.principal_amount": "元本金額",
+        "form.interest_rate": "金利",
+        "form.loan_term": "ローン期間",
+        "form.monthly_payment": "月次支払い",
+        "form.payment_due_day": "支払い期日",
+        
+        // Transaction Types
+        "transaction.expense": "支出",
+        "transaction.income": "収入",
+        "transaction.recurring": "定期取引",
+        "transaction.frequency": "頻度",
+        
+        // Frequency Options
+        "frequency.daily": "毎日",
+        "frequency.weekly": "毎週",
+        "frequency.monthly": "毎月",
+        "frequency.yearly": "毎年",
+        "frequency.day_of_week": "曜日",
+        "frequency.day_of_month": "月内日付",
+        "frequency.month": "月",
+        "frequency.day": "日",
+        
+        // Success Messages
+        "success.transaction_added": "取引が正常に追加されました！",
+        "success.budget_created": "予算が正常に作成されました！",
+        "success.payment_marked": "支払いが正常にマークされました！",
+        
+        // Loan Messages
+        "loan.all_paid": "すべてのローンが既に支払済みです！",
+        "loan.no_unpaid": "支払い済みとしてマークできる未払いローンがありません",
+        "loan.select_to_pay": "支払い済みとしてマークするローンを選択",
+        "loan.choose_to_pay": "支払い済みとしてマークしたいローンを選択",
+        "loan.payment_due_description": "支払い期日となる月内の日付を選択（例：1日、15日、30日）",
+        
+        // Budget Labels
+        "budget.budgets": "予算",
+        "budget.total": "合計",
+        "budget.allocated": "割り当て済み",
+        "budget.over_by": "超過",
+        "budget.total_monthly": "月次予算合計",
+        "budget.total_spent": "総使用額",
+        
+        // Loan Labels
+        "loan.total_debt": "総債務",
+        "loan.monthly_payment": "月次支払い",
+        "loan.next_due": "次回期日",
+        "loan.loans": "ローン",
+        "loan.apr": "年利",
+        "loan.due_date": "期日",
+        
+        // Transaction Labels
+        "transaction.count": "取引",
+        "transaction.count_plural": "取引",
+        
+        // Chart Labels
+        "chart.loading": "チャートデータを読み込み中...",
+        "chart.total_balance": "総残高",
+        "chart.new": "新規",
+        
+        // Settings Subtitles
+        "settings.push_notifications_subtitle": "予算制限と支払いのアラートを受信",
+        "settings.budget_alerts_subtitle": "予算制限に近づいたときに通知を受信",
+        "settings.default_currency_subtitle": "お好みの通貨を選択",
+        "settings.budget_period_subtitle": "デフォルトの予算期間を設定",
+        "settings.text_to_speech_subtitle": "ポリシー文書を読み上げる言語を選択",
+        "settings.export_data_subtitle": "財務データをCSV形式でダウンロード",
+        "settings.clear_data_subtitle": "すべての取引と予算を削除",
+        "settings.remove_test_data_subtitle": "すべてのサンプルデータをクリア",
+        "settings.add_test_data_subtitle": "サンプル取引、予算、ローンを追加",
+        "settings.version_history_subtitle": "最近の更新と変更を表示",
+        "settings.privacy_policy_subtitle": "プライバシーポリシーを読む",
+        "settings.terms_subtitle": "利用規約を読む",
+        "settings.font_licensing_subtitle": "Trapフォントファミリーライセンス情報",
+        
+        // Export Labels
+        "export.exporting": "エクスポート中...",
+        "export.export_type": "エクスポート",
+        
+        // Version History
+        "version.track_evolution": "Money Managerの進化を追跡",
+        "version.last_updated": "最終更新：2025年1月26日",
+        "version.version": "バージョン",
+        
+        // Font Licensing
+        "font.licensing_title": "Trapフォントファミリーライセンス情報",
+        
+        // Clear Data Warning
+        "clear_data.warning": "これにより、すべての取引、予算、ローンが永久に削除されます。この操作は元に戻せません。新しい開始残高を設定するよう求められます。"
     ]
     
     // MARK: - Privacy Policy Content

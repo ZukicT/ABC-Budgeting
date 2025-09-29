@@ -127,6 +127,7 @@ struct AddView: View {
 private struct TransactionForm: View {
     @ObservedObject var transactionViewModel: TransactionViewModel
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var title = ""
     @State private var amount = ""
     @State private var category = "Food"
@@ -171,9 +172,9 @@ private struct TransactionForm: View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // Transaction Type Picker
             Picker("Transaction Type", selection: $isExpense) {
-                Text("Expense")
+                Text(contentManager.localizedString("transaction.expense"))
                     .tag(true)
-                Text("Income")
+                Text(contentManager.localizedString("transaction.income"))
                     .tag(false)
             }
             .pickerStyle(SegmentedPickerStyle())
@@ -186,7 +187,7 @@ private struct TransactionForm: View {
             VStack(spacing: Constants.UI.Spacing.medium) {
                 // Title
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                    Text("Title")
+                    Text(contentManager.localizedString("form.title"))
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
@@ -200,7 +201,7 @@ private struct TransactionForm: View {
                 
                 // Amount
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                    Text("Amount")
+                    Text(contentManager.localizedString("form.amount"))
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
@@ -222,7 +223,7 @@ private struct TransactionForm: View {
                 
                 // Category
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                    Text("Category")
+                    Text(contentManager.localizedString("form.category"))
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
@@ -251,7 +252,7 @@ private struct TransactionForm: View {
                 
                 // Date
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                    Text("Date")
+                    Text(contentManager.localizedString("form.date"))
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
@@ -395,7 +396,7 @@ private struct TransactionForm: View {
             .animation(.easeInOut(duration: 0.3), value: showingSuccess)
             
             if showingSuccess {
-                Text("Transaction added successfully!")
+                Text(contentManager.localizedString("success.transaction_added"))
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.accentColor)
                     .transition(.opacity)
@@ -454,6 +455,7 @@ private struct TransactionForm: View {
 private struct BudgetForm: View {
     @ObservedObject var budgetViewModel: BudgetViewModel
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var category = "Food"
     @State private var amount = ""
     @State private var period = "Monthly"
@@ -478,7 +480,7 @@ private struct BudgetForm: View {
             VStack(spacing: Constants.UI.Spacing.medium) {
                 // Category
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                    Text("Category")
+                    Text(contentManager.localizedString("form.category"))
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
@@ -507,7 +509,7 @@ private struct BudgetForm: View {
                 
                 // Amount
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                    Text("Budget Amount")
+                    Text(contentManager.localizedString("form.budget_amount"))
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
@@ -529,7 +531,7 @@ private struct BudgetForm: View {
                 
                 // Period
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                    Text("Period")
+                    Text(contentManager.localizedString("form.period"))
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
@@ -568,7 +570,7 @@ private struct BudgetForm: View {
             .animation(.easeInOut(duration: 0.3), value: showingSuccess)
             
             if showingSuccess {
-                Text("Budget created successfully!")
+                Text(contentManager.localizedString("success.budget_created"))
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.accentColor)
                     .transition(.opacity)
@@ -617,6 +619,7 @@ private struct BudgetForm: View {
 private struct LoanForm: View {
     @ObservedObject var loanViewModel: LoanViewModel
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var loanAction: LoanAction = .addNew
     @State private var name = ""
     @State private var principal = ""
@@ -761,7 +764,7 @@ private struct LoanForm: View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             // Loan Name
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Loan Name")
+                Text(contentManager.localizedString("form.loan_name"))
                     .font(Constants.Typography.H3.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -775,7 +778,7 @@ private struct LoanForm: View {
             
             // Category
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Category")
+                Text(contentManager.localizedString("form.category"))
                     .font(Constants.Typography.H3.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -804,7 +807,7 @@ private struct LoanForm: View {
             
             // Principal Amount
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Principal Amount")
+                Text(contentManager.localizedString("form.principal_amount"))
                     .font(Constants.Typography.H3.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -829,7 +832,7 @@ private struct LoanForm: View {
             
             // Interest Rate
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Interest Rate")
+                Text(contentManager.localizedString("form.interest_rate"))
                     .font(Constants.Typography.H3.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -854,7 +857,7 @@ private struct LoanForm: View {
             
             // Loan Term (Years)
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Loan Term")
+                Text(contentManager.localizedString("form.loan_term"))
                     .font(Constants.Typography.H3.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -879,7 +882,7 @@ private struct LoanForm: View {
             
             // Calculated Monthly Payment (Read-only)
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Calculated Monthly Payment")
+                Text(contentManager.localizedString("form.monthly_payment"))
                     .font(Constants.Typography.H3.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -906,7 +909,7 @@ private struct LoanForm: View {
             
             // Due Date
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Payment Due Day")
+                Text(contentManager.localizedString("form.payment_due_day"))
                     .font(Constants.Typography.H3.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
