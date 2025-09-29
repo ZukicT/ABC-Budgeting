@@ -4,6 +4,7 @@ import SwiftUI
 struct ExportDataView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var exportService = DataExportService()
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var selectedExportType: ExportDataType = .transactions
     @State private var showingShareSheet = false
     @State private var exportFileURL: URL?
@@ -18,15 +19,15 @@ struct ExportDataView: View {
             VStack(spacing: Constants.UI.Spacing.large) {
                 // Header
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
-                    Text("Export Data")
+                    Text(contentManager.localizedString("nav.export_data"))
                         .font(Constants.Typography.H1.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .accessibilityAddTraits(.isHeader)
                     
-                    Text("Choose what data you want to export to CSV format")
+                    Text(contentManager.localizedString("export.subtitle"))
                         .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textSecondary)
-                        .accessibilityLabel("Choose what data you want to export to CSV format")
+                        .accessibilityLabel(contentManager.localizedString("export.subtitle"))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -51,7 +52,7 @@ struct ExportDataView: View {
                         HStack {
                             ProgressView()
                                 .scaleEffect(0.8)
-                            Text("Exporting...")
+                            Text(contentManager.localizedString("export.exporting"))
                                 .font(Constants.Typography.Body.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                         }
@@ -66,7 +67,7 @@ struct ExportDataView: View {
                         }) {
                             HStack {
                                 Image(systemName: "square.and.arrow.up")
-                                Text("Export \(selectedExportType.displayName)")
+                                Text("\(contentManager.localizedString("export.export_type")) \(selectedExportType.displayName)")
                             }
                             .font(Constants.Typography.Body.font)
                             .fontWeight(.medium)
@@ -88,11 +89,11 @@ struct ExportDataView: View {
                 }
             }
             .padding(Constants.UI.Padding.screenMargin)
-            .navigationTitle("Export Data")
+            .navigationTitle(contentManager.localizedString("nav.export_data"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(contentManager.localizedString("button.done")) {
                         dismiss()
                     }
                     .foregroundColor(Constants.Colors.textPrimary)
