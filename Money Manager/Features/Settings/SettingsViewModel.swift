@@ -37,6 +37,13 @@ class SettingsViewModel: ObservableObject {
         }
     }
     
+    // Language Settings
+    @Published var selectedLanguage: String {
+        didSet {
+            UserDefaults.standard.set(selectedLanguage, forKey: "selected_language")
+        }
+    }
+    
     // App Information
     @Published var appVersion: String = Constants.appVersion
     
@@ -52,6 +59,7 @@ class SettingsViewModel: ObservableObject {
         self.budgetAlertsEnabled = userDefaults.object(forKey: "budget_alerts_enabled") as? Bool ?? true
         self.selectedCurrency = userDefaults.string(forKey: "selected_currency") ?? "USD"
         self.budgetPeriod = userDefaults.string(forKey: "budget_period") ?? "Monthly"
+        self.selectedLanguage = userDefaults.string(forKey: "selected_language") ?? "en-US"
         
         // Request notification permissions on first launch
         requestNotificationPermissions()
@@ -107,6 +115,7 @@ class SettingsViewModel: ObservableObject {
         budgetAlertsEnabled = true
         selectedCurrency = "USD"
         budgetPeriod = "Monthly"
+        selectedLanguage = "en-US"
         
         print("🔄 Settings reset to defaults")
     }
@@ -157,6 +166,51 @@ enum SettingsNotificationType: String, CaseIterable {
     }
 }
 
+/// Represents different languages for text-to-speech
+enum SpeechLanguage: String, CaseIterable {
+    case englishUS = "en-US"
+    case englishUK = "en-GB"
+    case spanish = "es-ES"
+    case french = "fr-FR"
+    case german = "de-DE"
+    case italian = "it-IT"
+    case portuguese = "pt-PT"
+    case dutch = "nl-NL"
+    case japanese = "ja-JP"
+    case chinese = "zh-CN"
+    case korean = "ko-KR"
+    case arabic = "ar-SA"
+    case russian = "ru-RU"
+    case hindi = "hi-IN"
+    case brazilianPortuguese = "pt-BR"
+    case mexicanSpanish = "es-MX"
+    
+    var displayName: String {
+        switch self {
+        case .englishUS: return "English (US)"
+        case .englishUK: return "English (UK)"
+        case .spanish: return "Spanish (Spain)"
+        case .french: return "French (France)"
+        case .german: return "German (Germany)"
+        case .italian: return "Italian (Italy)"
+        case .portuguese: return "Portuguese (Portugal)"
+        case .dutch: return "Dutch (Netherlands)"
+        case .japanese: return "Japanese (Japan)"
+        case .chinese: return "Chinese (China)"
+        case .korean: return "Korean (Korea)"
+        case .arabic: return "Arabic (Saudi Arabia)"
+        case .russian: return "Russian (Russia)"
+        case .hindi: return "Hindi (India)"
+        case .brazilianPortuguese: return "Portuguese (Brazil)"
+        case .mexicanSpanish: return "Spanish (Mexico)"
+        }
+    }
+    
+    var languageCode: String {
+        return rawValue
+    }
+}
+
 // MARK: - Settings Constants
 
 extension SettingsViewModel {
@@ -177,6 +231,12 @@ extension SettingsViewModel {
     
     /// Available budget periods
     static let availableBudgetPeriods = BudgetPeriod.allCases.map { $0.displayName }
+    
+    /// Available languages for text-to-speech
+    static let availableLanguages = SpeechLanguage.allCases.map { $0.displayName }
+    
+    /// Language display names mapping
+    static let languageDisplayNames: [String: String] = Dictionary(uniqueKeysWithValues: SpeechLanguage.allCases.map { ($0.languageCode, $0.displayName) })
     
     /// Currency display names mapping
     static let currencyDisplayNames: [String: String] = [

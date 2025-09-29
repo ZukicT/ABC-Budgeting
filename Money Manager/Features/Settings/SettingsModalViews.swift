@@ -7,85 +7,64 @@ class TextToSpeechManager: NSObject, ObservableObject {
     @Published var isPlaying = false
     @Published var isPaused = false
     @Published var selectedSpeed: SpeechSpeed = .normal
-    @Published var currentWordRange: NSRange = NSRange(location: 0, length: 0)
-    @Published var highlightedText: String = ""
+    @Published var selectedLanguage: String = "en-US"
     
     private let synthesizer = AVSpeechSynthesizer()
     private var currentUtterance: AVSpeechUtterance?
-    private var fullText: String = ""
-    private var wordRanges: [NSRange] = []
     
     override init() {
         super.init()
         synthesizer.delegate = self
+        
+        // Load language from UserDefaults
+        selectedLanguage = UserDefaults.standard.string(forKey: "selected_language") ?? "en-US"
     }
     
     func speak(_ text: String) {
         // Stop any current speech
         stop()
         
-        fullText = text
-        wordRanges = extractWordRanges(from: text)
-        currentWordRange = NSRange(location: 0, length: 0)
-        
         let utterance = AVSpeechUtterance(string: text)
         utterance.rate = selectedSpeed.rate
         utterance.volume = 1.0
         utterance.pitchMultiplier = 1.0
         
-        // Use a clear, accessible voice
-        if let voice = AVSpeechSynthesisVoice(language: "en-US") {
+        // Use the selected language voice
+        if let voice = AVSpeechSynthesisVoice(language: selectedLanguage) {
             utterance.voice = voice
+        } else {
+            // Fallback to English if selected language is not available
+            utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         }
         
         currentUtterance = utterance
         synthesizer.speak(utterance)
         isPlaying = true
         isPaused = false
-        
-        // Start word highlighting simulation
-        startWordHighlighting()
     }
     
-    private func extractWordRanges(from text: String) -> [NSRange] {
-        var ranges: [NSRange] = []
-        let words = text.components(separatedBy: .whitespacesAndNewlines)
-        var currentLocation = 0
+    func updateLanguage(_ language: String) {
+        selectedLanguage = language
+        UserDefaults.standard.set(language, forKey: "selected_language")
         
-        for word in words {
-            if let range = text.range(of: word, range: text.index(text.startIndex, offsetBy: currentLocation)..<text.endIndex) {
-                let nsRange = NSRange(range, in: text)
-                ranges.append(nsRange)
-                currentLocation = nsRange.location + nsRange.length
-            }
-        }
-        
-        return ranges
-    }
-    
-    private func startWordHighlighting() {
-        guard isPlaying && !wordRanges.isEmpty else { return }
-        
-        let totalDuration = Double(fullText.count) / (Double(selectedSpeed.rate) * 10) // Rough estimation
-        let wordDuration = totalDuration / Double(wordRanges.count)
-        
-        for (index, range) in wordRanges.enumerated() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * wordDuration) {
-                if self.isPlaying {
-                    self.currentWordRange = range
-                    self.updateHighlightedText()
+        // If currently playing, restart with new language
+        if isPlaying {
+            let wasPaused = isPaused
+            stop()
+            if !wasPaused {
+                // Restart with new language after a brief delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if let utterance = self.currentUtterance {
+                        if let voice = AVSpeechSynthesisVoice(language: language) {
+                            utterance.voice = voice
+                        }
+                        self.synthesizer.speak(utterance)
+                        self.isPlaying = true
+                        self.isPaused = false
+                    }
                 }
             }
         }
-    }
-    
-    private func updateHighlightedText() {
-        guard currentWordRange.location < fullText.count else { return }
-        
-        let startIndex = fullText.index(fullText.startIndex, offsetBy: currentWordRange.location)
-        let endIndex = fullText.index(startIndex, offsetBy: min(currentWordRange.length, fullText.count - currentWordRange.location))
-        
-        highlightedText = String(fullText[startIndex..<endIndex])
     }
     
     func pause() {
@@ -99,26 +78,6 @@ class TextToSpeechManager: NSObject, ObservableObject {
         if isPaused {
             synthesizer.continueSpeaking()
             isPaused = false
-            // Resume word highlighting from current position
-            resumeWordHighlighting()
-        }
-    }
-    
-    private func resumeWordHighlighting() {
-        // Find current word index based on current range
-        guard let currentIndex = wordRanges.firstIndex(where: { $0.location == currentWordRange.location }) else { return }
-        
-        let remainingWords = Array(wordRanges.suffix(from: currentIndex))
-        let totalDuration = Double(fullText.count) / (Double(selectedSpeed.rate) * 10)
-        let wordDuration = totalDuration / Double(wordRanges.count)
-        
-        for (offset, range) in remainingWords.enumerated() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(offset) * wordDuration) {
-                if self.isPlaying && !self.isPaused {
-                    self.currentWordRange = range
-                    self.updateHighlightedText()
-                }
-            }
         }
     }
     
@@ -127,10 +86,6 @@ class TextToSpeechManager: NSObject, ObservableObject {
         isPlaying = false
         isPaused = false
         currentUtterance = nil
-        currentWordRange = NSRange(location: 0, length: 0)
-        highlightedText = ""
-        fullText = ""
-        wordRanges = []
     }
     
     func togglePlayPause(_ text: String) {
@@ -150,12 +105,16 @@ class TextToSpeechManager: NSObject, ObservableObject {
         // If currently playing, restart with new speed
         if isPlaying {
             let wasPaused = isPaused
-            let currentText = fullText
             stop()
             if !wasPaused {
                 // Restart with new speed after a brief delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.speak(currentText)
+                    if let utterance = self.currentUtterance {
+                        utterance.rate = speed.rate
+                        self.synthesizer.speak(utterance)
+                        self.isPlaying = true
+                        self.isPaused = false
+                    }
                 }
             }
         }
@@ -260,13 +219,6 @@ struct PrivacyPolicyView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.large) {
-                    // Word highlighting indicator
-                    HighlightedTextView(
-                        text: fullText,
-                        currentWordRange: speechManager.currentWordRange,
-                        highlightedText: speechManager.highlightedText
-                    )
-                    
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
                         Text("Privacy Policy")
                             .font(Constants.Typography.H1.font)
@@ -477,13 +429,6 @@ struct TermsOfServiceView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.large) {
-                    // Word highlighting indicator
-                    HighlightedTextView(
-                        text: fullText,
-                        currentWordRange: speechManager.currentWordRange,
-                        highlightedText: speechManager.highlightedText
-                    )
-                    
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
                         Text("Terms of Service")
                             .font(Constants.Typography.H1.font)
@@ -685,13 +630,6 @@ struct FontLicensingView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.large) {
-                    // Word highlighting indicator
-                    HighlightedTextView(
-                        text: fullText,
-                        currentWordRange: speechManager.currentWordRange,
-                        highlightedText: speechManager.highlightedText
-                    )
-                    
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
                         Text("Font Licensing")
                             .font(Constants.Typography.H1.font)
@@ -915,13 +853,6 @@ struct VersionHistoryView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.large) {
-                    // Word highlighting indicator
-                    HighlightedTextView(
-                        text: fullText,
-                        currentWordRange: speechManager.currentWordRange,
-                        highlightedText: speechManager.highlightedText
-                    )
-                    
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
                         Text("Version History")
                             .font(Constants.Typography.H1.font)
@@ -1000,41 +931,6 @@ struct VersionHistoryView: View {
                     .foregroundColor(Constants.Colors.textPrimary)
                 }
             }
-        }
-    }
-}
-
-// MARK: - Highlighted Text View
-private struct HighlightedTextView: View {
-    let text: String
-    let currentWordRange: NSRange
-    let highlightedText: String
-    
-    var body: some View {
-        if currentWordRange.length > 0 && !highlightedText.isEmpty {
-            VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Currently reading:")
-                    .font(Constants.Typography.Caption.font)
-                    .foregroundColor(Constants.Colors.textTertiary)
-                    .textSelection(.enabled)
-                
-                Text(highlightedText)
-                    .font(Constants.Typography.H3.font)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, Constants.UI.Spacing.medium)
-                    .padding(.vertical, Constants.UI.Spacing.small)
-                    .background(
-                        RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
-                            .fill(Constants.Colors.primaryBlue)
-                    )
-                    .textSelection(.enabled)
-                    .accessibilityLabel("Currently reading: \(highlightedText)")
-            }
-            .padding(.horizontal, Constants.UI.Padding.screenMargin)
-            .padding(.vertical, Constants.UI.Spacing.small)
-            .background(Constants.Colors.textPrimary.opacity(0.05))
-            .cornerRadius(Constants.UI.CornerRadius.secondary)
         }
     }
 }

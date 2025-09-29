@@ -55,6 +55,19 @@ struct SettingsView: View {
                             }
                         }
                         
+                        // Language Settings Section
+                        SettingsSection(title: "Language", icon: "globe") {
+                            VStack(spacing: Constants.UI.Spacing.medium) {
+                                SettingsLanguagePicker(
+                                    title: "Text-to-Speech Language",
+                                    subtitle: "Choose language for reading policy documents",
+                                    selection: $settingsViewModel.selectedLanguage,
+                                    languages: SettingsViewModel.availableLanguages,
+                                    languageNames: SettingsViewModel.languageDisplayNames
+                                )
+                            }
+                        }
+                        
                         // Data & Privacy Section
                         SettingsSection(title: "Data & Privacy", icon: "shield.fill") {
                             VStack(spacing: Constants.UI.Spacing.medium) {
@@ -384,6 +397,42 @@ private struct SettingsCurrencyPicker: View {
                             .foregroundColor(Constants.Colors.textSecondary)
                     }
                     .tag(currency)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+            .labelsHidden()
+        }
+        .padding(Constants.UI.Padding.cardInternal)
+    }
+}
+
+// MARK: - Settings Language Picker
+private struct SettingsLanguagePicker: View {
+    let title: String
+    let subtitle: String
+    @Binding var selection: String
+    let languages: [String]
+    let languageNames: [String: String]
+    
+    var body: some View {
+        HStack(spacing: Constants.UI.Spacing.medium) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(Constants.Typography.Body.font)
+                    .fontWeight(.medium)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                
+                Text(subtitle)
+                    .font(Constants.Typography.Caption.font)
+                    .foregroundColor(Constants.Colors.textSecondary)
+            }
+            
+            Spacer()
+            
+            Picker("", selection: $selection) {
+                ForEach(SpeechLanguage.allCases, id: \.languageCode) { language in
+                    Text(language.displayName)
+                        .tag(language.languageCode)
                 }
             }
             .pickerStyle(MenuPickerStyle())
