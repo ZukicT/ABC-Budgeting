@@ -106,6 +106,7 @@ class DataClearingService: ObservableObject {
 // MARK: - Starting Balance Prompt View
 struct StartingBalancePromptView: View {
     @ObservedObject var dataClearingService: DataClearingService
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var startingBalance: String = ""
     @State private var isValidInput: Bool = false
     @State private var showInvalidBalanceAlert: Bool = false
@@ -127,12 +128,12 @@ struct StartingBalancePromptView: View {
                         .font(.system(size: 64, weight: .light))
                         .foregroundColor(Constants.Colors.primaryOrange)
                     
-                    Text("Data Cleared Successfully")
+                    Text(contentManager.localizedString("data_cleared.title"))
                         .font(Constants.Typography.H1.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .multilineTextAlignment(.center)
                     
-                    Text("All your financial data has been cleared. Please set your new starting balance to continue.")
+                    Text(contentManager.localizedString("data_cleared.message"))
                         .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                         .multilineTextAlignment(.center)
@@ -141,7 +142,7 @@ struct StartingBalancePromptView: View {
                 
                 // Balance Input
                 VStack(spacing: Constants.UI.Spacing.medium) {
-                    Text("Starting Balance")
+                    Text(contentManager.localizedString("data_cleared.starting_balance"))
                         .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -177,7 +178,7 @@ struct StartingBalancePromptView: View {
                             showInvalidBalanceAlert = true
                         }
                     }) {
-                        Text("Set Starting Balance")
+                        Text(contentManager.localizedString("button.set_starting_balance"))
                             .font(Constants.Typography.Body.font)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
@@ -191,7 +192,7 @@ struct StartingBalancePromptView: View {
                     Button(action: {
                         dataClearingService.cancelStartingBalancePrompt()
                     }) {
-                        Text("Skip (Start with $0)")
+                        Text(contentManager.localizedString("button.skip"))
                             .font(Constants.Typography.Body.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                     }
@@ -209,10 +210,10 @@ struct StartingBalancePromptView: View {
                 isValidInput = true
             }
         }
-        .alert("Invalid Balance", isPresented: $showInvalidBalanceAlert) {
-            Button("OK") { }
+        .alert(contentManager.localizedString("data_cleared.starting_balance"), isPresented: $showInvalidBalanceAlert) {
+            Button(contentManager.localizedString("button.ok")) { }
         } message: {
-            Text("Please enter a valid starting balance (0 or greater) to continue.")
+            Text(contentManager.localizedString("data_cleared.validation_message"))
         }
     }
     
