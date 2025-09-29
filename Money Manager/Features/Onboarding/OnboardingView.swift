@@ -3,6 +3,7 @@ import SwiftUI
 struct OnboardingView: View {
     @EnvironmentObject private var onboardingManager: OnboardingManager
     @StateObject private var viewModel: OnboardingViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     init() {
         // Create a temporary OnboardingManager to pass to the view model

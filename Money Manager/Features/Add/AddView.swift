@@ -31,6 +31,7 @@ struct AddView: View {
     @ObservedObject var loanViewModel: LoanViewModel
     @ObservedObject var budgetViewModel: BudgetViewModel
     @ObservedObject var transactionViewModel: TransactionViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     enum AddType: String, CaseIterable {
         case transaction = "Transaction"
@@ -52,6 +53,14 @@ struct AddView: View {
             case .loan: return Constants.Colors.softRed
             }
         }
+        
+        func localizedDisplayName(_ contentManager: MultilingualContentManager) -> String {
+            switch self {
+            case .transaction: return contentManager.localizedString("transactions.title")
+            case .budget: return contentManager.localizedString("budget.title")
+            case .loan: return contentManager.localizedString("tab.loans")
+            }
+        }
     }
     
     var body: some View {
@@ -60,7 +69,7 @@ struct AddView: View {
                 VStack(spacing: Constants.UI.Spacing.large) {
                     // Type Selector
                     VStack(spacing: Constants.UI.Spacing.medium) {
-                        Text("What would you like to add?")
+                        Text(contentManager.localizedString("add.title"))
                             .font(Constants.Typography.H3.font)
                             .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
@@ -68,7 +77,7 @@ struct AddView: View {
                         
                         Picker("Type", selection: $selectedType) {
                             ForEach(AddType.allCases, id: \.self) { type in
-                                Text(type.rawValue)
+                                Text(type.localizedDisplayName(contentManager))
                                     .font(Constants.Typography.Body.font)
                                     .fontWeight(.medium)
                                     .tag(type)

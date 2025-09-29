@@ -20,12 +20,13 @@ import SwiftUI
 struct TransactionEmptyState: View {
     let actionTitle: String
     let action: () -> Void
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     init(
-        actionTitle: String = "Add Transaction",
+        actionTitle: String? = nil,
         action: @escaping () -> Void
     ) {
-        self.actionTitle = actionTitle
+        self.actionTitle = actionTitle ?? "Add Transaction"
         self.action = action
     }
     
@@ -40,19 +41,19 @@ struct TransactionEmptyState: View {
             
             // Content section
             VStack(spacing: Constants.UI.Spacing.medium) {
-                Text("No Transactions Yet")
+                Text(contentManager.localizedString("transactions.no_transactions"))
                     .font(Constants.Typography.H2.font)
                     .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                 
-                Text("Add your first transaction to start tracking your spending.")
+                Text(contentManager.localizedString("transactions.add_first"))
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
-                    .accessibilityLabel("Add your first transaction to start tracking your spending.")
+                    .accessibilityLabel(contentManager.localizedString("transactions.add_first"))
             }
             
             // Brand yellow call-to-action button

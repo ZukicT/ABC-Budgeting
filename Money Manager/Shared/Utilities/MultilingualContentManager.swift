@@ -188,10 +188,18 @@ class MultilingualContentManager: ObservableObject {
         
         // Onboarding
         "onboarding.welcome": "Welcome to Money Manager",
+        "onboarding.welcome_headline": "Get your money right and your life tight",
+        "onboarding.welcome_body": "Take charge of your finances with smart budgeting, expense tracking, and financial insights that help you build wealth and achieve your money goals.",
         "onboarding.get_started": "Get Started",
         "onboarding.next": "Next",
         "onboarding.skip": "Skip",
         "onboarding.complete": "Complete",
+        
+        // Add View
+        "add.title": "What would you like to add?",
+        "add.transaction": "Transaction",
+        "add.budget": "Budget", 
+        "add.loan": "Loan",
         
         // Export
         "export.title": "Export Data",
@@ -363,10 +371,18 @@ class MultilingualContentManager: ObservableObject {
         
         // Onboarding
         "onboarding.welcome": "欢迎使用Money Manager",
+        "onboarding.welcome_headline": "掌控财务，掌控人生",
+        "onboarding.welcome_body": "通过智能预算、支出跟踪和财务洞察来掌控您的财务，帮助您积累财富并实现财务目标。",
         "onboarding.get_started": "开始使用",
         "onboarding.next": "下一步",
         "onboarding.skip": "跳过",
         "onboarding.complete": "完成",
+        
+        // Add View
+        "add.title": "您想添加什么？",
+        "add.transaction": "交易",
+        "add.budget": "预算", 
+        "add.loan": "贷款",
         
         // Export
         "export.title": "导出数据",
@@ -538,10 +554,18 @@ class MultilingualContentManager: ObservableObject {
         
         // Onboarding
         "onboarding.welcome": "Money Managerへようこそ",
+        "onboarding.welcome_headline": "お金を正しく管理し、人生を充実させよう",
+        "onboarding.welcome_body": "スマートな予算管理、支出追跡、財務インサイトで財務をコントロールし、富を築き、お金の目標を達成しましょう。",
         "onboarding.get_started": "開始",
         "onboarding.next": "次へ",
         "onboarding.skip": "スキップ",
         "onboarding.complete": "完了",
+        
+        // Add View
+        "add.title": "何を追加しますか？",
+        "add.transaction": "取引",
+        "add.budget": "予算", 
+        "add.loan": "ローン",
         
         // Export
         "export.title": "データをエクスポート",

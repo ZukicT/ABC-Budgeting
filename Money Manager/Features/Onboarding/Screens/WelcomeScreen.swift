@@ -2,16 +2,17 @@ import SwiftUI
 
 struct WelcomeScreen: View {
     @ObservedObject var viewModel: OnboardingViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         SimpleOnboardingTemplate(
             illustration: AnyView(OnboardingIllustration()),
-            headline: "Get your money right and your life tight",
+            headline: contentManager.localizedString("onboarding.welcome_headline"),
             headlineColors: [
                 Constants.Onboarding.primaryBlueHex  // "Get your money right and your life tight" - entire hero text in primary blue
             ],
-            bodyText: "Take charge of your finances with smart budgeting, expense tracking, and financial insights that help you build wealth and achieve your money goals.",
-            buttonTitle: "Get Started",
+            bodyText: contentManager.localizedString("onboarding.welcome_body"),
+            buttonTitle: contentManager.localizedString("onboarding.get_started"),
             buttonIcon: "hand.wave",
             currentPage: 0,
             totalPages: OnboardingStep.allCases.count,
