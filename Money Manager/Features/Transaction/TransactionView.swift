@@ -281,6 +281,7 @@ private struct CategoryTag: View {
 private struct MonthHeader: View {
     let month: String
     let transactionCount: Int
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         HStack {
@@ -291,7 +292,7 @@ private struct MonthHeader: View {
             
             Spacer()
             
-            Text("\(transactionCount) transaction\(transactionCount == 1 ? "" : "s")")
+            Text("\(transactionCount) \(transactionCount == 1 ? contentManager.localizedString("transaction.count") : contentManager.localizedString("transaction.count_plural"))")
                 .font(Constants.Typography.Caption.font)
                 .foregroundColor(Constants.Colors.textSecondary)
         }

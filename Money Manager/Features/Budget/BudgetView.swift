@@ -369,7 +369,7 @@ private struct BudgetCard: View {
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
-                    Text("Budget")
+                    Text(contentManager.localizedString("budget.budget"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -409,7 +409,7 @@ private struct BudgetCard: View {
                 .frame(height: 8)
                 
                 HStack {
-                    Text("Spent: \(budget.spentAmount, format: .currency(code: "USD"))")
+                    Text("\(contentManager.localizedString("budget.spent_colon")) \(budget.spentAmount, format: .currency(code: "USD"))")
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -436,7 +436,7 @@ private struct BudgetCard: View {
                             .foregroundColor(Constants.Colors.error)
                     }
                 } else {
-                    Text("Remaining: \(budget.remainingAmount, format: .currency(code: "USD"))")
+                    Text("\(contentManager.localizedString("budget.remaining_colon")) \(budget.remainingAmount, format: .currency(code: "USD"))")
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -492,7 +492,7 @@ private struct BudgetSummaryCard: View {
     var body: some View {
         VStack(spacing: 20) {
             VStack(spacing: 8) {
-                Text("Total Monthly Budget")
+                Text(contentManager.localizedString("budget.total_monthly_budget"))
                     .font(Constants.Typography.Caption.font)
                     .fontWeight(.medium)
                     .foregroundColor(Constants.Colors.textSecondary)
@@ -508,7 +508,7 @@ private struct BudgetSummaryCard: View {
             
             HStack(spacing: 24) {
                 VStack(spacing: 6) {
-                    Text("Total Spent")
+                    Text(contentManager.localizedString("budget.total_spent"))
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)

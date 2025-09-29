@@ -159,11 +159,11 @@ struct SettingsView: View {
                     .padding(.top, Constants.UI.Spacing.medium)
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle(contentManager.localizedString("nav.settings"))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(contentManager.localizedString("button.done")) {
                         dismiss()
                     }
                     .font(Constants.Typography.Body.font)
@@ -171,12 +171,12 @@ struct SettingsView: View {
                 }
             }
             .alert("Clear All Data", isPresented: $showClearDataConfirmation) {
-                Button("Cancel", role: .cancel) { }
-                Button("Clear All Data", role: .destructive) {
+                Button(contentManager.localizedString("button.cancel"), role: .cancel) { }
+                Button(contentManager.localizedString("button.clear_all_data"), role: .destructive) {
                     dataClearingService.clearAllData()
                 }
             } message: {
-                Text("This will permanently delete all your transactions, budgets, and loans. This action cannot be undone. You will be asked to set a new starting balance.")
+                Text(contentManager.localizedString("clear_data.warning"))
             }
             .fullScreenCover(isPresented: $dataClearingService.showStartingBalancePrompt) {
                 StartingBalancePromptView(dataClearingService: dataClearingService)
