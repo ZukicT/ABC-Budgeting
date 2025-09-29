@@ -169,40 +169,14 @@ enum SettingsNotificationType: String, CaseIterable {
 /// Represents different languages for text-to-speech
 enum SpeechLanguage: String, CaseIterable {
     case englishUS = "en-US"
-    case englishUK = "en-GB"
-    case spanish = "es-ES"
-    case french = "fr-FR"
-    case german = "de-DE"
-    case italian = "it-IT"
-    case portuguese = "pt-PT"
-    case dutch = "nl-NL"
-    case japanese = "ja-JP"
     case chinese = "zh-CN"
-    case korean = "ko-KR"
-    case arabic = "ar-SA"
-    case russian = "ru-RU"
-    case hindi = "hi-IN"
-    case brazilianPortuguese = "pt-BR"
-    case mexicanSpanish = "es-MX"
+    case japanese = "ja-JP"
     
     var displayName: String {
         switch self {
-        case .englishUS: return "English (US)"
-        case .englishUK: return "English (UK)"
-        case .spanish: return "Spanish (Spain)"
-        case .french: return "French (France)"
-        case .german: return "German (Germany)"
-        case .italian: return "Italian (Italy)"
-        case .portuguese: return "Portuguese (Portugal)"
-        case .dutch: return "Dutch (Netherlands)"
-        case .japanese: return "Japanese (Japan)"
-        case .chinese: return "Chinese (China)"
-        case .korean: return "Korean (Korea)"
-        case .arabic: return "Arabic (Saudi Arabia)"
-        case .russian: return "Russian (Russia)"
-        case .hindi: return "Hindi (India)"
-        case .brazilianPortuguese: return "Portuguese (Brazil)"
-        case .mexicanSpanish: return "Spanish (Mexico)"
+        case .englishUS: return "English"
+        case .chinese: return "Chinese (中文)"
+        case .japanese: return "Japanese (日本語)"
         }
     }
     
