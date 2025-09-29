@@ -120,19 +120,19 @@ struct BalanceChartView: View {
     private var currentPeriodLabel: String {
         switch selectedTimeRange {
         case .oneDay:
-            return "Today"
+            return contentManager.localizedString("period.today")
         case .oneWeek:
-            return "This Week"
+            return contentManager.localizedString("period.this_week")
         case .oneMonth:
-            return "This Month"
+            return contentManager.localizedString("period.this_month")
         case .threeMonths:
-            return "Last 3 Months"
+            return contentManager.localizedString("period.last_3_months")
         case .yearToDate:
-            return "YTD"
+            return contentManager.localizedString("period.ytd")
         case .oneYear:
-            return "Last Year"
+            return contentManager.localizedString("period.last_year")
         case .all:
-            return "All Time"
+            return contentManager.localizedString("period.all_time")
         }
     }
     
@@ -288,7 +288,7 @@ struct BalanceChartView: View {
                             .foregroundColor(Constants.Colors.success)
                     }
                     
-                    Text("\(currentPeriodLabel) Income")
+                    Text("\(currentPeriodLabel) \(contentManager.localizedString("income.label"))")
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
@@ -316,7 +316,7 @@ struct BalanceChartView: View {
                             .foregroundColor(Constants.Colors.error)
                     }
                     
-                    Text("\(currentPeriodLabel) Expenses")
+                    Text("\(currentPeriodLabel) \(contentManager.localizedString("expense.label"))")
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     

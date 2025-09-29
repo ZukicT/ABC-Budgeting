@@ -167,16 +167,6 @@ class MultilingualContentManager: ObservableObject {
         "currency.jpy": "Japanese Yen",
         "currency.cny": "Chinese Yuan",
         
-        // Time Periods
-        "period.today": "Today",
-        "period.yesterday": "Yesterday",
-        "period.this_week": "This Week",
-        "period.last_week": "Last Week",
-        "period.this_month": "This Month",
-        "period.last_month": "Last Month",
-        "period.this_year": "This Year",
-        "period.last_year": "Last Year",
-        
         // Accessibility
         "accessibility.play": "Play",
         "accessibility.pause": "Pause",
@@ -234,27 +224,9 @@ class MultilingualContentManager: ObservableObject {
         "transaction.recurring": "Recurring Transaction",
         "transaction.frequency": "Frequency",
         
-        // Frequency Options
-        "frequency.daily": "Daily",
-        "frequency.weekly": "Weekly",
-        "frequency.monthly": "Monthly",
-        "frequency.yearly": "Yearly",
-        "frequency.day_of_week": "Day of Week",
-        "frequency.day_of_month": "Day of Month",
-        "frequency.month": "Month",
-        "frequency.day": "Day",
-        
         // Success Messages
         "success.transaction_added": "Transaction added successfully!",
         "success.budget_created": "Budget created successfully!",
-        "success.payment_marked": "Payment marked successfully!",
-        
-        // Loan Messages
-        "loan.all_paid": "All loans are already paid!",
-        "loan.no_unpaid": "No unpaid loans available to mark as paid",
-        "loan.select_to_pay": "Select Loan to Mark as Paid",
-        "loan.choose_to_pay": "Choose the loan you want to mark as paid",
-        "loan.payment_due_description": "Select the day of the month your payment is due (e.g., 1st, 15th, 30th)",
         
         // Budget Labels
         "budget.budgets": "BUDGETS",
@@ -262,24 +234,10 @@ class MultilingualContentManager: ObservableObject {
         "budget.allocated": "Allocated",
         "budget.over_by": "Over by",
         "budget.total_monthly": "Total Monthly Budget",
-        "budget.total_spent": "Total Spent",
-        
-        // Loan Labels
-        "loan.total_debt": "Total Debt",
-        "loan.monthly_payment": "Monthly Payment",
-        "loan.next_due": "Next Due",
-        "loan.loans": "LOANS",
-        "loan.apr": "APR",
-        "loan.due_date": "Due Date",
         
         // Transaction Labels
         "transaction.count": "transaction",
         "transaction.count_plural": "transactions",
-        
-        // Chart Labels
-        "chart.loading": "Loading chart data...",
-        "chart.total_balance": "Total Balance",
-        "chart.new": "New",
         
         // Settings Subtitles
         "settings.push_notifications_subtitle": "Receive alerts for budget limits and payments",
@@ -295,10 +253,6 @@ class MultilingualContentManager: ObservableObject {
         "settings.privacy_policy_subtitle": "Read our privacy policy",
         "settings.terms_subtitle": "Read our terms of service",
         "settings.font_licensing_subtitle": "Trap font family licensing information",
-        
-        // Export Labels
-        "export.exporting": "Exporting...",
-        "export.export_type": "Export",
         
         // Version History
         "version.track_evolution": "Track the evolution of Money Manager",
@@ -350,10 +304,6 @@ class MultilingualContentManager: ObservableObject {
         "loan.na": "N/A",
         "loan.mo": "/mo",
         
-        // Transaction Labels
-        "transaction.count": "transaction",
-        "transaction.count_plural": "transactions",
-        
         // Budget Labels
         "budget.budget": "Budget",
         "budget.spent_colon": "Spent:",
@@ -387,17 +337,22 @@ class MultilingualContentManager: ObservableObject {
         "data_cleared.starting_balance": "Starting Balance",
         "data_cleared.validation_message": "Please enter a valid starting balance (0 or greater) to continue.",
         
-        // Version History
-        "version.last_updated": "Last updated: January 26, 2025",
-        "version.track_evolution": "Track the evolution of Money Manager",
-        "version.version": "Version",
-        
-        // Font Licensing
-        "font.licensing_title": "Trap Font Family Licensing Information",
-        
         // Export
         "export.exporting": "Exporting...",
-        "export.export_type": "Export"
+        "export.export_type": "Export",
+        
+        // Period Labels
+        "period.today": "Today",
+        "period.this_week": "This Week",
+        "period.this_month": "This Month",
+        "period.last_3_months": "Last 3 Months",
+        "period.ytd": "YTD",
+        "period.last_year": "Last Year",
+        "period.all_time": "All Time",
+        
+        // Income/Expense Labels
+        "income.label": "Income",
+        "expense.label": "Expenses"
     ]
     
     private let chineseStrings: [String: String] = [

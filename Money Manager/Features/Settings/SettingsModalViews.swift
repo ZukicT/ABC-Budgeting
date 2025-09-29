@@ -230,7 +230,7 @@ struct PrivacyPolicyView: View {
                             .textSelection(.enabled)
                             .accessibilityAddTraits(.isHeader)
                         
-                        Text("Last updated: January 26, 2025")
+                        Text(contentManager.localizedString("version.last_updated"))
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .textSelection(.enabled)
@@ -289,7 +289,7 @@ struct PrivacyPolicyView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(contentManager.localizedString("button.done")) {
                         speechManager.stop()
                         dismiss()
                     }
@@ -386,7 +386,7 @@ struct TermsOfServiceView: View {
                             .textSelection(.enabled)
                             .accessibilityAddTraits(.isHeader)
                         
-                        Text("Last updated: January 26, 2025")
+                        Text(contentManager.localizedString("version.last_updated"))
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .textSelection(.enabled)
@@ -445,7 +445,7 @@ struct TermsOfServiceView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(contentManager.localizedString("button.done")) {
                         speechManager.stop()
                         dismiss()
                     }
@@ -518,7 +518,7 @@ struct FontLicensingView: View {
                             .textSelection(.enabled)
                             .accessibilityAddTraits(.isHeader)
                         
-                        Text("Trap Font Family Licensing Information")
+                        Text(contentManager.localizedString("font.licensing_title"))
                             .font(Constants.Typography.Body.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .textSelection(.enabled)
@@ -577,7 +577,7 @@ struct FontLicensingView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(contentManager.localizedString("button.done")) {
                         speechManager.stop()
                         dismiss()
                     }
@@ -692,7 +692,7 @@ struct VersionHistoryView: View {
                             .textSelection(.enabled)
                             .accessibilityAddTraits(.isHeader)
                         
-                        Text("Track the evolution of Money Manager")
+                        Text(contentManager.localizedString("version.track_evolution"))
                             .font(Constants.Typography.Body.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .textSelection(.enabled)
@@ -752,7 +752,7 @@ struct VersionHistoryView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(contentManager.localizedString("button.done")) {
                         speechManager.stop()
                         dismiss()
                     }
@@ -796,6 +796,7 @@ private struct GitStyleVersionCard: View {
     let version: VersionEntry
     let isFirst: Bool
     let isLast: Bool
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         HStack(alignment: .top, spacing: Constants.UI.Spacing.medium) {
@@ -830,7 +831,7 @@ private struct GitStyleVersionCard: View {
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Version \(version.version)")
+                        Text("\(contentManager.localizedString("version.version")) \(version.version)")
                             .font(Constants.Typography.H3.font)
                             .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
