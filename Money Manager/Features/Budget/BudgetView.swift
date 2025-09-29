@@ -188,6 +188,7 @@ private struct BudgetTableHeader: View {
 private struct MobileBudgetRow: View {
     let budget: Budget
     let isEven: Bool
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var budgetCategoryColor: Color {
         switch budget.category.lowercased() {
@@ -328,6 +329,7 @@ private struct MobileBudgetRow: View {
 // MARK: - Budget Card
 private struct BudgetCard: View {
     let budget: Budget
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var progressPercentage: Double {
         min(budget.spentAmount / budget.allocatedAmount, 1.0)
@@ -461,6 +463,7 @@ private struct BudgetCard: View {
 // MARK: - Budget Summary Card
 private struct BudgetSummaryCard: View {
     let viewModel: BudgetViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var totalAllocated: Double {
         viewModel.budgets.reduce(0) { $0 + $1.allocatedAmount }
