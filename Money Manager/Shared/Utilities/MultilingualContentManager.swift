@@ -1,6 +1,6 @@
 import Foundation
 
-/// Manages multilingual content for policy documents and app text
+/// Manages multilingual content for the entire app
 class MultilingualContentManager: ObservableObject {
     static let shared = MultilingualContentManager()
     
@@ -15,6 +15,543 @@ class MultilingualContentManager: ObservableObject {
         currentLanguage = language
         UserDefaults.standard.set(language, forKey: "selected_language")
     }
+    
+    // MARK: - Localization Helper
+    
+    func localizedString(_ key: String) -> String {
+        switch currentLanguage {
+        case "zh-CN":
+            return chineseStrings[key] ?? englishStrings[key] ?? key
+        case "ja-JP":
+            return japaneseStrings[key] ?? englishStrings[key] ?? key
+        default:
+            return englishStrings[key] ?? key
+        }
+    }
+    
+    // MARK: - Localization Strings
+    
+    private let englishStrings: [String: String] = [
+        // Navigation & Tabs
+        "tab.overview": "Overview",
+        "tab.transactions": "Transactions", 
+        "tab.budget": "Budget",
+        "tab.loans": "Loans",
+        "tab.settings": "Settings",
+        
+        // Overview Tab
+        "overview.title": "Overview",
+        "overview.balance": "Current Balance",
+        "overview.monthly_change": "Monthly Change",
+        "overview.income": "Income",
+        "overview.expenses": "Expenses",
+        "overview.savings": "Savings",
+        "overview.recent_transactions": "Recent Transactions",
+        "overview.budgets": "Budgets",
+        "overview.loans": "Loans",
+        "overview.financial_insights": "Financial Insights",
+        "overview.monthly_overview": "Monthly Overview",
+        
+        // Transactions Tab
+        "transactions.title": "Transactions",
+        "transactions.add_transaction": "Add Transaction",
+        "transactions.edit_transaction": "Edit Transaction",
+        "transactions.delete_transaction": "Delete Transaction",
+        "transactions.income": "Income",
+        "transactions.expense": "Expense",
+        "transactions.amount": "Amount",
+        "transactions.category": "Category",
+        "transactions.date": "Date",
+        "transactions.description": "Description",
+        "transactions.search": "Search transactions...",
+        "transactions.filter": "Filter",
+        "transactions.all": "All",
+        "transactions.no_transactions": "No transactions yet",
+        "transactions.add_first": "Add your first transaction to get started",
+        
+        // Budget Tab
+        "budget.title": "Budget",
+        "budget.add_budget": "Add Budget",
+        "budget.edit_budget": "Edit Budget",
+        "budget.delete_budget": "Delete Budget",
+        "budget.name": "Name",
+        "budget.amount": "Amount",
+        "budget.spent": "Spent",
+        "budget.remaining": "Remaining",
+        "budget.progress": "Progress",
+        "budget.period": "Period",
+        "budget.weekly": "Weekly",
+        "budget.monthly": "Monthly",
+        "budget.yearly": "Yearly",
+        "budget.no_budgets": "No budgets yet",
+        "budget.add_first": "Add your first budget to start tracking",
+        
+        // Settings Tab
+        "settings.title": "Settings",
+        "settings.notifications": "Notifications",
+        "settings.push_notifications": "Push Notifications",
+        "settings.budget_alerts": "Budget Alerts",
+        "settings.budget_settings": "Budget Settings",
+        "settings.default_currency": "Default Currency",
+        "settings.budget_period": "Budget Period",
+        "settings.language": "Language",
+        "settings.text_to_speech_language": "Text-to-Speech Language",
+        "settings.data_privacy": "Data & Privacy",
+        "settings.export_data": "Export Data",
+        "settings.clear_all_data": "Clear All Data",
+        "settings.test_data": "Test Data",
+        "settings.add_test_data": "Add Test Data",
+        "settings.remove_test_data": "Remove Test Data",
+        "settings.about": "About",
+        "settings.version": "Version",
+        "settings.version_history": "Version History",
+        "settings.privacy_policy": "Privacy Policy",
+        "settings.terms_of_service": "Terms of Service",
+        "settings.font_licensing": "Font Licensing",
+        
+        // Common Actions
+        "action.add": "Add",
+        "action.edit": "Edit",
+        "action.delete": "Delete",
+        "action.save": "Save",
+        "action.cancel": "Cancel",
+        "action.done": "Done",
+        "action.close": "Close",
+        "action.confirm": "Confirm",
+        "action.export": "Export",
+        "action.import": "Import",
+        "action.clear": "Clear",
+        "action.reset": "Reset",
+        
+        // Categories
+        "category.food": "Food",
+        "category.transport": "Transport",
+        "category.entertainment": "Entertainment",
+        "category.healthcare": "Healthcare",
+        "category.bills": "Bills",
+        "category.shopping": "Shopping",
+        "category.education": "Education",
+        "category.travel": "Travel",
+        "category.other": "Other",
+        
+        // Loan Categories
+        "loan.student": "Student Loan",
+        "loan.auto": "Auto Loan",
+        "loan.mortgage": "Mortgage",
+        "loan.personal": "Personal Loan",
+        "loan.credit_card": "Credit Card",
+        "loan.home_improvement": "Home Improvement",
+        
+        // Alerts & Messages
+        "alert.confirm_delete": "Confirm Delete",
+        "alert.delete_transaction": "Are you sure you want to delete this transaction?",
+        "alert.delete_budget": "Are you sure you want to delete this budget?",
+        "alert.clear_all_data": "Clear All Data",
+        "alert.clear_data_message": "This will permanently delete all your transactions, budgets, and loans. This action cannot be undone.",
+        "alert.success": "Success",
+        "alert.error": "Error",
+        "alert.data_exported": "Data exported successfully",
+        "alert.data_cleared": "All data cleared successfully",
+        
+        // Empty States
+        "empty.no_data": "No data available",
+        "empty.add_first_item": "Add your first item to get started",
+        "empty.no_results": "No results found",
+        "empty.try_different_search": "Try a different search term",
+        
+        // Currency
+        "currency.usd": "US Dollar",
+        "currency.eur": "Euro",
+        "currency.gbp": "British Pound",
+        "currency.jpy": "Japanese Yen",
+        "currency.cny": "Chinese Yuan",
+        
+        // Time Periods
+        "period.today": "Today",
+        "period.yesterday": "Yesterday",
+        "period.this_week": "This Week",
+        "period.last_week": "Last Week",
+        "period.this_month": "This Month",
+        "period.last_month": "Last Month",
+        "period.this_year": "This Year",
+        "period.last_year": "Last Year",
+        
+        // Accessibility
+        "accessibility.play": "Play",
+        "accessibility.pause": "Pause",
+        "accessibility.stop": "Stop",
+        "accessibility.speed_control": "Speed Control",
+        "accessibility.language_selector": "Language Selector",
+        "accessibility.currency_selector": "Currency Selector",
+        "accessibility.category_selector": "Category Selector",
+        
+        // Onboarding
+        "onboarding.welcome": "Welcome to Money Manager",
+        "onboarding.get_started": "Get Started",
+        "onboarding.next": "Next",
+        "onboarding.skip": "Skip",
+        "onboarding.complete": "Complete",
+        
+        // Export
+        "export.title": "Export Data",
+        "export.subtitle": "Choose what data you want to export to CSV format",
+        "export.transactions": "Transactions",
+        "export.budgets": "Budgets", 
+        "export.loans": "Loans",
+        "export.all_data": "All Data",
+        "export.transactions_desc": "Export all your transaction records",
+        "export.budgets_desc": "Export all your budget information",
+        "export.loans_desc": "Export all your loan details",
+        "export.all_data_desc": "Export everything in one file"
+    ]
+    
+    private let chineseStrings: [String: String] = [
+        // Navigation & Tabs
+        "tab.overview": "概览",
+        "tab.transactions": "交易",
+        "tab.budget": "预算",
+        "tab.loans": "贷款",
+        "tab.settings": "设置",
+        
+        // Overview Tab
+        "overview.title": "概览",
+        "overview.balance": "当前余额",
+        "overview.monthly_change": "月度变化",
+        "overview.income": "收入",
+        "overview.expenses": "支出",
+        "overview.savings": "储蓄",
+        "overview.recent_transactions": "最近交易",
+        "overview.budgets": "预算",
+        "overview.loans": "贷款",
+        "overview.financial_insights": "财务洞察",
+        "overview.monthly_overview": "月度概览",
+        
+        // Transactions Tab
+        "transactions.title": "交易",
+        "transactions.add_transaction": "添加交易",
+        "transactions.edit_transaction": "编辑交易",
+        "transactions.delete_transaction": "删除交易",
+        "transactions.income": "收入",
+        "transactions.expense": "支出",
+        "transactions.amount": "金额",
+        "transactions.category": "类别",
+        "transactions.date": "日期",
+        "transactions.description": "描述",
+        "transactions.search": "搜索交易...",
+        "transactions.filter": "筛选",
+        "transactions.all": "全部",
+        "transactions.no_transactions": "暂无交易",
+        "transactions.add_first": "添加您的第一笔交易开始使用",
+        
+        // Budget Tab
+        "budget.title": "预算",
+        "budget.add_budget": "添加预算",
+        "budget.edit_budget": "编辑预算",
+        "budget.delete_budget": "删除预算",
+        "budget.name": "名称",
+        "budget.amount": "金额",
+        "budget.spent": "已花费",
+        "budget.remaining": "剩余",
+        "budget.progress": "进度",
+        "budget.period": "周期",
+        "budget.weekly": "每周",
+        "budget.monthly": "每月",
+        "budget.yearly": "每年",
+        "budget.no_budgets": "暂无预算",
+        "budget.add_first": "添加您的第一个预算开始跟踪",
+        
+        // Settings Tab
+        "settings.title": "设置",
+        "settings.notifications": "通知",
+        "settings.push_notifications": "推送通知",
+        "settings.budget_alerts": "预算提醒",
+        "settings.budget_settings": "预算设置",
+        "settings.default_currency": "默认货币",
+        "settings.budget_period": "预算周期",
+        "settings.language": "语言",
+        "settings.text_to_speech_language": "语音语言",
+        "settings.data_privacy": "数据与隐私",
+        "settings.export_data": "导出数据",
+        "settings.clear_all_data": "清除所有数据",
+        "settings.test_data": "测试数据",
+        "settings.add_test_data": "添加测试数据",
+        "settings.remove_test_data": "移除测试数据",
+        "settings.about": "关于",
+        "settings.version": "版本",
+        "settings.version_history": "版本历史",
+        "settings.privacy_policy": "隐私政策",
+        "settings.terms_of_service": "服务条款",
+        "settings.font_licensing": "字体许可",
+        
+        // Common Actions
+        "action.add": "添加",
+        "action.edit": "编辑",
+        "action.delete": "删除",
+        "action.save": "保存",
+        "action.cancel": "取消",
+        "action.done": "完成",
+        "action.close": "关闭",
+        "action.confirm": "确认",
+        "action.export": "导出",
+        "action.import": "导入",
+        "action.clear": "清除",
+        "action.reset": "重置",
+        
+        // Categories
+        "category.food": "食物",
+        "category.transport": "交通",
+        "category.entertainment": "娱乐",
+        "category.healthcare": "医疗",
+        "category.bills": "账单",
+        "category.shopping": "购物",
+        "category.education": "教育",
+        "category.travel": "旅行",
+        "category.other": "其他",
+        
+        // Loan Categories
+        "loan.student": "学生贷款",
+        "loan.auto": "汽车贷款",
+        "loan.mortgage": "抵押贷款",
+        "loan.personal": "个人贷款",
+        "loan.credit_card": "信用卡",
+        "loan.home_improvement": "房屋装修",
+        
+        // Alerts & Messages
+        "alert.confirm_delete": "确认删除",
+        "alert.delete_transaction": "您确定要删除这笔交易吗？",
+        "alert.delete_budget": "您确定要删除这个预算吗？",
+        "alert.clear_all_data": "清除所有数据",
+        "alert.clear_data_message": "这将永久删除您的所有交易、预算和贷款。此操作无法撤销。",
+        "alert.success": "成功",
+        "alert.error": "错误",
+        "alert.data_exported": "数据导出成功",
+        "alert.data_cleared": "所有数据清除成功",
+        
+        // Empty States
+        "empty.no_data": "暂无数据",
+        "empty.add_first_item": "添加您的第一个项目开始使用",
+        "empty.no_results": "未找到结果",
+        "empty.try_different_search": "尝试不同的搜索词",
+        
+        // Currency
+        "currency.usd": "美元",
+        "currency.eur": "欧元",
+        "currency.gbp": "英镑",
+        "currency.jpy": "日元",
+        "currency.cny": "人民币",
+        
+        // Time Periods
+        "period.today": "今天",
+        "period.yesterday": "昨天",
+        "period.this_week": "本周",
+        "period.last_week": "上周",
+        "period.this_month": "本月",
+        "period.last_month": "上月",
+        "period.this_year": "今年",
+        "period.last_year": "去年",
+        
+        // Accessibility
+        "accessibility.play": "播放",
+        "accessibility.pause": "暂停",
+        "accessibility.stop": "停止",
+        "accessibility.speed_control": "速度控制",
+        "accessibility.language_selector": "语言选择器",
+        "accessibility.currency_selector": "货币选择器",
+        "accessibility.category_selector": "类别选择器",
+        
+        // Onboarding
+        "onboarding.welcome": "欢迎使用Money Manager",
+        "onboarding.get_started": "开始使用",
+        "onboarding.next": "下一步",
+        "onboarding.skip": "跳过",
+        "onboarding.complete": "完成",
+        
+        // Export
+        "export.title": "导出数据",
+        "export.subtitle": "选择要导出为CSV格式的数据",
+        "export.transactions": "交易",
+        "export.budgets": "预算",
+        "export.loans": "贷款",
+        "export.all_data": "所有数据",
+        "export.transactions_desc": "导出所有交易记录",
+        "export.budgets_desc": "导出所有预算信息",
+        "export.loans_desc": "导出所有贷款详情",
+        "export.all_data_desc": "一次性导出所有内容"
+    ]
+    
+    private let japaneseStrings: [String: String] = [
+        // Navigation & Tabs
+        "tab.overview": "概要",
+        "tab.transactions": "取引",
+        "tab.budget": "予算",
+        "tab.loans": "ローン",
+        "tab.settings": "設定",
+        
+        // Overview Tab
+        "overview.title": "概要",
+        "overview.balance": "現在の残高",
+        "overview.monthly_change": "月次変化",
+        "overview.income": "収入",
+        "overview.expenses": "支出",
+        "overview.savings": "貯蓄",
+        "overview.recent_transactions": "最近の取引",
+        "overview.budgets": "予算",
+        "overview.loans": "ローン",
+        "overview.financial_insights": "財務インサイト",
+        "overview.monthly_overview": "月次概要",
+        
+        // Transactions Tab
+        "transactions.title": "取引",
+        "transactions.add_transaction": "取引を追加",
+        "transactions.edit_transaction": "取引を編集",
+        "transactions.delete_transaction": "取引を削除",
+        "transactions.income": "収入",
+        "transactions.expense": "支出",
+        "transactions.amount": "金額",
+        "transactions.category": "カテゴリ",
+        "transactions.date": "日付",
+        "transactions.description": "説明",
+        "transactions.search": "取引を検索...",
+        "transactions.filter": "フィルター",
+        "transactions.all": "すべて",
+        "transactions.no_transactions": "取引がありません",
+        "transactions.add_first": "最初の取引を追加して開始",
+        
+        // Budget Tab
+        "budget.title": "予算",
+        "budget.add_budget": "予算を追加",
+        "budget.edit_budget": "予算を編集",
+        "budget.delete_budget": "予算を削除",
+        "budget.name": "名前",
+        "budget.amount": "金額",
+        "budget.spent": "使用済み",
+        "budget.remaining": "残り",
+        "budget.progress": "進捗",
+        "budget.period": "期間",
+        "budget.weekly": "週次",
+        "budget.monthly": "月次",
+        "budget.yearly": "年次",
+        "budget.no_budgets": "予算がありません",
+        "budget.add_first": "最初の予算を追加して追跡開始",
+        
+        // Settings Tab
+        "settings.title": "設定",
+        "settings.notifications": "通知",
+        "settings.push_notifications": "プッシュ通知",
+        "settings.budget_alerts": "予算アラート",
+        "settings.budget_settings": "予算設定",
+        "settings.default_currency": "デフォルト通貨",
+        "settings.budget_period": "予算期間",
+        "settings.language": "言語",
+        "settings.text_to_speech_language": "音声読み上げ言語",
+        "settings.data_privacy": "データとプライバシー",
+        "settings.export_data": "データをエクスポート",
+        "settings.clear_all_data": "すべてのデータをクリア",
+        "settings.test_data": "テストデータ",
+        "settings.add_test_data": "テストデータを追加",
+        "settings.remove_test_data": "テストデータを削除",
+        "settings.about": "について",
+        "settings.version": "バージョン",
+        "settings.version_history": "バージョン履歴",
+        "settings.privacy_policy": "プライバシーポリシー",
+        "settings.terms_of_service": "利用規約",
+        "settings.font_licensing": "フォントライセンス",
+        
+        // Common Actions
+        "action.add": "追加",
+        "action.edit": "編集",
+        "action.delete": "削除",
+        "action.save": "保存",
+        "action.cancel": "キャンセル",
+        "action.done": "完了",
+        "action.close": "閉じる",
+        "action.confirm": "確認",
+        "action.export": "エクスポート",
+        "action.import": "インポート",
+        "action.clear": "クリア",
+        "action.reset": "リセット",
+        
+        // Categories
+        "category.food": "食事",
+        "category.transport": "交通",
+        "category.entertainment": "エンターテイメント",
+        "category.healthcare": "医療",
+        "category.bills": "請求書",
+        "category.shopping": "ショッピング",
+        "category.education": "教育",
+        "category.travel": "旅行",
+        "category.other": "その他",
+        
+        // Loan Categories
+        "loan.student": "学生ローン",
+        "loan.auto": "自動車ローン",
+        "loan.mortgage": "住宅ローン",
+        "loan.personal": "個人ローン",
+        "loan.credit_card": "クレジットカード",
+        "loan.home_improvement": "住宅改築",
+        
+        // Alerts & Messages
+        "alert.confirm_delete": "削除を確認",
+        "alert.delete_transaction": "この取引を削除してもよろしいですか？",
+        "alert.delete_budget": "この予算を削除してもよろしいですか？",
+        "alert.clear_all_data": "すべてのデータをクリア",
+        "alert.clear_data_message": "これにより、すべての取引、予算、ローンが永久に削除されます。この操作は元に戻せません。",
+        "alert.success": "成功",
+        "alert.error": "エラー",
+        "alert.data_exported": "データのエクスポートが成功しました",
+        "alert.data_cleared": "すべてのデータがクリアされました",
+        
+        // Empty States
+        "empty.no_data": "データがありません",
+        "empty.add_first_item": "最初のアイテムを追加して開始",
+        "empty.no_results": "結果が見つかりません",
+        "empty.try_different_search": "別の検索語を試してください",
+        
+        // Currency
+        "currency.usd": "米ドル",
+        "currency.eur": "ユーロ",
+        "currency.gbp": "英ポンド",
+        "currency.jpy": "日本円",
+        "currency.cny": "中国元",
+        
+        // Time Periods
+        "period.today": "今日",
+        "period.yesterday": "昨日",
+        "period.this_week": "今週",
+        "period.last_week": "先週",
+        "period.this_month": "今月",
+        "period.last_month": "先月",
+        "period.this_year": "今年",
+        "period.last_year": "昨年",
+        
+        // Accessibility
+        "accessibility.play": "再生",
+        "accessibility.pause": "一時停止",
+        "accessibility.stop": "停止",
+        "accessibility.speed_control": "速度制御",
+        "accessibility.language_selector": "言語選択器",
+        "accessibility.currency_selector": "通貨選択器",
+        "accessibility.category_selector": "カテゴリ選択器",
+        
+        // Onboarding
+        "onboarding.welcome": "Money Managerへようこそ",
+        "onboarding.get_started": "開始",
+        "onboarding.next": "次へ",
+        "onboarding.skip": "スキップ",
+        "onboarding.complete": "完了",
+        
+        // Export
+        "export.title": "データをエクスポート",
+        "export.subtitle": "CSV形式でエクスポートするデータを選択",
+        "export.transactions": "取引",
+        "export.budgets": "予算",
+        "export.loans": "ローン",
+        "export.all_data": "すべてのデータ",
+        "export.transactions_desc": "すべての取引記録をエクスポート",
+        "export.budgets_desc": "すべての予算情報をエクスポート",
+        "export.loans_desc": "すべてのローン詳細をエクスポート",
+        "export.all_data_desc": "すべてを1つのファイルでエクスポート"
+    ]
     
     // MARK: - Privacy Policy Content
     

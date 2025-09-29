@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     // Shared ViewModels - created once and shared across all tabs
     @StateObject private var loanViewModel = LoanViewModel()
@@ -23,7 +24,7 @@ struct MainTabView: View {
             )
                 .tabItem {
                     Image(systemName: "chart.pie.fill")
-                    Text("Overview")
+                    Text(contentManager.localizedString("tab.overview"))
                 }
                 .tag(0)
                 .accessibilityLabel("Overview tab")
@@ -37,7 +38,7 @@ struct MainTabView: View {
             )
                 .tabItem {
                     Image(systemName: "list.bullet")
-                    Text("Transactions")
+                    Text(contentManager.localizedString("tab.transactions"))
                 }
                 .tag(1)
                 .accessibilityLabel("Transactions tab")
@@ -51,7 +52,7 @@ struct MainTabView: View {
             )
                 .tabItem {
                     Image(systemName: "dollarsign.circle.fill")
-                    Text("Budget")
+                    Text(contentManager.localizedString("tab.budget"))
                 }
                 .tag(2)
                 .accessibilityLabel("Budget tab")
@@ -65,7 +66,7 @@ struct MainTabView: View {
             )
                 .tabItem {
                     Image(systemName: "creditcard.fill")
-                    Text("Loans")
+                    Text(contentManager.localizedString("tab.loans"))
                 }
                 .tag(3)
                 .accessibilityLabel("Loans tab")
