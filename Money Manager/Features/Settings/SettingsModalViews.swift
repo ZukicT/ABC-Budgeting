@@ -6,6 +6,7 @@ import AVFoundation
 class TextToSpeechManager: NSObject, ObservableObject {
     @Published var isPlaying = false
     @Published var isPaused = false
+    @Published var selectedSpeed: SpeechSpeed = .normal
     
     private let synthesizer = AVSpeechSynthesizer()
     private var currentUtterance: AVSpeechUtterance?
@@ -20,7 +21,7 @@ class TextToSpeechManager: NSObject, ObservableObject {
         stop()
         
         let utterance = AVSpeechUtterance(string: text)
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.8 // Slightly slower for better comprehension
+        utterance.rate = selectedSpeed.rate
         utterance.volume = 1.0
         utterance.pitchMultiplier = 1.0
         
@@ -66,6 +67,49 @@ class TextToSpeechManager: NSObject, ObservableObject {
         } else {
             speak(text)
         }
+    }
+    
+    func changeSpeed(_ speed: SpeechSpeed) {
+        selectedSpeed = speed
+        // If currently playing, restart with new speed
+        if isPlaying {
+            let wasPaused = isPaused
+            stop()
+            if !wasPaused {
+                // Restart with new speed after a brief delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if let utterance = self.currentUtterance {
+                        utterance.rate = speed.rate
+                        self.synthesizer.speak(utterance)
+                        self.isPlaying = true
+                        self.isPaused = false
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Speech Speed Enum
+enum SpeechSpeed: String, CaseIterable {
+    case slow = "0.8x"
+    case normal = "1x"
+    case fast = "1.2x"
+    case faster = "1.5x"
+    case fastest = "2x"
+    
+    var rate: Float {
+        switch self {
+        case .slow: return AVSpeechUtteranceDefaultSpeechRate * 0.8
+        case .normal: return AVSpeechUtteranceDefaultSpeechRate
+        case .fast: return AVSpeechUtteranceDefaultSpeechRate * 1.2
+        case .faster: return AVSpeechUtteranceDefaultSpeechRate * 1.5
+        case .fastest: return AVSpeechUtteranceDefaultSpeechRate * 2.0
+        }
+    }
+    
+    var displayName: String {
+        return rawValue
     }
 }
 
@@ -226,14 +270,42 @@ struct PrivacyPolicyView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        speechManager.togglePlayPause(fullText)
-                    }) {
-                        Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(Constants.Colors.primaryBlue)
+                    HStack(spacing: Constants.UI.Spacing.small) {
+                        Button(action: {
+                            speechManager.togglePlayPause(fullText)
+                        }) {
+                            Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(Constants.Colors.primaryBlue)
+                        }
+                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
+                        
+                        // Speed Control
+                        Menu {
+                            ForEach(SpeechSpeed.allCases, id: \.self) { speed in
+                                Button(action: {
+                                    speechManager.changeSpeed(speed)
+                                }) {
+                                    HStack {
+                                        Text(speed.displayName)
+                                        if speechManager.selectedSpeed == speed {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            Text(speechManager.selectedSpeed.displayName)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(Constants.Colors.textSecondary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Constants.Colors.textPrimary.opacity(0.1))
+                                .cornerRadius(6)
+                        }
+                        .accessibilityLabel("Speech speed: \(speechManager.selectedSpeed.displayName)")
                     }
-                    .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -423,14 +495,42 @@ struct TermsOfServiceView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        speechManager.togglePlayPause(fullText)
-                    }) {
-                        Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(Constants.Colors.primaryBlue)
+                    HStack(spacing: Constants.UI.Spacing.small) {
+                        Button(action: {
+                            speechManager.togglePlayPause(fullText)
+                        }) {
+                            Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(Constants.Colors.primaryBlue)
+                        }
+                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
+                        
+                        // Speed Control
+                        Menu {
+                            ForEach(SpeechSpeed.allCases, id: \.self) { speed in
+                                Button(action: {
+                                    speechManager.changeSpeed(speed)
+                                }) {
+                                    HStack {
+                                        Text(speed.displayName)
+                                        if speechManager.selectedSpeed == speed {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            Text(speechManager.selectedSpeed.displayName)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(Constants.Colors.textSecondary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Constants.Colors.textPrimary.opacity(0.1))
+                                .cornerRadius(6)
+                        }
+                        .accessibilityLabel("Speech speed: \(speechManager.selectedSpeed.displayName)")
                     }
-                    .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -576,14 +676,42 @@ struct FontLicensingView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        speechManager.togglePlayPause(fullText)
-                    }) {
-                        Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(Constants.Colors.primaryBlue)
+                    HStack(spacing: Constants.UI.Spacing.small) {
+                        Button(action: {
+                            speechManager.togglePlayPause(fullText)
+                        }) {
+                            Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(Constants.Colors.primaryBlue)
+                        }
+                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
+                        
+                        // Speed Control
+                        Menu {
+                            ForEach(SpeechSpeed.allCases, id: \.self) { speed in
+                                Button(action: {
+                                    speechManager.changeSpeed(speed)
+                                }) {
+                                    HStack {
+                                        Text(speed.displayName)
+                                        if speechManager.selectedSpeed == speed {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            Text(speechManager.selectedSpeed.displayName)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(Constants.Colors.textSecondary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Constants.Colors.textPrimary.opacity(0.1))
+                                .cornerRadius(6)
+                        }
+                        .accessibilityLabel("Speech speed: \(speechManager.selectedSpeed.displayName)")
                     }
-                    .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -725,14 +853,42 @@ struct VersionHistoryView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        speechManager.togglePlayPause(fullText)
-                    }) {
-                        Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(Constants.Colors.primaryBlue)
+                    HStack(spacing: Constants.UI.Spacing.small) {
+                        Button(action: {
+                            speechManager.togglePlayPause(fullText)
+                        }) {
+                            Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(Constants.Colors.primaryBlue)
+                        }
+                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
+                        
+                        // Speed Control
+                        Menu {
+                            ForEach(SpeechSpeed.allCases, id: \.self) { speed in
+                                Button(action: {
+                                    speechManager.changeSpeed(speed)
+                                }) {
+                                    HStack {
+                                        Text(speed.displayName)
+                                        if speechManager.selectedSpeed == speed {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            Text(speechManager.selectedSpeed.displayName)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(Constants.Colors.textSecondary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Constants.Colors.textPrimary.opacity(0.1))
+                                .cornerRadius(6)
+                        }
+                        .accessibilityLabel("Speech speed: \(speechManager.selectedSpeed.displayName)")
                     }
-                    .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
