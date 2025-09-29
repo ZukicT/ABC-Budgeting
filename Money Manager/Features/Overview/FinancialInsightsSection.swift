@@ -6,12 +6,13 @@ struct FinancialInsightsSection: View {
     @State private var categorySpendingData: [CategorySpendingData] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // Section Header
             HStack {
-                Text("Financial Insights")
+                Text(contentManager.localizedString("overview.financial_insights_title"))
                     .font(Constants.Typography.H2.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 

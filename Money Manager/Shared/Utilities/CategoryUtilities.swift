@@ -3,6 +3,26 @@ import SwiftUI
 /// Centralized category management utilities to eliminate code duplication
 struct CategoryUtilities {
     
+    // MARK: - Localized Category Names
+    static func localizedName(for category: String) -> String {
+        let contentManager = MultilingualContentManager.shared
+        switch category.lowercased() {
+        case "food": return contentManager.localizedString("category.food")
+        case "transport": return contentManager.localizedString("category.transport")
+        case "shopping": return contentManager.localizedString("category.shopping")
+        case "entertainment": return contentManager.localizedString("category.entertainment")
+        case "bills": return contentManager.localizedString("category.bills")
+        case "savings": return contentManager.localizedString("category.savings")
+        case "income": return contentManager.localizedString("category.income")
+        case "housing": return contentManager.localizedString("category.housing")
+        case "healthcare", "health & fitness": return contentManager.localizedString("category.healthcare")
+        case "education": return contentManager.localizedString("category.education")
+        case "travel": return contentManager.localizedString("category.travel")
+        case "other": return contentManager.localizedString("category.other")
+        default: return contentManager.localizedString("category.other")
+        }
+    }
+    
     // MARK: - Category Icons
     static func icon(for category: String) -> String {
         switch category.lowercased() {
@@ -41,7 +61,7 @@ struct CategoryUtilities {
         }
     }
     
-    // MARK: - Available Categories
+    // MARK: - Available Categories (English keys for internal use)
     static let budgetCategories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Savings", "Other"]
     static let transactionCategories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Income", "Other"]
     static let allCategories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Savings", "Income", "Housing", "Healthcare", "Education", "Travel", "Other"]
@@ -55,5 +75,9 @@ extension String {
     
     var categoryColor: Color {
         CategoryUtilities.color(for: self)
+    }
+    
+    var localizedCategoryName: String {
+        CategoryUtilities.localizedName(for: self)
     }
 }

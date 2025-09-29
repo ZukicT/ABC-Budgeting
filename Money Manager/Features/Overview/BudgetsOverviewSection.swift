@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BudgetsOverviewSection: View {
     @ObservedObject var budgetViewModel: BudgetViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var totalBudgeted: Double = 0.0
     @State private var totalSpent: Double = 0.0
     @State private var overallProgress: Double = 0.0
@@ -14,7 +15,7 @@ struct BudgetsOverviewSection: View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // Section Header
             HStack {
-                Text("Budgets Overview")
+                Text(contentManager.localizedString("budgets_overview.title"))
                     .font(Constants.Typography.H2.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
@@ -24,7 +25,7 @@ struct BudgetsOverviewSection: View {
                 Button(action: {
                     onTabSwitch(2) // Switch to Budget tab
                 }) {
-                    Text("See All")
+                    Text(contentManager.localizedString("button.view_all"))
                         .font(Constants.Typography.BodySmall.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -39,7 +40,7 @@ struct BudgetsOverviewSection: View {
                 }
             } else if budgetViewModel.budgets.isEmpty {
                 BudgetEmptyState(
-                    actionTitle: "Create Budget",
+                    actionTitle: contentManager.localizedString("cta.create_budget"),
                     action: {
                         // TODO: Navigate to create budget
                     }
@@ -119,7 +120,7 @@ private struct BudgetSummaryCard: View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             // Header
             HStack {
-                Text("Total Budget")
+                Text("budgets_overview.total_budget".localized)
                     .font(Constants.Typography.H3.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
@@ -152,7 +153,7 @@ private struct BudgetSummaryCard: View {
             // Amount Details
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Budgeted")
+                    Text("budgets_overview.budgeted".localized)
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
@@ -165,7 +166,7 @@ private struct BudgetSummaryCard: View {
                 Spacer()
                 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("Spent")
+                    Text("budgets_overview.spent".localized)
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     

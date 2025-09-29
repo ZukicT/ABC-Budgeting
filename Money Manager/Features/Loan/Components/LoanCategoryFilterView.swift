@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoanCategoryFilterView: View {
     @Binding var selectedCategory: LoanCategory?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     let categories = LoanCategory.allCases
     
     var body: some View {
@@ -11,7 +12,7 @@ struct LoanCategoryFilterView: View {
                 // "All" button to show all loans
                 CategoryFilterTag(
                     category: nil,
-                    displayName: "All",
+                    displayName: contentManager.localizedString("loan.filter.all"),
                     icon: "square.grid.2x2",
                     isSelected: selectedCategory == nil,
                     action: {

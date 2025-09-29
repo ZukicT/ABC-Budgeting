@@ -86,7 +86,7 @@ struct BudgetView: View {
     private var contentSection: some View {
         Group {
             if viewModel.isLoading {
-                LoadingStateView(message: "Loading budget...")
+                LoadingStateView(message: contentManager.localizedString("budget.loading"))
             } else if let errorMessage = viewModel.errorMessage {
                 ErrorStateView(message: errorMessage) {
                     viewModel.loadBudgets()
@@ -258,7 +258,7 @@ private struct MobileBudgetRow: View {
                         }
                         .frame(height: 6)
                         
-                        Text("\(Int(progressPercentage * 100))%")
+                        Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("budget.used_percentage"))")
                             .font(Constants.Typography.Caption.font)
                             .fontWeight(.medium)
                             .foregroundColor(progressColor)
@@ -416,7 +416,7 @@ private struct BudgetCard: View {
                     
                     Spacer()
                     
-                    Text("\(Int(progressPercentage * 100))%")
+                    Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("budget.used_percentage"))")
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.bold)
                         .foregroundColor(progressColor)
@@ -430,7 +430,7 @@ private struct BudgetCard: View {
                             .font(.caption2)
                             .foregroundColor(Constants.Colors.error)
                         
-                        Text("Over by \((budget.spentAmount - budget.allocatedAmount), format: .currency(code: "USD"))")
+                        Text("\(contentManager.localizedString("budget.over_by_amount")) \((budget.spentAmount - budget.allocatedAmount), format: .currency(code: "USD"))")
                             .font(Constants.Typography.Caption.font)
                             .fontWeight(.medium)
                             .foregroundColor(Constants.Colors.error)
@@ -444,7 +444,7 @@ private struct BudgetCard: View {
                 
                 Spacer()
                 
-                Text(isOverBudget ? "Over Budget" : "On Track")
+                Text(isOverBudget ? contentManager.localizedString("budget.over_budget") : contentManager.localizedString("budget.on_track"))
                     .font(.caption2)
                     .fontWeight(.semibold)
                     .foregroundColor(progressColor)

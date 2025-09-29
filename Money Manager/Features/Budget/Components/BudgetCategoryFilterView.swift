@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BudgetCategoryFilterView: View {
     @Binding var selectedCategory: String?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     let categories = CategoryUtilities.budgetCategories
     
     var body: some View {
@@ -11,7 +12,7 @@ struct BudgetCategoryFilterView: View {
                 // "All" button to show all budgets
                 BudgetCategoryFilterTag(
                     category: nil,
-                    displayName: "All",
+                    displayName: contentManager.localizedString("budget.filter.all"),
                     icon: "square.grid.2x2",
                     isSelected: selectedCategory == nil,
                     action: {
@@ -22,7 +23,7 @@ struct BudgetCategoryFilterView: View {
                 ForEach(categories, id: \.self) { category in
                     BudgetCategoryFilterTag(
                         category: category,
-                        displayName: category,
+                        displayName: category.localizedCategoryName,
                         icon: nil,
                         isSelected: selectedCategory == category,
                         action: {

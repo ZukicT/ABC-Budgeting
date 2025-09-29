@@ -24,13 +24,13 @@ struct SettingsView: View {
                             VStack(spacing: Constants.UI.Spacing.medium) {
                                 SettingsToggle(
                                     title: contentManager.localizedString("settings.push_notifications"),
-                                    subtitle: "Receive alerts for budget limits and payments",
+                                    subtitle: contentManager.localizedString("settings.subtitle.push_notifications"),
                                     isOn: $settingsViewModel.notificationsEnabled
                                 )
                                 
                                 SettingsToggle(
                                     title: contentManager.localizedString("settings.budget_alerts"),
-                                    subtitle: "Get notified when approaching budget limits",
+                                    subtitle: contentManager.localizedString("settings.subtitle.budget_alerts"),
                                     isOn: $settingsViewModel.budgetAlertsEnabled
                                 )
                             }
@@ -41,7 +41,7 @@ struct SettingsView: View {
                             VStack(spacing: Constants.UI.Spacing.medium) {
                                 SettingsCurrencyPicker(
                                     title: contentManager.localizedString("settings.default_currency"),
-                                    subtitle: "Choose your preferred currency",
+                                    subtitle: contentManager.localizedString("settings.subtitle.default_currency"),
                                     selection: $settingsViewModel.selectedCurrency,
                                     currencies: SettingsViewModel.availableCurrencies,
                                     currencyNames: SettingsViewModel.currencyDisplayNames
@@ -49,7 +49,7 @@ struct SettingsView: View {
                                 
                                 SettingsPicker(
                                     title: contentManager.localizedString("settings.budget_period"),
-                                    subtitle: "Set your default budget timeframe",
+                                    subtitle: contentManager.localizedString("settings.subtitle.budget_period"),
                                     selection: $settingsViewModel.budgetPeriod,
                                     options: SettingsViewModel.availableBudgetPeriods
                                 )
@@ -61,7 +61,7 @@ struct SettingsView: View {
                             VStack(spacing: Constants.UI.Spacing.medium) {
                                 SettingsLanguagePicker(
                                     title: contentManager.localizedString("settings.text_to_speech_language"),
-                                    subtitle: "Choose language for reading policy documents",
+                                    subtitle: contentManager.localizedString("settings.subtitle.text_to_speech_language"),
                                     selection: $settingsViewModel.selectedLanguage,
                                     languages: SettingsViewModel.availableLanguages,
                                     languageNames: SettingsViewModel.languageDisplayNames
@@ -74,7 +74,7 @@ struct SettingsView: View {
                             VStack(spacing: Constants.UI.Spacing.medium) {
                                 SettingsButton(
                                     title: contentManager.localizedString("settings.export_data"),
-                                    subtitle: "Download your financial data as CSV",
+                                    subtitle: contentManager.localizedString("settings.subtitle.export_data"),
                                     action: {
                                         showExportData = true
                                     }
@@ -82,7 +82,7 @@ struct SettingsView: View {
                                 
                                 SettingsDestructiveButton(
                                     title: contentManager.localizedString("settings.clear_all_data"),
-                                    subtitle: "Remove all transactions and budgets",
+                                    subtitle: contentManager.localizedString("settings.subtitle.clear_all_data"),
                                     action: {
                                         showClearDataConfirmation = true
                                     }
@@ -96,7 +96,7 @@ struct SettingsView: View {
                                 if hasTestData {
                                     SettingsButton(
                                         title: contentManager.localizedString("settings.remove_test_data"),
-                                        subtitle: "Clear all sample data",
+                                        subtitle: contentManager.localizedString("settings.subtitle.remove_test_data"),
                                         action: {
                                             removeTestData()
                                         }
@@ -104,7 +104,7 @@ struct SettingsView: View {
                                 } else {
                                     SettingsButton(
                                         title: contentManager.localizedString("settings.add_test_data"),
-                                        subtitle: "Add sample transactions, budgets, and loans",
+                                        subtitle: contentManager.localizedString("settings.subtitle.add_test_data"),
                                         action: {
                                             addTestData()
                                         }
@@ -123,7 +123,7 @@ struct SettingsView: View {
                                 
                                 SettingsButton(
                                     title: contentManager.localizedString("settings.version_history"),
-                                    subtitle: "View recent updates and changes",
+                                    subtitle: contentManager.localizedString("settings.subtitle.version_history"),
                                     action: {
                                         showVersionHistory = true
                                     }
@@ -131,7 +131,7 @@ struct SettingsView: View {
                                 
                                 SettingsButton(
                                     title: contentManager.localizedString("settings.privacy_policy"),
-                                    subtitle: "Read our privacy policy",
+                                    subtitle: contentManager.localizedString("settings.subtitle.privacy_policy"),
                                     action: {
                                         showPrivacyPolicy = true
                                     }
@@ -139,7 +139,7 @@ struct SettingsView: View {
                                 
                                 SettingsButton(
                                     title: contentManager.localizedString("settings.terms_of_service"),
-                                    subtitle: "Read our terms of service",
+                                    subtitle: contentManager.localizedString("settings.subtitle.terms_of_service"),
                                     action: {
                                         showTermsOfService = true
                                     }
@@ -147,7 +147,7 @@ struct SettingsView: View {
                                 
                                 SettingsButton(
                                     title: contentManager.localizedString("settings.font_licensing"),
-                                    subtitle: "Trap font family licensing information",
+                                    subtitle: contentManager.localizedString("settings.subtitle.font_licensing"),
                                     action: {
                                         showFontLicensing = true
                                     }

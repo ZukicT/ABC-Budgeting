@@ -7,6 +7,7 @@ struct BudgetEditView: View {
     @State private var allocatedAmount: String
     @State private var showingErrorAlert = false
     @State private var errorMessage = ""
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private let categories = CategoryUtilities.budgetCategories
     
@@ -35,7 +36,7 @@ struct BudgetEditView: View {
             VStack(spacing: 16) {
                 // Top Row: Title + Close Button
                 HStack {
-                    Text("Edit Budget")
+                    Text(contentManager.localizedString("budget.edit_budget"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Constants.Colors.textPrimary)
                         .accessibilityLabel("Edit Budget")
@@ -64,7 +65,7 @@ struct BudgetEditView: View {
                 VStack(spacing: 20) {
                     // Category Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("CATEGORY")
+                        Text(contentManager.localizedString("budget.category_caps"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -73,7 +74,7 @@ struct BudgetEditView: View {
                             ForEach(categories, id: \.self) { categoryOption in
                                 HStack {
                                     CategoryIcon(category: categoryOption, size: 20)
-                                    Text(categoryOption)
+                                    Text(categoryOption.localizedCategoryName)
                                         .font(.system(size: 16, weight: .medium))
                                 }
                                 .tag(categoryOption)
@@ -85,7 +86,7 @@ struct BudgetEditView: View {
                     
                     // Allocated Amount Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("ALLOCATED AMOUNT")
+                        Text(contentManager.localizedString("budget.allocated_amount_caps"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -115,14 +116,14 @@ struct BudgetEditView: View {
                     
                     // Current Spending Info (Read-only)
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("CURRENT SPENDING")
+                        Text(contentManager.localizedString("budget.current_spending_caps"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         VStack(spacing: 12) {
                             HStack {
-                                Text("Spent")
+                                Text(contentManager.localizedString("budget.spent"))
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(Constants.Colors.textSecondary)
                                 Spacer()
@@ -132,7 +133,7 @@ struct BudgetEditView: View {
                             }
                             
                             HStack {
-                                Text("Remaining")
+                                Text(contentManager.localizedString("budget.remaining"))
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(Constants.Colors.textSecondary)
                                 Spacer()
@@ -164,7 +165,7 @@ struct BudgetEditView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "checkmark")
                             .font(.system(size: 14, weight: .semibold))
-                        Text("Save")
+                        Text(contentManager.localizedString("budget.save"))
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -184,7 +185,7 @@ struct BudgetEditView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .semibold))
-                        Text("Cancel")
+                        Text("button.cancel".localized)
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -199,8 +200,8 @@ struct BudgetEditView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
-        .alert("Validation Error", isPresented: $showingErrorAlert) {
-            Button("OK") { }
+        .alert(contentManager.localizedString("alert.validation_error"), isPresented: $showingErrorAlert) {
+            Button(contentManager.localizedString("button.ok")) { }
         } message: {
             Text(errorMessage)
         }
@@ -227,13 +228,13 @@ struct BudgetEditView: View {
     private func saveBudget() {
         // Validate input
         guard !category.isEmpty else {
-            errorMessage = "Please select a category."
+            errorMessage = contentManager.localizedString("budget.validation.select_category")
             showingErrorAlert = true
             return
         }
         
         guard let allocatedValue = Double(allocatedAmount), allocatedValue > 0 else {
-            errorMessage = "Please enter a valid allocated amount greater than 0."
+            errorMessage = contentManager.localizedString("budget.validation.valid_amount")
             showingErrorAlert = true
             return
         }

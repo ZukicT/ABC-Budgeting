@@ -32,7 +32,7 @@ struct TransactionCard: View {
                 
                 // Category and Date - Secondary Information
                 HStack(spacing: 6) {
-                    Text(transaction.category)
+                    Text(transaction.category.localizedCategoryName)
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)

@@ -246,7 +246,7 @@ struct PrivacyPolicyView: View {
                 }
                 .padding(Constants.UI.Padding.screenMargin)
             }
-            .navigationTitle("Privacy Policy")
+            .navigationTitle(contentManager.localizedString("nav.privacy_policy"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -258,7 +258,7 @@ struct PrivacyPolicyView: View {
                                 .font(.title2)
                                 .foregroundColor(Constants.Colors.primaryBlue)
                         }
-                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
+                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? contentManager.localizedString("accessibility.resume_reading") : contentManager.localizedString("accessibility.pause_reading")) : contentManager.localizedString("accessibility.start_reading"))
                         
                         // Speed Control
                         Menu {
@@ -402,7 +402,7 @@ struct TermsOfServiceView: View {
                 }
                 .padding(Constants.UI.Padding.screenMargin)
             }
-            .navigationTitle("Terms of Service")
+            .navigationTitle(contentManager.localizedString("nav.terms_of_service"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -414,7 +414,7 @@ struct TermsOfServiceView: View {
                                 .font(.title2)
                                 .foregroundColor(Constants.Colors.primaryBlue)
                         }
-                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
+                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? contentManager.localizedString("accessibility.resume_reading") : contentManager.localizedString("accessibility.pause_reading")) : contentManager.localizedString("accessibility.start_reading"))
                         
                         // Speed Control
                         Menu {
@@ -534,7 +534,7 @@ struct FontLicensingView: View {
                 }
                 .padding(Constants.UI.Padding.screenMargin)
             }
-            .navigationTitle("Font Licensing")
+            .navigationTitle(contentManager.localizedString("nav.font_licensing"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -546,7 +546,7 @@ struct FontLicensingView: View {
                                 .font(.title2)
                                 .foregroundColor(Constants.Colors.primaryBlue)
                         }
-                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
+                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? contentManager.localizedString("accessibility.resume_reading") : contentManager.localizedString("accessibility.pause_reading")) : contentManager.localizedString("accessibility.start_reading"))
                         
                         // Speed Control
                         Menu {
@@ -709,7 +709,7 @@ struct VersionHistoryView: View {
                 }
                 .padding(Constants.UI.Padding.screenMargin)
             }
-            .navigationTitle("Version History")
+            .navigationTitle(contentManager.localizedString("nav.version_history"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -721,7 +721,7 @@ struct VersionHistoryView: View {
                                 .font(.title2)
                                 .foregroundColor(Constants.Colors.primaryBlue)
                         }
-                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? "Resume reading" : "Pause reading") : "Start reading")
+                        .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? contentManager.localizedString("accessibility.resume_reading") : contentManager.localizedString("accessibility.pause_reading")) : contentManager.localizedString("accessibility.start_reading"))
                         
                         // Speed Control
                         Menu {
@@ -852,12 +852,12 @@ private struct GitStyleVersionCard: View {
                         Image(systemName: "star.fill")
                             .font(.title3)
                             .foregroundColor(Constants.Colors.warning)
-                            .accessibilityLabel("Latest version")
+                            .accessibilityLabel(contentManager.localizedString("accessibility.latest_version"))
                     } else {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.title3)
                             .foregroundColor(Constants.Colors.success)
-                            .accessibilityLabel("Completed version")
+                            .accessibilityLabel(contentManager.localizedString("accessibility.completed_version"))
                     }
                 }
                 

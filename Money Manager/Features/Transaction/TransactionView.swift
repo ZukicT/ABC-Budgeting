@@ -148,7 +148,7 @@ struct TransactionView: View {
                 }
             } else if viewModel.transactions.isEmpty {
                 TransactionEmptyState(
-                    actionTitle: "Add Transaction",
+                    actionTitle: contentManager.localizedString("cta.add_transaction"),
                     action: {
                         showAddView = true
                     }

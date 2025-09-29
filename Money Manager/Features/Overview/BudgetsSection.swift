@@ -1,17 +1,19 @@
 import SwiftUI
 
 struct BudgetsSection: View {
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
+    
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             // Section Header
             HStack {
-                Text("Budgets")
+                Text(contentManager.localizedString("budget.title"))
                     .font(Constants.Typography.H2.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 Spacer()
                 
-                Button("View All") {
+                Button(contentManager.localizedString("button.view_all")) {
                     // TODO: Navigate to budgets tab
                 }
                 .font(Constants.Typography.BodySmall.font)
@@ -20,12 +22,12 @@ struct BudgetsSection: View {
             
             // Placeholder content
             VStack(spacing: Constants.UI.Spacing.small) {
-                Text("Budget overview will appear here")
+                Text(contentManager.localizedString("budgets.overview_placeholder"))
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textSecondary)
                     .multilineTextAlignment(.center)
                 
-                Text("This section will show budget progress and status")
+                Text(contentManager.localizedString("budgets.overview_description"))
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.textTertiary)
                     .multilineTextAlignment(.center)

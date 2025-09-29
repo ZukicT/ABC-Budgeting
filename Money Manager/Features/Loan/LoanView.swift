@@ -72,7 +72,7 @@ struct LoanView: View {
     private var contentSection: some View {
         Group {
             if viewModel.isLoading {
-                LoadingStateView(message: "Loading loans...")
+                LoadingStateView(message: contentManager.localizedString("loan.loading"))
             } else if let errorMessage = viewModel.errorMessage {
                 ErrorStateView(message: errorMessage) {
                     viewModel.loadLoans()
@@ -136,7 +136,7 @@ struct LoanView: View {
                     showAddView = true
                 }) {
                     Image(systemName: "plus")
-                        .accessibilityLabel("Add Loan")
+                        .accessibilityLabel(contentManager.localizedString("accessibility.add_loan"))
                 }
             }
             
@@ -325,7 +325,7 @@ private struct LoanCard: View {
             HStack(spacing: Constants.UI.Spacing.medium) {
                 // Loan Details
                 HStack(spacing: 6) {
-                    Text("\(loan.interestRate, specifier: "%.1f")% APR")
+                    Text("\\(loan.interestRate, specifier: \"%.1f\")% \\(contentManager.localizedString(\"loan.apr\"))")
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -342,7 +342,7 @@ private struct LoanCard: View {
                 Spacer()
                 
                 // Monthly Payment
-                Text("\(loan.monthlyPayment, format: .currency(code: "USD"))/mo")
+                Text("\\(loan.monthlyPayment, format: .currency(code: \"USD\"))\\(contentManager.localizedString(\"loan.per_month\"))")
                     .font(Constants.Typography.Caption.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.error)
@@ -440,7 +440,7 @@ private struct MobileLoanRow: View {
                 
                 // Remaining Amount (Most Important)
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("Remaining")
+                    Text("budget.remaining".localized)
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -458,7 +458,7 @@ private struct MobileLoanRow: View {
             HStack {
                 // Monthly Payment
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Monthly Payment")
+                    Text("loan.monthly_payment".localized)
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -473,7 +473,7 @@ private struct MobileLoanRow: View {
                 
                 // Due Date
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("Due Date")
+                    Text("loan.due_date".localized)
                         .font(Constants.Typography.Caption.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)

@@ -4,6 +4,7 @@ import SwiftUI
 struct LoanPickerView: View {
     let loans: [Loan]
     @Binding var selectedLoan: Loan?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var searchText = ""
     
     private var filteredLoans: [Loan] {
@@ -24,7 +25,7 @@ struct LoanPickerView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(Constants.Colors.textSecondary)
                 
-                TextField("Search loans...", text: $searchText)
+                TextField(contentManager.localizedString("loan.search_placeholder"), text: $searchText)
                     .font(Constants.Typography.Body.font)
                     .textFieldStyle(PlainTextFieldStyle())
             }
@@ -39,12 +40,12 @@ struct LoanPickerView: View {
                         .font(.system(size: 48))
                         .foregroundColor(Constants.Colors.textTertiary)
                     
-                    Text(searchText.isEmpty ? "No unpaid loans" : "No loans found")
+                    Text(searchText.isEmpty ? contentManager.localizedString("loan.no_unpaid") : contentManager.localizedString("loan.no_found"))
                         .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     if !searchText.isEmpty {
-                        Text("Try a different search term")
+                        Text(contentManager.localizedString("loan.try_different"))
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                     }
@@ -103,7 +104,7 @@ private struct LoanPickerRow: View {
                     .foregroundColor(Constants.Colors.textPrimary)
                     .lineLimit(1)
                 
-                Text("\(loan.remainingAmount, format: .currency(code: "USD")) remaining")
+                Text("\\(loan.remainingAmount, format: .currency(code: \"USD\")) \\(contentManager.localizedString(\"loan.remaining\"))")
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.textSecondary)
             }

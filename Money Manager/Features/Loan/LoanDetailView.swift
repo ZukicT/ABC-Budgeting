@@ -3,6 +3,7 @@ import SwiftUI
 struct LoanDetailView: View {
     let loan: Loan
     @ObservedObject var viewModel: LoanViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var showingEditSheet = false
     @State private var showingDeleteAlert = false
@@ -87,7 +88,7 @@ struct LoanDetailView: View {
                 }
                 
                 // Progress Percentage - Tertiary
-                Text("\(Int(progressPercentage * 100))% Paid")
+                Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("loan.paid_percentage"))")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(loanTypeColor)
                     .accessibilityLabel("Progress: \(Int(progressPercentage * 100)) percent paid")
@@ -124,7 +125,7 @@ struct LoanDetailView: View {
             VStack(spacing: 16) {
                 // Principal Amount
                 HStack {
-                    Text("PRINCIPAL")
+                    Text("loan.principal".localized)
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(Constants.Colors.textTertiary)
                         .tracking(1.0)
@@ -143,7 +144,7 @@ struct LoanDetailView: View {
                 
                 // Monthly Payment
                 HStack {
-                    Text("MONTHLY PAYMENT")
+                    Text("loan.monthly_payment_caps".localized)
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(Constants.Colors.textTertiary)
                         .tracking(1.0)
@@ -162,7 +163,7 @@ struct LoanDetailView: View {
                 
                 // Interest Rate
                 HStack {
-                    Text("INTEREST RATE")
+                    Text("loan.interest_rate_caps".localized)
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(Constants.Colors.textTertiary)
                         .tracking(1.0)
@@ -181,7 +182,7 @@ struct LoanDetailView: View {
                 
                 // Due Date
                 HStack {
-                    Text("DUE DATE")
+                    Text("loan.due_date_caps".localized)
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(Constants.Colors.textTertiary)
                         .tracking(1.0)
@@ -205,7 +206,7 @@ struct LoanDetailView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "pencil")
                             .font(.system(size: 14, weight: .semibold))
-                        Text("Edit")
+                        Text("loan.edit".localized)
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -214,7 +215,7 @@ struct LoanDetailView: View {
                     .background(Constants.Colors.cleanBlack)
                     .cornerRadius(12)
                 }
-                .accessibilityLabel("Edit loan")
+                .accessibilityLabel(contentManager.localizedString("accessibility.edit_loan"))
                 .accessibilityHint("Double tap to edit this loan")
                 
                 // Delete Button - Secondary action
@@ -224,7 +225,7 @@ struct LoanDetailView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "trash")
                             .font(.system(size: 14, weight: .semibold))
-                        Text("Delete")
+                        Text("loan.delete".localized)
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -233,7 +234,7 @@ struct LoanDetailView: View {
                     .background(Constants.Colors.error)
                     .cornerRadius(12)
                 }
-                .accessibilityLabel("Delete loan")
+                .accessibilityLabel(contentManager.localizedString("accessibility.delete_loan"))
                 .accessibilityHint("Double tap to delete this loan")
             }
             .padding(.horizontal, 24)
@@ -245,14 +246,14 @@ struct LoanDetailView: View {
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(20)
         }
-        .alert("Delete Loan", isPresented: $showingDeleteAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
+        .alert(contentManager.localizedString("alert.confirm_delete"), isPresented: $showingDeleteAlert) {
+            Button(contentManager.localizedString("button.cancel"), role: .cancel) { }
+            Button(contentManager.localizedString("button.delete"), role: .destructive) {
                 viewModel.deleteLoan(loan)
                 dismiss()
             }
         } message: {
-            Text("Are you sure you want to delete this loan? This action cannot be undone.")
+            Text(contentManager.localizedString("alert.delete_loan_message"))
         }
     }
     
@@ -260,15 +261,15 @@ struct LoanDetailView: View {
     private func loanTypeFromName(_ name: String) -> String {
         switch name.lowercased() {
         case let name where name.contains("auto") || name.contains("car"):
-            return "Auto Loan"
+            return contentManager.localizedString("loan.auto_loan")
         case let name where name.contains("student"):
-            return "Student Loan"
+            return contentManager.localizedString("loan.student_loan")
         case let name where name.contains("credit"):
-            return "Credit Card"
+            return contentManager.localizedString("loan.credit_card")
         case let name where name.contains("home") || name.contains("mortgage"):
-            return "Home Loan"
+            return contentManager.localizedString("loan.home_loan")
         default:
-            return "Personal Loan"
+            return contentManager.localizedString("loan.personal_loan")
         }
     }
 }

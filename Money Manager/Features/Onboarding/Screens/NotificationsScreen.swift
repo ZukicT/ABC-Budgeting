@@ -24,6 +24,7 @@ struct NotificationsScreen: View {
     @State private var showPermissionAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     // MARK: - Constants
     private let notificationPermissionKey = "notification_permission_granted"
@@ -41,12 +42,12 @@ struct NotificationsScreen: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             ),
-            headline: "Stay on track",
+            headline: contentManager.localizedString("onboarding.notifications.headline"),
             headlineColors: [
                 Constants.Onboarding.pinkHex  // "Stay on track" - entire hero text in brand pink
             ],
-            bodyText: "Get smart reminders about your spending goals, bill due dates, and financial insights to help you stay in control of your money",
-            buttonTitle: "Enable Notifications",
+            bodyText: contentManager.localizedString("onboarding.notifications.body"),
+            buttonTitle: contentManager.localizedString("onboarding.notifications.enable_button"),
             buttonIcon: "bell.fill",
             currentPage: 3,
             totalPages: OnboardingStep.allCases.count,
@@ -57,7 +58,7 @@ struct NotificationsScreen: View {
             backButtonAction: {
                 viewModel.previousStep()
             },
-            secondaryButtonTitle: "No thanks, I'm good",
+            secondaryButtonTitle: contentManager.localizedString("onboarding.notifications.skip_button"),
             secondaryButtonAction: {
                 UserDefaults.standard.set(false, forKey: notificationPermissionKey)
                 print("⚠️ User skipped notifications")
@@ -65,7 +66,7 @@ struct NotificationsScreen: View {
             }
         )
         .alert(alertTitle, isPresented: $showPermissionAlert) {
-            Button("OK") {
+            Button(contentManager.localizedString("button.ok")) {
                 handleAlertDismissal()
             }
         } message: {
@@ -99,26 +100,26 @@ struct NotificationsScreen: View {
         case .granted:
             print("✅ Notification permission granted")
             UserDefaults.standard.set(true, forKey: notificationPermissionKey)
-            alertTitle = "Success!"
-            alertMessage = "Notifications enabled. You'll receive helpful reminders about your financial goals."
+            alertTitle = contentManager.localizedString("notification.success_title")
+            alertMessage = contentManager.localizedString("notification.success_message")
             showPermissionAlert = true
             
         case .denied:
             UserDefaults.standard.set(false, forKey: notificationPermissionKey)
-            alertTitle = "Notifications Disabled"
-            alertMessage = "You can enable notifications later in Settings to receive helpful reminders."
+            alertTitle = contentManager.localizedString("notification.disabled_title")
+            alertMessage = contentManager.localizedString("notification.disabled_message")
             showPermissionAlert = true
             
         case .error:
             UserDefaults.standard.set(false, forKey: notificationPermissionKey)
-            alertTitle = "Permission Error"
-            alertMessage = "There was an error requesting notification permission. Please try again."
+            alertTitle = contentManager.localizedString("notification.error_title")
+            alertMessage = contentManager.localizedString("notification.error_message")
             showPermissionAlert = true
         }
     }
     
     private func handleAlertDismissal() {
-        if alertTitle == "Success!" {
+        if alertTitle == contentManager.localizedString("notification.success_title") {
             viewModel.nextStep()
         }
     }

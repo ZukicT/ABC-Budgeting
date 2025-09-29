@@ -4,10 +4,11 @@ import Charts
 struct SpendingCategoryChart: View {
     let data: [CategorySpendingData]
     @State private var selectedCategory: String?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
-            Text("Spending by Category")
+            Text(contentManager.localizedString("overview.spending_by_category"))
                 .font(Constants.Typography.H3.font)
                 .foregroundColor(Constants.Colors.textPrimary)
             
@@ -18,11 +19,11 @@ struct SpendingCategoryChart: View {
                         .font(.system(size: 48, weight: .light))
                         .foregroundColor(Constants.Colors.textTertiary)
                     
-                    Text("No Spending Data")
+                    Text(contentManager.localizedString("overview.no_spending_data"))
                         .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
-                    Text("Add transactions to see your spending breakdown by category")
+                    Text(contentManager.localizedString("overview.add_transactions_spending"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                         .multilineTextAlignment(.center)

@@ -3,6 +3,7 @@ import SwiftUI
 struct BudgetDetailView: View {
     let budgetId: UUID
     @ObservedObject var budgetViewModel: BudgetViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var showingEditSheet = false
     @State private var showingDeleteAlert = false
@@ -72,7 +73,7 @@ struct BudgetDetailView: View {
                         }
                         
                         // Progress Percentage - Tertiary
-                        Text("\(Int(progressPercentage * 100))% Used")
+                        Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("budget.used_percentage"))")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(progressColor)
                             .accessibilityLabel("Progress: \(Int(progressPercentage * 100)) percent used")
@@ -109,7 +110,7 @@ struct BudgetDetailView: View {
                     VStack(spacing: 16) {
                         // Spent Amount
                         HStack {
-                            Text("SPENT")
+                            Text(contentManager.localizedString("budget.spent_caps"))
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(Constants.Colors.textTertiary)
                                 .tracking(1.0)
@@ -128,7 +129,7 @@ struct BudgetDetailView: View {
                         
                         // Remaining Amount
                         HStack {
-                            Text("REMAINING")
+                            Text(contentManager.localizedString("budget.remaining_caps"))
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(Constants.Colors.textTertiary)
                                 .tracking(1.0)
@@ -148,7 +149,7 @@ struct BudgetDetailView: View {
                                 .padding(.horizontal, 24)
                             
                             HStack {
-                                Text("OVER BY")
+                                Text(contentManager.localizedString("budget.over_by_caps"))
                                     .font(.system(size: 11, weight: .bold))
                                     .foregroundColor(Constants.Colors.textTertiary)
                                     .tracking(1.0)
@@ -173,7 +174,7 @@ struct BudgetDetailView: View {
                             HStack(spacing: 8) {
                                 Image(systemName: "pencil")
                                     .font(.system(size: 14, weight: .semibold))
-                                Text("Edit")
+                                Text("budget.edit".localized)
                                     .font(.system(size: 14, weight: .semibold))
                             }
                             .foregroundColor(.white)
@@ -182,7 +183,7 @@ struct BudgetDetailView: View {
                             .background(Constants.Colors.cleanBlack)
                             .cornerRadius(12)
                         }
-                        .accessibilityLabel("Edit budget")
+                        .accessibilityLabel(contentManager.localizedString("accessibility.edit_budget"))
                         .accessibilityHint("Double tap to edit this budget")
                         
                         // Delete Button - Secondary action
@@ -192,7 +193,7 @@ struct BudgetDetailView: View {
                             HStack(spacing: 8) {
                                 Image(systemName: "trash")
                                     .font(.system(size: 14, weight: .semibold))
-                                Text("Delete")
+                                Text("budget.delete".localized)
                                     .font(.system(size: 14, weight: .semibold))
                             }
                             .foregroundColor(.white)
@@ -201,7 +202,7 @@ struct BudgetDetailView: View {
                             .background(Constants.Colors.error)
                             .cornerRadius(12)
                         }
-                        .accessibilityLabel("Delete budget")
+                        .accessibilityLabel(contentManager.localizedString("accessibility.delete_budget"))
                         .accessibilityHint("Double tap to delete this budget")
                     }
                     .padding(.horizontal, 24)
@@ -213,14 +214,14 @@ struct BudgetDetailView: View {
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(20)
                 }
-                .alert("Delete Budget", isPresented: $showingDeleteAlert) {
-                    Button("Cancel", role: .cancel) { }
-                    Button("Delete", role: .destructive) {
+                .alert(contentManager.localizedString("alert.confirm_delete"), isPresented: $showingDeleteAlert) {
+                    Button(contentManager.localizedString("button.cancel"), role: .cancel) { }
+                    Button(contentManager.localizedString("button.delete"), role: .destructive) {
                         budgetViewModel.deleteBudget(budget)
                         dismiss()
                     }
                 } message: {
-                    Text("Are you sure you want to delete this budget? This action cannot be undone.")
+                    Text(contentManager.localizedString("alert.delete_budget_message"))
                 }
             } else {
                 // Budget not found
@@ -229,16 +230,16 @@ struct BudgetDetailView: View {
                         .font(.system(size: 50))
                         .foregroundColor(Constants.Colors.warning)
                     
-                    Text("Budget Not Found")
+                    Text("budget.not_found".localized)
                         .font(Constants.Typography.H2.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
-                    Text("This budget may have been deleted.")
+                    Text("budget.may_have_been_deleted".localized)
                         .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                         .multilineTextAlignment(.center)
                     
-                    Button("Done") {
+                    Button(contentManager.localizedString("button.done")) {
                         dismiss()
                     }
                     .font(Constants.Typography.Body.font)

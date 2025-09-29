@@ -21,6 +21,7 @@ import SwiftUI
 
 struct StartingBalanceScreen: View {
     @ObservedObject var viewModel: OnboardingViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var startingBalance: String = ""
     @State private var isValidInput: Bool = false
     @State private var showInvalidBalanceAlert: Bool = false
@@ -46,7 +47,7 @@ struct StartingBalanceScreen: View {
                                 .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(.white)
                             
-                            Text("Back")
+                            Text(contentManager.localizedString("onboarding.back"))
                                 .font(TrapFontUtility.trapFont(size: 16, weight: .bold))
                                 .foregroundColor(.white)
                         }
@@ -63,7 +64,7 @@ struct StartingBalanceScreen: View {
                 
                 // Header section
                 VStack(spacing: Constants.StartingBalance.headerSpacing) {
-                    Text("What's your starting balance?")
+                    Text(contentManager.localizedString("onboarding.starting_balance_title"))
                         .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.headlineFontSize, weight: .black))
                         .foregroundColor(Constants.Onboarding.yellowHex)
                         .multilineTextAlignment(.leading)
@@ -72,7 +73,7 @@ struct StartingBalanceScreen: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
                     
-                    Text("Set your current account balance to begin accurate financial tracking")
+                    Text(contentManager.localizedString("onboarding.starting_balance_description"))
                         .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.bodyTextFontSize, weight: .regular))
                         .foregroundColor(Constants.Colors.textPrimary)
                         .multilineTextAlignment(.leading)
@@ -121,9 +122,9 @@ struct StartingBalanceScreen: View {
             }
         }
         .alert("Starting Balance Required", isPresented: $showInvalidBalanceAlert) {
-            Button("OK") { }
+            Button(contentManager.localizedString("button.ok")) { }
         } message: {
-            Text("Please enter a valid starting balance to continue.")
+            Text(contentManager.localizedString("onboarding.starting_balance_validation"))
         }
     }
     
@@ -141,7 +142,7 @@ struct StartingBalanceScreen: View {
             VStack(spacing: Constants.StartingBalance.inputSectionSpacing) {
                 // Balance input field
                 VStack(alignment: .leading, spacing: Constants.StartingBalance.inputFieldSpacing) {
-                    Text("Starting Balance")
+                    Text("onboarding.starting_balance_label".localized)
                         .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.labelFontSize, weight: .bold))
                         .foregroundColor(Constants.Colors.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -176,7 +177,7 @@ struct StartingBalanceScreen: View {
                     )
 
                     if !isValidInput && !startingBalance.isEmpty {
-                        Text("Please enter a valid amount")
+                        Text("onboarding.starting_balance_error".localized)
                             .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.errorFontSize, weight: .regular))
                             .foregroundColor(Constants.Colors.error)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -185,7 +186,7 @@ struct StartingBalanceScreen: View {
 
                 // Quick amount buttons
                 VStack(alignment: .leading, spacing: Constants.StartingBalance.quickAmountsSpacing) {
-                    Text("Quick amounts")
+                    Text("onboarding.quick_amounts".localized)
                         .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.labelFontSize, weight: .bold))
                         .foregroundColor(Constants.Colors.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)

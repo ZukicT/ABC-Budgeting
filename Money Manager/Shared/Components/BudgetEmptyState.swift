@@ -21,12 +21,14 @@ import SwiftUI
 struct BudgetEmptyState: View {
     let actionTitle: String
     let action: () -> Void
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     init(
-        actionTitle: String = "Create A Budget",
+        actionTitle: String = "",
         action: @escaping () -> Void
     ) {
-        self.actionTitle = actionTitle
+        let contentManager = MultilingualContentManager.shared
+        self.actionTitle = actionTitle.isEmpty ? contentManager.localizedString("cta.create_budget") : actionTitle
         self.action = action
     }
     
@@ -39,14 +41,14 @@ struct BudgetEmptyState: View {
                 .accessibilityHidden(true)
             
             VStack(spacing: Constants.UI.Spacing.medium) {
-                Text("No Budgets Yet")
+                Text(contentManager.localizedString("budget.empty_title"))
                     .font(Constants.Typography.H2.font)
                     .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                 
-                Text("Create your first budget to track spending and reach your financial goals.")
+                Text(contentManager.localizedString("budget.empty_description"))
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)

@@ -3,6 +3,7 @@ import SwiftUI
 struct LoanEditView: View {
     @Binding var loan: Loan
     @ObservedObject var viewModel: LoanViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var name: String
     @State private var principalAmount: String
@@ -33,7 +34,7 @@ struct LoanEditView: View {
             VStack(spacing: 16) {
                 // Top Row: Title + Close Button
                 HStack {
-                    Text("Edit Loan")
+                    Text("loan.edit_loan".localized)
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Constants.Colors.textPrimary)
                         .accessibilityLabel("Edit Loan")
@@ -62,12 +63,12 @@ struct LoanEditView: View {
                 VStack(spacing: 20) {
                     // Loan Name Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("LOAN NAME")
+                        Text("loan.loan_name_caps".localized)
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
-                        TextField("Enter loan name", text: $name)
+                        TextField(contentManager.localizedString("loan.enter_name"), text: $name)
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(Constants.Colors.textPrimary)
                             .padding(.horizontal, 16)
@@ -84,7 +85,7 @@ struct LoanEditView: View {
                     
                     // Principal Amount Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("PRINCIPAL AMOUNT")
+                        Text("loan.principal_amount_caps".localized)
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -114,7 +115,7 @@ struct LoanEditView: View {
                     
                     // Remaining Amount Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("REMAINING AMOUNT")
+                        Text("loan.remaining_amount_caps".localized)
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -144,7 +145,7 @@ struct LoanEditView: View {
                     
                     // Interest Rate Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("INTEREST RATE")
+                        Text("loan.interest_rate_caps".localized)
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -174,7 +175,7 @@ struct LoanEditView: View {
                     
                     // Monthly Payment Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("MONTHLY PAYMENT")
+                        Text("loan.monthly_payment_caps".localized)
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -204,7 +205,7 @@ struct LoanEditView: View {
                     
                     // Due Date Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("DUE DATE")
+                        Text(contentManager.localizedString("loan.due_date_caps"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -240,7 +241,7 @@ struct LoanEditView: View {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 14, weight: .semibold))
                         }
-                        Text(isSaving ? "Saving..." : "Save")
+                        Text(isSaving ? contentManager.localizedString("loan.saving") : contentManager.localizedString("loan.save"))
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -260,7 +261,7 @@ struct LoanEditView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .semibold))
-                        Text("Cancel")
+                        Text("button.cancel".localized)
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -275,8 +276,8 @@ struct LoanEditView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
-        .alert("Validation Error", isPresented: $showingErrorAlert) {
-            Button("OK") { }
+        .alert(contentManager.localizedString("alert.validation_error"), isPresented: $showingErrorAlert) {
+            Button(contentManager.localizedString("button.ok")) { }
         } message: {
             Text(errorMessage)
         }
@@ -318,42 +319,42 @@ struct LoanEditView: View {
         
         // Validate input
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            errorMessage = "Please enter a loan name."
+            errorMessage = contentManager.localizedString("loan.validation.name_required")
             showingErrorAlert = true
             isSaving = false
             return
         }
         
         guard let principal = Double(principalAmount), principal > 0 else {
-            errorMessage = "Please enter a valid principal amount greater than 0."
+            errorMessage = contentManager.localizedString("loan.validation.principal_required")
             showingErrorAlert = true
             isSaving = false
             return
         }
         
         guard let remaining = Double(remainingAmount), remaining >= 0 else {
-            errorMessage = "Please enter a valid remaining amount (0 or greater)."
+            errorMessage = contentManager.localizedString("loan.validation.remaining_valid")
             showingErrorAlert = true
             isSaving = false
             return
         }
         
         guard let interest = Double(interestRate), interest >= 0 else {
-            errorMessage = "Please enter a valid interest rate (0 or greater)."
+            errorMessage = contentManager.localizedString("loan.validation.interest_valid")
             showingErrorAlert = true
             isSaving = false
             return
         }
         
         guard let monthly = Double(monthlyPayment), monthly > 0 else {
-            errorMessage = "Please enter a valid monthly payment greater than 0."
+            errorMessage = contentManager.localizedString("loan.validation.payment_required")
             showingErrorAlert = true
             isSaving = false
             return
         }
         
         guard remaining <= principal else {
-            errorMessage = "Remaining amount cannot be greater than principal amount."
+            errorMessage = contentManager.localizedString("loan.validation.remaining_less_principal")
             showingErrorAlert = true
             isSaving = false
             return

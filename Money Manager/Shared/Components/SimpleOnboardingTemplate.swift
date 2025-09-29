@@ -32,6 +32,7 @@ struct SimpleOnboardingTemplate: View {
     let showBackButton: Bool
     let backButtonAction: (() -> Void)?
     let secondaryButtonTitle: String?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     let secondaryButtonAction: (() -> Void)?
     
     init(
@@ -82,7 +83,7 @@ struct SimpleOnboardingTemplate: View {
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(.white)
                                     
-                                    Text("Back")
+                                    Text(contentManager.localizedString("onboarding.back"))
                                         .font(TrapFontUtility.trapFont(size: 16, weight: .bold))
                                         .foregroundColor(.white)
                                 }

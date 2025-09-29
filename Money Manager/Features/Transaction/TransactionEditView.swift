@@ -33,6 +33,7 @@ struct TransactionEditView: View {
     @State private var showingErrorAlert = false
     @State private var errorMessage = ""
     @State private var isSaving = false
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private let categories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Income", "Other"]
     
@@ -68,10 +69,10 @@ struct TransactionEditView: View {
             VStack(spacing: 16) {
                 // Top Row: Title + Close Button
                 HStack {
-                    Text("Edit Transaction")
+                    Text(contentManager.localizedString("transaction.edit_title"))
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(Constants.Colors.textPrimary)
-                        .accessibilityLabel("Edit Transaction")
+                        .accessibilityLabel(contentManager.localizedString("transaction.edit_title"))
                         .accessibilityAddTraits(.isHeader)
                     
                     Spacer()
@@ -97,7 +98,7 @@ struct TransactionEditView: View {
                 VStack(spacing: 20) {
                     // Title Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("TITLE")
+                        Text(contentManager.localizedString("form.title_label"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -120,7 +121,7 @@ struct TransactionEditView: View {
                     
                     // Amount Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("AMOUNT")
+                        Text(contentManager.localizedString("form.amount_label"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -151,7 +152,7 @@ struct TransactionEditView: View {
                     
                     // Transaction Type Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("TYPE")
+                        Text(contentManager.localizedString("form.type_label"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -175,7 +176,7 @@ struct TransactionEditView: View {
                                     )
                                 }
                             }) {
-                                Text("INCOME")
+                                Text(contentManager.localizedString("form.income_type"))
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(isIncome ? .white : Constants.Colors.textPrimary)
                                     .frame(maxWidth: .infinity)
@@ -206,7 +207,7 @@ struct TransactionEditView: View {
                                     )
                                 }
                             }) {
-                                Text("EXPENSE")
+                                Text(contentManager.localizedString("form.expense_type"))
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(!isIncome ? .white : Constants.Colors.textPrimary)
                                     .frame(maxWidth: .infinity)
@@ -223,7 +224,7 @@ struct TransactionEditView: View {
                     
                     // Date Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("DATE")
+                        Text(contentManager.localizedString("form.date_label"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -236,7 +237,7 @@ struct TransactionEditView: View {
                     
                     // Category Field
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("CATEGORY")
+                        Text(contentManager.localizedString("form.category_label"))
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
@@ -298,7 +299,7 @@ struct TransactionEditView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .semibold))
-                        Text("Cancel")
+                        Text(contentManager.localizedString("button.cancel"))
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -313,8 +314,8 @@ struct TransactionEditView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
-        .alert("Validation Error", isPresented: $showingErrorAlert) {
-            Button("OK") { }
+        .alert(contentManager.localizedString("alert.validation_error"), isPresented: $showingErrorAlert) {
+            Button(contentManager.localizedString("button.ok")) { }
         } message: {
             Text(errorMessage)
         }

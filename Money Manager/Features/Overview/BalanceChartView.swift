@@ -270,7 +270,7 @@ struct BalanceChartView: View {
             VStack(alignment: .leading, spacing: 1) {
                 // Income
                 HStack(alignment: .center, spacing: 2) {
-                    Text("▲")
+                    Text(contentManager.localizedString("chart.up_arrow"))
                         .font(.caption)
                         .foregroundColor(Constants.Colors.success)
                     
@@ -298,7 +298,7 @@ struct BalanceChartView: View {
                 
                 // Expenses
                 HStack(alignment: .center, spacing: 2) {
-                    Text("▼")
+                    Text(contentManager.localizedString("chart.down_arrow"))
                         .font(.caption)
                         .foregroundColor(Constants.Colors.error)
                     

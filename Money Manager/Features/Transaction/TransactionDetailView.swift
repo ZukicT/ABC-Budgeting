@@ -38,6 +38,7 @@ struct TransactionDetailView: View {
     @Environment(\.dismiss) var dismiss
     @State private var showingEditSheet = false
     @State private var showingDeleteAlert = false
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     // MARK: - Computed Properties (Memoized for Performance)
     private var transaction: Transaction? {
@@ -159,7 +160,7 @@ struct TransactionDetailView: View {
                             HStack(spacing: 8) {
                                 Image(systemName: "pencil")
                                     .font(.system(size: 14, weight: .semibold))
-                                Text("Edit")
+                                Text(contentManager.localizedString("transaction.edit"))
                                     .font(.system(size: 14, weight: .semibold))
                             }
                             .foregroundColor(.white)
@@ -179,7 +180,7 @@ struct TransactionDetailView: View {
                             HStack(spacing: 8) {
                                 Image(systemName: "trash")
                                     .font(.system(size: 14, weight: .semibold))
-                                Text("Delete")
+                                Text(contentManager.localizedString("transaction.delete"))
                                     .font(.system(size: 14, weight: .semibold))
                             }
                             .foregroundColor(.white)
@@ -199,13 +200,13 @@ struct TransactionDetailView: View {
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(20)
                 }
-                .alert("Delete Transaction", isPresented: $showingDeleteAlert) {
-                    Button("Cancel", role: .cancel) { }
-                    Button("Delete", role: .destructive) {
+                .alert(contentManager.localizedString("transaction.delete_alert_title"), isPresented: $showingDeleteAlert) {
+                    Button(contentManager.localizedString("button.cancel"), role: .cancel) { }
+                    Button(contentManager.localizedString("transaction.delete"), role: .destructive) {
                         deleteTransaction()
                     }
                 } message: {
-                    Text("Are you sure you want to delete this transaction? This action cannot be undone.")
+                    Text(contentManager.localizedString("transaction.delete_alert_message"))
                 }
             } else {
                 // Clean Error State - No shadows, minimal design
@@ -224,12 +225,12 @@ struct TransactionDetailView: View {
                     
                     // Error content - Clean typography
                     VStack(spacing: 16) {
-                        Text("TRANSACTION NOT FOUND")
+                        Text(contentManager.localizedString("transaction.not_found"))
                             .font(.system(size: 18, weight: .black))
                             .foregroundColor(Constants.Colors.textPrimary)
                             .tracking(1.0)
                         
-                        Text("This transaction may have been deleted.")
+                        Text(contentManager.localizedString("transaction.may_have_been_deleted"))
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(Constants.Colors.textSecondary)
                             .multilineTextAlignment(.center)
@@ -240,7 +241,7 @@ struct TransactionDetailView: View {
                     Button(action: {
                         dismiss()
                     }) {
-                        Text("Done")
+                        Text(contentManager.localizedString("button.done"))
                             .font(Constants.Typography.Button.font)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)

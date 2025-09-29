@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OnboardingProgressView: View {
     let currentStep: OnboardingStep
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var progress: Double {
         Double(currentStep.rawValue + 1) / Double(OnboardingStep.allCases.count)
@@ -24,7 +25,7 @@ struct OnboardingProgressView: View {
             .padding(.horizontal, Constants.UI.Padding.screenMargin)
             
             // Step Counter
-            Text("Step \(currentStep.rawValue + 1) of \(OnboardingStep.allCases.count)")
+            Text("\(contentManager.localizedString("onboarding.step_counter")) \(currentStep.rawValue + 1) \(contentManager.localizedString("onboarding.of")) \(OnboardingStep.allCases.count)")
                 .font(Constants.Typography.Caption.font)
                 .foregroundColor(Constants.Colors.textTertiary)
         }

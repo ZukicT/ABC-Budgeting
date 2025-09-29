@@ -3,10 +3,11 @@ import Charts
 
 struct IncomeExpenseChart: View {
     let data: [IncomeExpenseData]
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
-            Text("Income vs Expenses")
+            Text(contentManager.localizedString("chart.income_vs_expenses"))
                 .font(Constants.Typography.H3.font)
                 .foregroundColor(Constants.Colors.textPrimary)
             
@@ -17,11 +18,11 @@ struct IncomeExpenseChart: View {
                         .font(.system(size: 48, weight: .light))
                         .foregroundColor(Constants.Colors.textTertiary)
                     
-                    Text("No Data Available")
+                    Text(contentManager.localizedString("chart.no_data_available"))
                         .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
-                    Text("Add transactions to see your income vs expenses analysis")
+                    Text(contentManager.localizedString("chart.add_transactions_analysis"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                         .multilineTextAlignment(.center)
@@ -77,7 +78,7 @@ struct IncomeExpenseChart: View {
                             .fill(Constants.Colors.success)
                             .frame(width: 12, height: 12)
                         
-                        Text("Income")
+                        Text(contentManager.localizedString("income.label"))
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                     }
@@ -88,7 +89,7 @@ struct IncomeExpenseChart: View {
                             .fill(Constants.Colors.error)
                             .frame(width: 12, height: 12)
                         
-                        Text("Expenses")
+                        Text(contentManager.localizedString("expense.label"))
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                     }

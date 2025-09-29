@@ -168,7 +168,17 @@ enum LoanCategory: String, CaseIterable {
     case creditCard = "Credit Card"
     case other = "Other"
     
-    var displayName: String { rawValue }
+    var displayName: String {
+        let contentManager = MultilingualContentManager.shared
+        switch self {
+        case .mortgage: return contentManager.localizedString("loan.mortgage")
+        case .auto: return contentManager.localizedString("loan.auto")
+        case .student: return contentManager.localizedString("loan.student")
+        case .personal: return contentManager.localizedString("loan.personal")
+        case .creditCard: return contentManager.localizedString("loan.credit_card")
+        case .other: return contentManager.localizedString("loan.other")
+        }
+    }
     
     var color: Color {
         switch self {
@@ -194,6 +204,16 @@ enum LoanPaymentStatus: String, CaseIterable {
         case .overdue: return "Overdue"
         case .missed: return "Missed"
         case .current: return "Current"
+        }
+    }
+    
+    var localizedDisplayName: String {
+        let contentManager = MultilingualContentManager.shared
+        switch self {
+        case .paid: return contentManager.localizedString("loan.status.paid")
+        case .overdue: return contentManager.localizedString("loan.status.overdue")
+        case .missed: return contentManager.localizedString("loan.status.missed")
+        case .current: return contentManager.localizedString("loan.status.current")
         }
     }
     

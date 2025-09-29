@@ -3,6 +3,7 @@ import SwiftUI
 struct RecentTransactionsSection: View {
     @ObservedObject var transactionViewModel: TransactionViewModel
     @State private var selectedTransaction: Transaction?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     let onTabSwitch: (Int) -> Void
     
@@ -10,7 +11,7 @@ struct RecentTransactionsSection: View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // Section Header
             HStack {
-                Text("Recent Transactions")
+                Text(contentManager.localizedString("overview.recent_transactions_title"))
                     .font(Constants.Typography.H2.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
@@ -20,7 +21,7 @@ struct RecentTransactionsSection: View {
                 Button(action: {
                     onTabSwitch(1) // Switch to Transactions tab
                 }) {
-                    Text("See All")
+                    Text(contentManager.localizedString("button.view_all"))
                         .font(Constants.Typography.BodySmall.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -29,7 +30,7 @@ struct RecentTransactionsSection: View {
             
             if transactionViewModel.transactions.isEmpty {
                 TransactionEmptyState(
-                    actionTitle: "Add Transaction",
+                    actionTitle: contentManager.localizedString("cta.add_transaction"),
                     action: {
                         // TODO: Navigate to add transaction
                     }

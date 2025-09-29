@@ -21,12 +21,14 @@ import SwiftUI
 struct LoanEmptyState: View {
     let actionTitle: String
     let action: () -> Void
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     init(
-        actionTitle: String = "Add A Loan",
+        actionTitle: String = "",
         action: @escaping () -> Void
     ) {
-        self.actionTitle = actionTitle
+        let contentManager = MultilingualContentManager.shared
+        self.actionTitle = actionTitle.isEmpty ? contentManager.localizedString("cta.add_loan") : actionTitle
         self.action = action
     }
     
@@ -39,20 +41,20 @@ struct LoanEmptyState: View {
                 .accessibilityHidden(true)
             
             VStack(spacing: Constants.UI.Spacing.medium) {
-                Text("No Loans Yet")
+                Text(contentManager.localizedString("loan.empty_title"))
                     .font(Constants.Typography.H2.font)
                     .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                 
-                Text("Add your first loan to start tracking your debt.")
+                Text(contentManager.localizedString("loan.empty_description"))
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                     .lineLimit(3)
-                    .accessibilityLabel("Add your first loan to start tracking your debt.")
+                    .accessibilityLabel(contentManager.localizedString("loan.empty_description"))
             }
             
             Button(action: action) {

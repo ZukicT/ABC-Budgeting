@@ -142,11 +142,45 @@ private struct TransactionForm: View {
     @State private var yearlyMonth = "January"
     @State private var yearlyDay = 1
     
-    private let categories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Income", "Other"]
-    private let weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    private var categories: [String] {
+        [
+            contentManager.localizedString("add.category.food"),
+            contentManager.localizedString("add.category.transport"),
+            contentManager.localizedString("add.category.shopping"),
+            contentManager.localizedString("add.category.entertainment"),
+            contentManager.localizedString("add.category.bills"),
+            contentManager.localizedString("add.category.income"),
+            contentManager.localizedString("add.category.other")
+        ]
+    }
+    private var weekDays: [String] {
+        [
+            contentManager.localizedString("add.day.monday"),
+            contentManager.localizedString("add.day.tuesday"),
+            contentManager.localizedString("add.day.wednesday"),
+            contentManager.localizedString("add.day.thursday"),
+            contentManager.localizedString("add.day.friday"),
+            contentManager.localizedString("add.day.saturday"),
+            contentManager.localizedString("add.day.sunday")
+        ]
+    }
     private let monthlyOptions = ["Same Day", "1st", "15th", "Last Day"]
-    private let months = ["January", "February", "March", "April", "May", "June", 
-                         "July", "August", "September", "October", "November", "December"]
+    private var months: [String] {
+        [
+            contentManager.localizedString("add.month.january"),
+            contentManager.localizedString("add.month.february"),
+            contentManager.localizedString("add.month.march"),
+            contentManager.localizedString("add.month.april"),
+            contentManager.localizedString("add.month.may"),
+            contentManager.localizedString("add.month.june"),
+            contentManager.localizedString("add.month.july"),
+            contentManager.localizedString("add.month.august"),
+            contentManager.localizedString("add.month.september"),
+            contentManager.localizedString("add.month.october"),
+            contentManager.localizedString("add.month.november"),
+            contentManager.localizedString("add.month.december")
+        ]
+    }
     
     private var maxDayForSelectedMonth: Int {
         let monthIndex = months.firstIndex(of: yearlyMonth) ?? 0
@@ -192,7 +226,7 @@ private struct TransactionForm: View {
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
-                    TextField("Enter transaction title", text: $title)
+                    TextField(contentManager.localizedString("add.placeholder.transaction_title"), text: $title)
                         .font(Constants.Typography.Body.font)
                         .padding(Constants.UI.Spacing.medium)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
@@ -302,12 +336,12 @@ private struct TransactionForm: View {
                             // Detailed Options based on Frequency
                             if recurringFrequency == "Weekly" {
                                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                                    Text("Day of Week")
+                                    Text(contentManager.localizedString("frequency.day_of_week"))
                                         .font(Constants.Typography.Body.font)
                                         .fontWeight(.medium)
                                         .foregroundColor(Constants.Colors.textSecondary)
                                     
-                                    Picker("Day of Week", selection: $weeklyDay) {
+                                    Picker(contentManager.localizedString("frequency.day_of_week"), selection: $weeklyDay) {
                                         ForEach(weekDays, id: \.self) { day in
                                             Text(day).tag(day)
                                         }
@@ -317,7 +351,7 @@ private struct TransactionForm: View {
                                 }
                             } else if recurringFrequency == "Monthly" {
                                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                                    Text("Day of Month")
+                                    Text(contentManager.localizedString("frequency.day_of_month"))
                                         .font(Constants.Typography.Body.font)
                                         .fontWeight(.medium)
                                         .foregroundColor(Constants.Colors.textSecondary)
@@ -332,7 +366,7 @@ private struct TransactionForm: View {
                                 }
                             } else if recurringFrequency == "Yearly" {
                                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                                    Text("Month")
+                                    Text(contentManager.localizedString("frequency.month"))
                                         .font(Constants.Typography.Body.font)
                                         .fontWeight(.medium)
                                         .foregroundColor(Constants.Colors.textSecondary)
@@ -345,7 +379,7 @@ private struct TransactionForm: View {
                                     .pickerStyle(.menu)
                                     .accentColor(Constants.Colors.cleanBlack)
                                     
-                                    Text("Day")
+                                    Text(contentManager.localizedString("frequency.day"))
                                         .font(Constants.Typography.Body.font)
                                         .fontWeight(.medium)
                                         .foregroundColor(Constants.Colors.textSecondary)
@@ -381,7 +415,7 @@ private struct TransactionForm: View {
                             .scaleEffect(0.8)
                     }
                     
-                    Text(showingSuccess ? "Transaction Added!" : "Add Transaction")
+                    Text(showingSuccess ? contentManager.localizedString("add.success.transaction_added") : contentManager.localizedString("add.cta.add_transaction"))
                         .font(Constants.Typography.Body.font)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -462,8 +496,24 @@ private struct BudgetForm: View {
     @State private var showingSuccess = false
     @State private var isSubmitting = false
     
-    private let categories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Savings", "Other"]
-    private let periods = ["Weekly", "Monthly", "Yearly"]
+    private var categories: [String] {
+        [
+            contentManager.localizedString("add.category.food"),
+            contentManager.localizedString("add.category.transport"),
+            contentManager.localizedString("add.category.shopping"),
+            contentManager.localizedString("add.category.entertainment"),
+            contentManager.localizedString("add.category.bills"),
+            contentManager.localizedString("add.category.savings"),
+            contentManager.localizedString("add.category.other")
+        ]
+    }
+    private var periods: [String] {
+        [
+            contentManager.localizedString("add.period.weekly"),
+            contentManager.localizedString("add.period.monthly"),
+            contentManager.localizedString("add.period.yearly")
+        ]
+    }
     
     private var isValid: Bool {
         guard !amount.isEmpty,
@@ -555,7 +605,7 @@ private struct BudgetForm: View {
                             .scaleEffect(0.8)
                     }
                     
-                    Text(showingSuccess ? "Budget Created!" : "Create Budget")
+                    Text(showingSuccess ? contentManager.localizedString("add.success.budget_created") : contentManager.localizedString("add.cta.create_budget"))
                         .font(Constants.Typography.Body.font)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -639,8 +689,15 @@ private struct LoanForm: View {
     private let categories = LoanCategory.allCases
     
     enum LoanAction: String, CaseIterable {
-        case addNew = "Add New Loan"
-        case markPaid = "Mark Loan as Paid"
+        case addNew = "add_new_loan"
+        case markPaid = "mark_loan_paid"
+        
+        func localizedDisplayName(_ contentManager: MultilingualContentManager) -> String {
+            switch self {
+            case .addNew: return contentManager.localizedString("add.action.add_new_loan")
+            case .markPaid: return contentManager.localizedString("add.action.mark_loan_paid")
+            }
+        }
         
         var icon: String {
             switch self {
@@ -706,7 +763,7 @@ private struct LoanForm: View {
             // Action Selector
             Picker("Loan Action", selection: $loanAction) {
                 ForEach(LoanAction.allCases, id: \.self) { action in
-                    Text(action.rawValue)
+                    Text(action.localizedDisplayName(contentManager))
                         .font(Constants.Typography.Body.font)
                         .fontWeight(.medium)
                         .tag(action)
@@ -769,7 +826,7 @@ private struct LoanForm: View {
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
-                TextField("Enter loan name", text: $name)
+                TextField(contentManager.localizedString("add.placeholder.loan_name"), text: $name)
                     .font(Constants.Typography.Body.font)
                     .padding(Constants.UI.Spacing.medium)
                     .background(Constants.Colors.textPrimary.opacity(0.05))
@@ -870,7 +927,7 @@ private struct LoanForm: View {
                             calculateMonthlyPayment()
                         }
                     
-                    Text("years")
+                    Text(contentManager.localizedString("frequency.years"))
                         .font(Constants.Typography.Body.font)
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
@@ -914,7 +971,7 @@ private struct LoanForm: View {
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
-                Text("Select the day of the month your payment is due (e.g., 1st, 15th, 30th)")
+                Text(contentManager.localizedString("loan.payment_due_description"))
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.textSecondary)
                     .padding(.bottom, Constants.UI.Spacing.small)
@@ -937,7 +994,7 @@ private struct LoanForm: View {
                             .scaleEffect(0.8)
                     }
                     
-                    Text(showingSuccess ? (loanAction == .addNew ? "Loan Added!" : "Payment Marked!") : (loanAction == .addNew ? "Add Loan" : "Mark as Paid"))
+                    Text(showingSuccess ? (loanAction == .addNew ? contentManager.localizedString("add.success.loan_added") : contentManager.localizedString("add.success.payment_marked")) : (loanAction == .addNew ? contentManager.localizedString("add.cta.add_loan") : contentManager.localizedString("add.cta.mark_as_paid")))
                         .font(Constants.Typography.Body.font)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -969,11 +1026,11 @@ private struct LoanForm: View {
                         .font(.system(size: 48))
                         .foregroundColor(Constants.Colors.success)
                     
-                    Text("All loans are already paid!")
+                    Text(contentManager.localizedString("loan.all_paid"))
                         .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
-                    Text("No unpaid loans available to mark as paid")
+                    Text(contentManager.localizedString("loan.no_unpaid"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                 }
@@ -981,12 +1038,12 @@ private struct LoanForm: View {
                 .padding(Constants.UI.Spacing.large)
             } else {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                    Text("Select Loan to Mark as Paid")
+                    Text(contentManager.localizedString("loan.select_to_pay"))
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
-                    Text("Choose the loan you want to mark as paid")
+                    Text(contentManager.localizedString("loan.choose_to_pay"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -1003,7 +1060,7 @@ private struct LoanForm: View {
                                 .scaleEffect(0.8)
                         }
                         
-                        Text(showingSuccess ? "Payment Marked!" : "Mark as Paid")
+                        Text(showingSuccess ? contentManager.localizedString("add.success.payment_marked") : contentManager.localizedString("add.cta.mark_as_paid"))
                             .font(Constants.Typography.Body.font)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
@@ -1018,7 +1075,7 @@ private struct LoanForm: View {
                 .animation(.easeInOut(duration: 0.3), value: showingSuccess)
                 
                 if showingSuccess {
-                    Text("Payment marked successfully!")
+                    Text(contentManager.localizedString("success.payment_marked"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.accentColor)
                         .transition(.opacity)

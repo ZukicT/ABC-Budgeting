@@ -1,17 +1,19 @@
 import SwiftUI
 
 struct InsightsSection: View {
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
+    
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             // Section Header
             HStack {
-                Text("Insights")
+                Text(contentManager.localizedString("insights.title"))
                     .font(Constants.Typography.H2.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 Spacer()
                 
-                Button("View All") {
+                Button(contentManager.localizedString("button.view_all")) {
                     // TODO: Navigate to insights or analytics
                 }
                 .font(Constants.Typography.BodySmall.font)
@@ -20,12 +22,12 @@ struct InsightsSection: View {
             
             // Placeholder content
             VStack(spacing: Constants.UI.Spacing.small) {
-                Text("Financial insights will appear here")
+                Text(contentManager.localizedString("insights.coming_soon"))
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textSecondary)
                     .multilineTextAlignment(.center)
                 
-                Text("This section will show spending patterns and recommendations")
+                Text(contentManager.localizedString("insights.description"))
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.textTertiary)
                     .multilineTextAlignment(.center)

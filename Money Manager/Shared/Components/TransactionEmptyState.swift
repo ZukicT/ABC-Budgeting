@@ -26,7 +26,8 @@ struct TransactionEmptyState: View {
         actionTitle: String? = nil,
         action: @escaping () -> Void
     ) {
-        self.actionTitle = actionTitle ?? "Add Transaction"
+        let contentManager = MultilingualContentManager.shared
+        self.actionTitle = actionTitle ?? contentManager.localizedString("cta.add_transaction")
         self.action = action
     }
     

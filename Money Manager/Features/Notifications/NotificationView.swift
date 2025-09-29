@@ -20,6 +20,7 @@ import SwiftUI
 struct NotificationView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel = NotificationViewModel()
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         NavigationStack {
@@ -28,12 +29,12 @@ struct NotificationView: View {
                 VStack(spacing: Constants.UI.Spacing.medium) {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Notifications")
+                            Text(contentManager.localizedString("notifications.title"))
                                 .font(Constants.Typography.H2.font)
                                 .fontWeight(.bold)
                                 .foregroundColor(Constants.Colors.textPrimary)
                             
-                            Text("\(viewModel.unreadCount) unread")
+                            Text("\(viewModel.unreadCount) \(contentManager.localizedString("notifications.unread_count"))")
                                 .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                         }
@@ -41,20 +42,20 @@ struct NotificationView: View {
                         Spacer()
                         
                         HStack(spacing: Constants.UI.Spacing.medium) {
-                            Button("Clear All") {
+                            Button(contentManager.localizedString("notifications.clear_all")) {
                                 viewModel.clearAllNotifications()
                             }
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.error)
-                            .accessibilityLabel("Clear all notifications")
+                            .accessibilityLabel(contentManager.localizedString("notifications.clear_all"))
                             .accessibilityHint("Double tap to clear all notifications")
                             
-                            Button("Mark All Read") {
+                            Button(contentManager.localizedString("notifications.mark_all_read")) {
                                 viewModel.markAllAsRead()
                             }
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
-                            .accessibilityLabel("Mark all notifications as read")
+                            .accessibilityLabel(contentManager.localizedString("notifications.mark_all_read"))
                             .accessibilityHint("Double tap to mark all notifications as read")
                         }
                     }
@@ -64,7 +65,7 @@ struct NotificationView: View {
                         HStack(spacing: 0) {
                             // Total notifications
                             VStack(spacing: 4) {
-                                Text("Total")
+                                Text(contentManager.localizedString("notifications.total"))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Text("\(viewModel.notifications.count)")
@@ -81,7 +82,7 @@ struct NotificationView: View {
                             
                             // Unread notifications
                             VStack(spacing: 4) {
-                                Text("Unread")
+                                Text(contentManager.localizedString("notifications.unread"))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Text("\(viewModel.unreadCount)")
@@ -99,7 +100,7 @@ struct NotificationView: View {
                             
                             // Today's notifications
                             VStack(spacing: 4) {
-                                Text("Today")
+                                Text(contentManager.localizedString("notifications.today"))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Text("\(viewModel.todayCount)")
@@ -139,12 +140,12 @@ struct NotificationView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button(contentManager.localizedString("notifications.done")) {
                         dismiss()
                     }
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
-                    .accessibilityLabel("Done")
+                    .accessibilityLabel(contentManager.localizedString("notifications.done"))
                     .accessibilityHint("Double tap to close notifications")
                 }
             }
@@ -244,6 +245,8 @@ private struct NotificationRow: View {
 
 // MARK: - Empty Notifications View
 private struct EmptyNotificationsView: View {
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
+    
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
             Image("Budget-Empty")
@@ -253,26 +256,26 @@ private struct EmptyNotificationsView: View {
                 .accessibilityHidden(true)
             
             VStack(spacing: Constants.UI.Spacing.medium) {
-                Text("No Notifications")
+                Text(contentManager.localizedString("notifications.empty_title"))
                     .font(Constants.Typography.H2.font)
                     .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                 
-                Text("You're all caught up! We'll notify you when there's something important.")
+                Text(contentManager.localizedString("notifications.empty_description"))
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                     .lineLimit(3)
-                    .accessibilityLabel("You're all caught up! We'll notify you when there's something important.")
+                    .accessibilityLabel(contentManager.localizedString("notifications.empty_description"))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, Constants.UI.Padding.screenMargin)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("No notifications. You're all caught up! We'll notify you when there's something important.")
+        .accessibilityLabel("\(contentManager.localizedString("notifications.empty_title")). \(contentManager.localizedString("notifications.empty_description"))")
     }
 }
 

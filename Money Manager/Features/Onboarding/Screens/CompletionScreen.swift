@@ -20,6 +20,7 @@ import SwiftUI
 
 struct CompletionScreen: View {
     @ObservedObject var viewModel: OnboardingViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var imageLoadError = false
     
     var body: some View {
@@ -33,7 +34,7 @@ struct CompletionScreen: View {
                                 .font(.system(size: 80))
                                 .foregroundColor(Constants.Onboarding.pinkHex)
                             
-                            Text("Welcome!")
+                            Text(contentManager.localizedString("onboarding.welcome_completion"))
                                 .font(TrapFontUtility.trapFont(size: 24, weight: .bold))
                                 .foregroundColor(Constants.Colors.textPrimary)
                         }

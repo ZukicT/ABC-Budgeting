@@ -134,6 +134,9 @@ class MultilingualContentManager: ObservableObject {
         "category.education": "Education",
         "category.travel": "Travel",
         "category.other": "Other",
+        "category.income": "Income",
+        "category.savings": "Savings",
+        "category.housing": "Housing",
         
         // Loan Categories
         "loan.student": "Student Loan",
@@ -141,12 +144,14 @@ class MultilingualContentManager: ObservableObject {
         "loan.mortgage": "Mortgage",
         "loan.personal": "Personal Loan",
         "loan.credit_card": "Credit Card",
-        "loan.home_improvement": "Home Improvement",
+        "loan.other": "Other",
         
         // Alerts & Messages
         "alert.confirm_delete": "Confirm Delete",
         "alert.delete_transaction": "Are you sure you want to delete this transaction?",
         "alert.delete_budget": "Are you sure you want to delete this budget?",
+        "alert.delete_budget_message": "Are you sure you want to delete this budget? This action cannot be undone.",
+        "alert.delete_loan_message": "Are you sure you want to delete this loan? This action cannot be undone.",
         "alert.clear_all_data": "Clear All Data",
         "alert.clear_data_message": "This will permanently delete all your transactions, budgets, and loans. This action cannot be undone.",
         "alert.success": "Success",
@@ -184,6 +189,23 @@ class MultilingualContentManager: ObservableObject {
         "onboarding.next": "Next",
         "onboarding.skip": "Skip",
         "onboarding.complete": "Complete",
+        "onboarding.step_counter": "Step",
+        "onboarding.of": "of",
+        "onboarding.back": "Back",
+        "onboarding.choose_currency": "Choose your currency",
+        "onboarding.currency_description": "Select the currency that best fits your financial needs and location",
+        "onboarding.starting_balance_title": "What's your starting balance?",
+        "onboarding.starting_balance_description": "Set your current account balance to begin accurate financial tracking",
+        "onboarding.starting_balance_validation": "Please enter a valid starting balance to continue.",
+        "onboarding.starting_balance_label": "Starting Balance",
+        "onboarding.starting_balance_error": "Please enter a valid amount",
+        "onboarding.quick_amounts": "Quick amounts",
+        "onboarding.welcome_completion": "Welcome!",
+        
+        // Insights Section
+        "insights.title": "Insights",
+        "insights.coming_soon": "Financial insights will appear here",
+        "insights.description": "This section will show spending patterns and recommendations",
         
         // Add View
         "add.title": "What would you like to add?",
@@ -225,8 +247,7 @@ class MultilingualContentManager: ObservableObject {
         "transaction.frequency": "Frequency",
         
         // Success Messages
-        "success.transaction_added": "Transaction added successfully!",
-        "success.budget_created": "Budget created successfully!",
+        "success.payment_marked": "Payment marked successfully!",
         
         // Budget Labels
         "budget.budgets": "BUDGETS",
@@ -269,7 +290,6 @@ class MultilingualContentManager: ObservableObject {
         "button.done": "Done",
         "button.cancel": "Cancel",
         "button.delete": "Delete",
-        "button.ok": "OK",
         "button.clear_all_data": "Clear All Data",
         "button.view_all": "View All",
         "button.set_starting_balance": "Set Starting Balance",
@@ -283,6 +303,73 @@ class MultilingualContentManager: ObservableObject {
         "nav.font_licensing": "Font Licensing",
         "nav.version_history": "Version History",
         "nav.export_data": "Export Data",
+        
+        // Settings Subtitles
+        "settings.subtitle.push_notifications": "Receive alerts for budget limits and payments",
+        "settings.subtitle.budget_alerts": "Get notified when approaching budget limits",
+        "settings.subtitle.default_currency": "Choose your preferred currency",
+        "settings.subtitle.budget_period": "Set your default budget timeframe",
+        "settings.subtitle.text_to_speech_language": "Choose language for reading policy documents",
+        "settings.subtitle.export_data": "Download your financial data as CSV",
+        "settings.subtitle.clear_all_data": "Remove all transactions and budgets",
+        "settings.subtitle.remove_test_data": "Clear all sample data",
+        "settings.subtitle.add_test_data": "Add sample transactions, budgets, and loans",
+        "settings.subtitle.version_history": "View recent updates and changes",
+        "settings.subtitle.privacy_policy": "Read our privacy policy",
+        "settings.subtitle.terms_of_service": "Read our terms of service",
+        "settings.subtitle.font_licensing": "Trap font family licensing information",
+        
+        // Add Form CTAs
+        "add.cta.add_transaction": "Add Transaction",
+        "add.cta.create_budget": "Create Budget",
+        "add.cta.add_loan": "Add Loan",
+        "add.cta.mark_as_paid": "Mark as Paid",
+        "add.success.transaction_added": "Transaction Added!",
+        "add.success.budget_created": "Budget Created!",
+        "add.success.loan_added": "Loan Added!",
+        "add.success.payment_marked": "Payment Marked!",
+        "add.placeholder.transaction_title": "Enter transaction title",
+        "add.placeholder.loan_name": "Enter loan name",
+        "add.action.add_new_loan": "Add New Loan",
+        "add.action.mark_loan_paid": "Mark Loan as Paid",
+        
+        // Add Form Categories
+        "add.category.food": "Food",
+        "add.category.transport": "Transport",
+        "add.category.shopping": "Shopping",
+        "add.category.entertainment": "Entertainment",
+        "add.category.bills": "Bills",
+        "add.category.income": "Income",
+        "add.category.savings": "Savings",
+        "add.category.other": "Other",
+        
+        // Add Form Periods
+        "add.period.weekly": "Weekly",
+        "add.period.monthly": "Monthly",
+        "add.period.yearly": "Yearly",
+        
+        // Add Form Days
+        "add.day.monday": "Monday",
+        "add.day.tuesday": "Tuesday",
+        "add.day.wednesday": "Wednesday",
+        "add.day.thursday": "Thursday",
+        "add.day.friday": "Friday",
+        "add.day.saturday": "Saturday",
+        "add.day.sunday": "Sunday",
+        
+        // Add Form Months
+        "add.month.january": "January",
+        "add.month.february": "February",
+        "add.month.march": "March",
+        "add.month.april": "April",
+        "add.month.may": "May",
+        "add.month.june": "June",
+        "add.month.july": "July",
+        "add.month.august": "August",
+        "add.month.september": "September",
+        "add.month.october": "October",
+        "add.month.november": "November",
+        "add.month.december": "December",
         
         // Chart and Overview Labels
         "chart.loading": "Loading chart data...",
@@ -303,6 +390,119 @@ class MultilingualContentManager: ObservableObject {
         "loan.due_date": "Due Date",
         "loan.na": "N/A",
         "loan.mo": "/mo",
+        "loan.principal": "PRINCIPAL",
+        "loan.monthly_payment_caps": "MONTHLY PAYMENT",
+        "loan.interest_rate_caps": "INTEREST RATE",
+        "loan.due_date_caps": "DUE DATE",
+        "loan.edit": "Edit",
+        "loan.delete": "Delete",
+        "loan.edit_loan": "Edit Loan",
+        "loan.loan_name_caps": "LOAN NAME",
+        "loan.principal_amount_caps": "PRINCIPAL AMOUNT",
+        "loan.remaining_amount_caps": "REMAINING AMOUNT",
+        "budget.edit": "Edit",
+        "budget.delete": "Delete",
+        "budget.not_found": "Budget Not Found",
+        "budget.may_have_been_deleted": "This budget may have been deleted.",
+        "budget.used_percentage": "% Used",
+        "budget.spent_caps": "SPENT",
+        "budget.remaining_caps": "REMAINING",
+        "budget.over_by_caps": "OVER BY",
+        "loan.paid_percentage": "% Paid",
+        "loan.auto_loan": "Auto Loan",
+        "loan.student_loan": "Student Loan",
+        "loan.home_loan": "Home Loan",
+        "loan.personal_loan": "Personal Loan",
+        "accessibility.add_loan": "Add Loan",
+        "accessibility.edit_budget": "Edit budget",
+        "accessibility.delete_budget": "Delete budget",
+        "accessibility.edit_loan": "Edit loan",
+        "accessibility.delete_loan": "Delete loan",
+        "accessibility.start_reading": "Start reading",
+        "accessibility.pause_reading": "Pause reading",
+        "accessibility.resume_reading": "Resume reading",
+        "accessibility.latest_version": "Latest version",
+        "accessibility.completed_version": "Completed version",
+        "version.performance_optimizations": "Performance optimizations",
+        "version.settings_implementation": "Settings implementation",
+        "version.accessibility_improvements": "Accessibility improvements",
+        "version.chart_visualizations": "Chart visualizations",
+        "budget.over_by_amount": "Over by",
+        "chart.income_vs_expenses": "Income vs Expenses",
+        "chart.no_data_available": "No Data Available",
+        "chart.add_transactions_analysis": "Add transactions to see your income vs expenses analysis",
+        "budget.save": "Save",
+        
+        // Budget Edit Form
+        "budget.category_caps": "CATEGORY",
+        "budget.allocated_amount_caps": "ALLOCATED AMOUNT",
+        "budget.current_spending_caps": "CURRENT SPENDING",
+        
+        // Budget Empty State
+        "budget.empty_title": "No Budgets Yet",
+        "budget.empty_description": "Create your first budget to track spending and reach your financial goals.",
+        
+        // Budgets Overview Section
+        "budgets_overview.title": "Budgets Overview",
+        "budgets_overview.see_all": "See All",
+        "budgets_overview.total_budget": "Total Budget",
+        "budgets_overview.budgeted": "Budgeted",
+        "budgets_overview.spent": "Spent",
+        
+        // Alert Messages
+        "alert.validation_error": "Validation Error",
+        "button.ok": "OK",
+        
+        // Budget Status Tags
+        "budget.over_budget": "Over Budget",
+        "budget.on_track": "On Track",
+        
+        // Budget Loading & Error Messages
+        "budget.loading": "Loading budget...",
+        "budget.validation.select_category": "Please select a category.",
+        "budget.validation.valid_amount": "Please enter a valid allocated amount greater than 0.",
+        
+        // Budget Filter
+        "budget.filter.all": "All",
+        
+        // Loan Loading & Error Messages
+        "loan.loading": "Loading loans...",
+        "loan.validation.name_required": "Please enter a loan name.",
+        "loan.validation.principal_required": "Please enter a valid principal amount greater than 0.",
+        "loan.validation.remaining_valid": "Please enter a valid remaining amount (0 or greater).",
+        "loan.validation.interest_valid": "Please enter a valid interest rate (0 or greater).",
+        "loan.validation.payment_required": "Please enter a valid monthly payment greater than 0.",
+        "loan.validation.remaining_less_principal": "Remaining amount cannot be greater than principal amount.",
+        
+        // Loan Form Labels
+        "loan.enter_name": "Enter loan name",
+        "loan.saving": "Saving...",
+        "loan.save": "Save",
+        
+        // Loan Search & Filter
+        "loan.search_placeholder": "Search loans...",
+        "loan.no_found": "No loans found",
+        "loan.try_different": "Try a different search term",
+        "loan.filter.all": "All",
+        
+        // Loan Status
+        "loan.status.paid": "Paid",
+        "loan.status.overdue": "Overdue",
+        "loan.status.missed": "Missed",
+        "loan.status.current": "Current",
+        
+        // Loan Types
+        "loan.type.personal": "Personal",
+        "loan.type.auto": "Auto",
+        "loan.type.home": "Home",
+        "loan.type.student": "Student",
+        "loan.type.credit_card": "Credit Card",
+        "loan.type.business": "Business",
+        "loan.type.other": "Other",
+        
+        // Chart Symbols
+        "chart.up_arrow": "▲",
+        "chart.down_arrow": "▼",
         
         // Budget Labels
         "budget.budget": "Budget",
@@ -328,9 +528,6 @@ class MultilingualContentManager: ObservableObject {
         "loan.choose_to_pay": "Choose the loan you want to mark as paid",
         "loan.payment_due_description": "Select the day of the month your payment is due (e.g., 1st, 15th, 30th)",
         
-        // Success Messages
-        "success.payment_marked": "Payment marked successfully!",
-        
         // Data Clearing
         "data_cleared.title": "Data Cleared Successfully",
         "data_cleared.message": "All your financial data has been cleared. Please set your new starting balance to continue.",
@@ -352,7 +549,94 @@ class MultilingualContentManager: ObservableObject {
         
         // Income/Expense Labels
         "income.label": "Income",
-        "expense.label": "Expenses"
+        "expense.label": "Expenses",
+        
+        // Loan Empty State
+        "loan.empty_title": "No Loans Yet",
+        "loan.empty_description": "Add your first loan to start tracking your debt.",
+        
+        // Transaction Edit
+        "transaction.edit_title": "Edit Transaction",
+        
+        // Section Placeholders
+        "budgets.overview_placeholder": "Budget overview will appear here",
+        "budgets.overview_description": "This section will show budget progress and status",
+        "loans.overview_placeholder": "Loan overview will appear here",
+        "loans.overview_description": "This section will show active loans and payment status",
+        
+        // Notifications
+        "notifications.title": "Notifications",
+        "notifications.unread_count": "unread",
+        "notifications.clear_all": "Clear All",
+        "notifications.mark_all_read": "Mark All Read",
+        "notifications.total": "Total",
+        "notifications.unread": "Unread",
+        "notifications.today": "Today",
+        "notifications.done": "Done",
+        "notifications.empty_title": "No Notifications",
+        "notifications.empty_description": "You're all caught up! We'll notify you when there's something important.",
+        
+        // Onboarding Notifications
+        "onboarding.notifications.headline": "Stay on track",
+        "onboarding.notifications.body": "Get smart reminders about your spending goals, bill due dates, and financial insights to help you stay in control of your money",
+        "onboarding.notifications.enable_button": "Enable Notifications",
+        "onboarding.notifications.skip_button": "No thanks, I'm good",
+        
+        // Error States
+        "error.something_wrong": "Something went wrong",
+        "error.try_again": "Try Again",
+        
+        // Notification Alert Messages
+        "notification.success_title": "Success!",
+        "notification.success_message": "Notifications enabled. You'll receive helpful reminders about your financial goals.",
+        "notification.disabled_title": "Notifications Disabled",
+        "notification.disabled_message": "You can enable notifications later in Settings to receive helpful reminders.",
+        "notification.error_title": "Permission Error",
+        "notification.error_message": "There was an error requesting notification permission. Please try again.",
+        
+        // Form Field Labels
+        "form.title_label": "TITLE",
+        "form.amount_label": "AMOUNT",
+        "form.type_label": "TYPE",
+        "form.date_label": "DATE",
+        "form.category_label": "CATEGORY",
+        "form.income_type": "INCOME",
+        "form.expense_type": "EXPENSE",
+        
+        // Transaction Detail
+        "transaction.edit": "Edit",
+        "transaction.delete": "Delete",
+        "transaction.delete_alert_title": "Delete Transaction",
+        "transaction.delete_alert_message": "Are you sure you want to delete this transaction? This action cannot be undone.",
+        "transaction.not_found": "TRANSACTION NOT FOUND",
+        "transaction.may_have_been_deleted": "This transaction may have been deleted.",
+        
+        // Overview Sections
+        "overview.loans_title": "Loans Overview",
+        "overview.financial_insights_title": "Financial Insights",
+        "overview.recent_transactions_title": "Recent Transactions",
+        "overview.spending_by_category": "Spending by Category",
+        "overview.no_spending_data": "No Spending Data",
+        "overview.add_transactions_spending": "Add transactions to see your spending breakdown by category",
+        
+        // Loan Overview Details
+        "loan.overview.active_loans": "Active Loans",
+        "loan.overview.total_debt": "Total Debt",
+        "loan.overview.monthly_payments": "Monthly Payments",
+        "loan.overview.avg_interest_rate": "Avg Interest Rate",
+        "loan.overview.highest_rate": "Highest Rate",
+        "loan.overview.debt_by_category": "Debt by Category",
+        
+        // Loan Tags and Labels
+        "loan.remaining": "remaining",
+        "loan.per_month": "/mo",
+        "loan.count": "loan",
+        "loan.count_plural": "loans",
+        
+        // CTA Empty State Actions
+        "cta.add_transaction": "Add Transaction",
+        "cta.add_loan": "Add Loan",
+        "cta.create_budget": "Create Budget"
     ]
     
     private let chineseStrings: [String: String] = [
@@ -448,6 +732,76 @@ class MultilingualContentManager: ObservableObject {
         "action.clear": "清除",
         "action.reset": "重置",
         
+        // Button Labels
+        "button.view_all": "查看全部",
+        
+        // Settings Subtitles
+        "settings.subtitle.push_notifications": "接收预算限制和付款提醒",
+        "settings.subtitle.budget_alerts": "接近预算限制时获得通知",
+        "settings.subtitle.default_currency": "选择您偏好的货币",
+        "settings.subtitle.budget_period": "设置您的默认预算时间范围",
+        "settings.subtitle.text_to_speech_language": "选择阅读政策文档的语言",
+        "settings.subtitle.export_data": "以CSV格式下载您的财务数据",
+        "settings.subtitle.clear_all_data": "删除所有交易和预算",
+        "settings.subtitle.remove_test_data": "清除所有示例数据",
+        "settings.subtitle.add_test_data": "添加示例交易、预算和贷款",
+        "settings.subtitle.version_history": "查看最近的更新和更改",
+        "settings.subtitle.privacy_policy": "阅读我们的隐私政策",
+        "settings.subtitle.terms_of_service": "阅读我们的服务条款",
+        "settings.subtitle.font_licensing": "Trap字体家族许可信息",
+        
+        // Add Form CTAs
+        "add.cta.add_transaction": "添加交易",
+        "add.cta.create_budget": "创建预算",
+        "add.cta.add_loan": "添加贷款",
+        "add.cta.mark_as_paid": "标记为已付款",
+        "add.success.transaction_added": "交易已添加！",
+        "add.success.budget_created": "预算已创建！",
+        "add.success.loan_added": "贷款已添加！",
+        "add.success.payment_marked": "付款已标记！",
+        "add.placeholder.transaction_title": "输入交易标题",
+        "add.placeholder.loan_name": "输入贷款名称",
+        "add.action.add_new_loan": "添加新贷款",
+        "add.action.mark_loan_paid": "标记贷款为已付款",
+        
+        // Add Form Categories
+        "add.category.food": "食物",
+        "add.category.transport": "交通",
+        "add.category.shopping": "购物",
+        "add.category.entertainment": "娱乐",
+        "add.category.bills": "账单",
+        "add.category.income": "收入",
+        "add.category.savings": "储蓄",
+        "add.category.other": "其他",
+        
+        // Add Form Periods
+        "add.period.weekly": "每周",
+        "add.period.monthly": "每月",
+        "add.period.yearly": "每年",
+        
+        // Add Form Days
+        "add.day.monday": "星期一",
+        "add.day.tuesday": "星期二",
+        "add.day.wednesday": "星期三",
+        "add.day.thursday": "星期四",
+        "add.day.friday": "星期五",
+        "add.day.saturday": "星期六",
+        "add.day.sunday": "星期日",
+        
+        // Add Form Months
+        "add.month.january": "一月",
+        "add.month.february": "二月",
+        "add.month.march": "三月",
+        "add.month.april": "四月",
+        "add.month.may": "五月",
+        "add.month.june": "六月",
+        "add.month.july": "七月",
+        "add.month.august": "八月",
+        "add.month.september": "九月",
+        "add.month.october": "十月",
+        "add.month.november": "十一月",
+        "add.month.december": "十二月",
+        
         // Categories
         "category.food": "食物",
         "category.transport": "交通",
@@ -458,6 +812,9 @@ class MultilingualContentManager: ObservableObject {
         "category.education": "教育",
         "category.travel": "旅行",
         "category.other": "其他",
+        "category.income": "收入",
+        "category.savings": "储蓄",
+        "category.housing": "住房",
         
         // Loan Categories
         "loan.student": "学生贷款",
@@ -465,7 +822,7 @@ class MultilingualContentManager: ObservableObject {
         "loan.mortgage": "抵押贷款",
         "loan.personal": "个人贷款",
         "loan.credit_card": "信用卡",
-        "loan.home_improvement": "房屋装修",
+        "loan.other": "其他",
         
         // Alerts & Messages
         "alert.confirm_delete": "确认删除",
@@ -518,6 +875,23 @@ class MultilingualContentManager: ObservableObject {
         "onboarding.next": "下一步",
         "onboarding.skip": "跳过",
         "onboarding.complete": "完成",
+        "onboarding.step_counter": "步骤",
+        "onboarding.of": "共",
+        "onboarding.back": "返回",
+        "onboarding.choose_currency": "选择您的货币",
+        "onboarding.currency_description": "选择最适合您财务需求和所在地的货币",
+        "onboarding.starting_balance_title": "您的起始余额是多少？",
+        "onboarding.starting_balance_description": "设置您当前的账户余额以开始准确的财务跟踪",
+        "onboarding.starting_balance_validation": "请输入有效的起始余额以继续。",
+        "onboarding.starting_balance_label": "起始余额",
+        "onboarding.starting_balance_error": "请输入有效金额",
+        "onboarding.quick_amounts": "快速金额",
+        "onboarding.welcome_completion": "欢迎！",
+        
+        // Insights Section
+        "insights.title": "洞察",
+        "insights.coming_soon": "财务洞察将在此显示",
+        "insights.description": "此部分将显示支出模式和推荐",
         
         // Add View
         "add.title": "您想添加什么？",
@@ -575,7 +949,6 @@ class MultilingualContentManager: ObservableObject {
         
         // Loan Messages
         "loan.all_paid": "所有贷款已还清！",
-        "loan.no_unpaid": "没有未还清的贷款可标记",
         "loan.select_to_pay": "选择要标记为已还的贷款",
         "loan.choose_to_pay": "选择您要标记为已还的贷款",
         "loan.payment_due_description": "选择您付款到期的月份日期（例如：1日、15日、30日）",
@@ -604,6 +977,11 @@ class MultilingualContentManager: ObservableObject {
         "chart.loading": "正在加载图表数据...",
         "chart.total_balance": "总余额",
         "chart.new": "新增",
+        "chart.monthly_overview": "月度概览",
+        "chart.no_monthly_data": "无月度数据",
+        "chart.add_transactions_message": "添加交易以查看您的月度收入和支出概览",
+        "chart.loading_monthly": "正在加载月度数据...",
+        "chart.failed_load": "加载月度数据失败",
         
         // Settings Subtitles
         "settings.push_notifications_subtitle": "接收预算限制和付款提醒",
@@ -633,7 +1011,210 @@ class MultilingualContentManager: ObservableObject {
         "font.licensing_title": "Trap字体家族许可信息",
         
         // Clear Data Warning
-        "clear_data.warning": "这将永久删除您的所有交易、预算和贷款。此操作无法撤销。您将被要求设置新的起始余额。"
+        "clear_data.warning": "这将永久删除您的所有交易、预算和贷款。此操作无法撤销。您将被要求设置新的起始余额。",
+        
+        // Additional Loan Labels
+        "loan.principal": "本金",
+        "loan.monthly_payment_caps": "月付款",
+        "loan.interest_rate_caps": "利率",
+        "loan.edit": "编辑",
+        "loan.delete": "删除",
+        "loan.edit_loan": "编辑贷款",
+        "loan.loan_name_caps": "贷款名称",
+        "loan.principal_amount_caps": "本金金额",
+        "loan.remaining_amount_caps": "剩余金额",
+        "budget.edit": "编辑",
+        "budget.delete": "删除",
+        "budget.not_found": "找不到预算",
+        "budget.may_have_been_deleted": "此预算可能已被删除。",
+        "budget.used_percentage": "已使用",
+        "budget.spent_caps": "已花费",
+        "budget.remaining_caps": "剩余",
+        "budget.over_by_caps": "超出",
+        "loan.paid_percentage": "已支付",
+        "loan.due_date_caps": "到期日",
+        "loan.auto_loan": "汽车贷款",
+        "loan.student_loan": "学生贷款",
+        "loan.home_loan": "住房贷款",
+        "loan.personal_loan": "个人贷款",
+        "accessibility.add_loan": "添加贷款",
+        "accessibility.edit_budget": "编辑预算",
+        "accessibility.delete_budget": "删除预算",
+        "accessibility.edit_loan": "编辑贷款",
+        "accessibility.delete_loan": "删除贷款",
+        "accessibility.start_reading": "开始阅读",
+        "accessibility.pause_reading": "暂停阅读",
+        "accessibility.resume_reading": "恢复阅读",
+        "accessibility.latest_version": "最新版本",
+        "accessibility.completed_version": "已完成版本",
+        "version.performance_optimizations": "性能优化",
+        "version.settings_implementation": "设置实现",
+        "version.accessibility_improvements": "无障碍改进",
+        "version.chart_visualizations": "图表可视化",
+        "budget.over_by_amount": "超出",
+        "chart.income_vs_expenses": "收入与支出",
+        "chart.no_data_available": "暂无数据",
+        "chart.add_transactions_analysis": "添加交易以查看您的收入与支出分析",
+        "budget.save": "保存",
+        
+        // Budget Edit Form
+        "budget.category_caps": "类别",
+        "budget.allocated_amount_caps": "分配金额",
+        "budget.current_spending_caps": "当前支出",
+        
+        // Budget Empty State
+        "budget.empty_title": "暂无预算",
+        "budget.empty_description": "创建您的第一个预算来跟踪支出并实现财务目标。",
+        
+        // Budgets Overview Section
+        "budgets_overview.title": "预算概览",
+        "budgets_overview.see_all": "查看全部",
+        "budgets_overview.total_budget": "总预算",
+        "budgets_overview.budgeted": "已预算",
+        "budgets_overview.spent": "已花费",
+        
+        // Alert Messages
+        "alert.validation_error": "验证错误",
+        "button.ok": "确定",
+        
+        // Budget Status Tags
+        "budget.over_budget": "超出预算",
+        "budget.on_track": "正常",
+        
+        // Budget Loading & Error Messages
+        "budget.loading": "加载预算中...",
+        "budget.validation.select_category": "请选择一个类别。",
+        "budget.validation.valid_amount": "请输入大于0的有效分配金额。",
+        
+        // Budget Filter
+        "budget.filter.all": "全部",
+        
+        // Loan Loading & Error Messages
+        "loan.loading": "加载贷款中...",
+        "loan.validation.name_required": "请输入贷款名称。",
+        "loan.validation.principal_required": "请输入大于0的有效本金金额。",
+        "loan.validation.remaining_valid": "请输入有效的剩余金额（0或更大）。",
+        "loan.validation.interest_valid": "请输入有效的利率（0或更大）。",
+        "loan.validation.payment_required": "请输入大于0的有效月付款。",
+        "loan.validation.remaining_less_principal": "剩余金额不能大于本金金额。",
+        
+        // Loan Form Labels
+        "loan.enter_name": "输入贷款名称",
+        "loan.saving": "保存中...",
+        "loan.save": "保存",
+        
+        // Loan Search & Filter
+        "loan.search_placeholder": "搜索贷款...",
+        "loan.no_unpaid": "没有未付贷款",
+        "loan.no_found": "未找到贷款",
+        "loan.try_different": "尝试不同的搜索词",
+        "loan.filter.all": "全部",
+        
+        // Loan Status
+        "loan.status.paid": "已付",
+        "loan.status.overdue": "逾期",
+        "loan.status.missed": "错过",
+        "loan.status.current": "当前",
+        
+        // Loan Types
+        "loan.type.personal": "个人",
+        "loan.type.auto": "汽车",
+        "loan.type.home": "住房",
+        "loan.type.student": "学生",
+        "loan.type.credit_card": "信用卡",
+        "loan.type.business": "商业",
+        "loan.type.other": "其他",
+        
+        // Chart Symbols
+        "chart.up_arrow": "▲",
+        "chart.down_arrow": "▼",
+        
+        // Loan Empty State
+        "loan.empty_title": "暂无贷款",
+        "loan.empty_description": "添加您的第一笔贷款开始跟踪债务。",
+        
+        // Transaction Edit
+        "transaction.edit_title": "编辑交易",
+        
+        // Section Placeholders
+        "budgets.overview_placeholder": "预算概览将在此显示",
+        "budgets.overview_description": "此部分将显示预算进度和状态",
+        "loans.overview_placeholder": "贷款概览将在此显示",
+        "loans.overview_description": "此部分将显示活跃贷款和付款状态",
+        
+        // Notifications
+        "notifications.title": "通知",
+        "notifications.unread_count": "未读",
+        "notifications.clear_all": "清除全部",
+        "notifications.mark_all_read": "全部标记为已读",
+        "notifications.total": "总计",
+        "notifications.unread": "未读",
+        "notifications.today": "今天",
+        "notifications.done": "完成",
+        "notifications.empty_title": "暂无通知",
+        "notifications.empty_description": "您已全部完成！有重要事项时我们会通知您。",
+        
+        // Onboarding Notifications
+        "onboarding.notifications.headline": "保持正轨",
+        "onboarding.notifications.body": "获取关于您支出目标、账单到期日和财务洞察的智能提醒，帮助您掌控财务",
+        "onboarding.notifications.enable_button": "启用通知",
+        "onboarding.notifications.skip_button": "不用了，我很好",
+        
+        // Error States
+        "error.something_wrong": "出现错误",
+        "error.try_again": "重试",
+        
+        // Notification Alert Messages
+        "notification.success_title": "成功！",
+        "notification.success_message": "通知已启用。您将收到关于财务目标的有用提醒。",
+        "notification.disabled_title": "通知已禁用",
+        "notification.disabled_message": "您可以稍后在设置中启用通知以接收有用的提醒。",
+        "notification.error_title": "权限错误",
+        "notification.error_message": "请求通知权限时出错。请重试。",
+        
+        // Form Field Labels
+        "form.title_label": "标题",
+        "form.amount_label": "金额",
+        "form.type_label": "类型",
+        "form.date_label": "日期",
+        "form.category_label": "类别",
+        "form.income_type": "收入",
+        "form.expense_type": "支出",
+        
+        // Transaction Detail
+        "transaction.edit": "编辑",
+        "transaction.delete": "删除",
+        "transaction.delete_alert_title": "删除交易",
+        "transaction.delete_alert_message": "您确定要删除这笔交易吗？此操作无法撤销。",
+        "transaction.not_found": "未找到交易",
+        "transaction.may_have_been_deleted": "此交易可能已被删除。",
+        
+        // Overview Sections
+        "overview.loans_title": "贷款概览",
+        "overview.financial_insights_title": "财务洞察",
+        "overview.recent_transactions_title": "最近交易",
+        "overview.spending_by_category": "按类别支出",
+        "overview.no_spending_data": "无支出数据",
+        "overview.add_transactions_spending": "添加交易以查看按类别的支出明细",
+        
+        // Loan Overview Details
+        "loan.overview.active_loans": "活跃贷款",
+        "loan.overview.total_debt": "总债务",
+        "loan.overview.monthly_payments": "月付款",
+        "loan.overview.avg_interest_rate": "平均利率",
+        "loan.overview.highest_rate": "最高利率",
+        "loan.overview.debt_by_category": "按类别债务",
+        
+        // Loan Tags and Labels
+        "loan.remaining": "剩余",
+        "loan.per_month": "/月",
+        "loan.count": "贷款",
+        "loan.count_plural": "贷款",
+        
+        // CTA Empty State Actions
+        "cta.add_transaction": "添加交易",
+        "cta.add_loan": "添加贷款",
+        "cta.create_budget": "创建预算"
     ]
     
     private let japaneseStrings: [String: String] = [
@@ -729,6 +1310,76 @@ class MultilingualContentManager: ObservableObject {
         "action.clear": "クリア",
         "action.reset": "リセット",
         
+        // Button Labels
+        "button.view_all": "すべて表示",
+        
+        // Settings Subtitles
+        "settings.subtitle.push_notifications": "予算制限と支払いのアラートを受信",
+        "settings.subtitle.budget_alerts": "予算制限に近づいたときに通知を受け取る",
+        "settings.subtitle.default_currency": "お好みの通貨を選択",
+        "settings.subtitle.budget_period": "デフォルトの予算期間を設定",
+        "settings.subtitle.text_to_speech_language": "ポリシードキュメントを読むための言語を選択",
+        "settings.subtitle.export_data": "財務データをCSV形式でダウンロード",
+        "settings.subtitle.clear_all_data": "すべての取引と予算を削除",
+        "settings.subtitle.remove_test_data": "すべてのサンプルデータをクリア",
+        "settings.subtitle.add_test_data": "サンプル取引、予算、ローンを追加",
+        "settings.subtitle.version_history": "最近の更新と変更を表示",
+        "settings.subtitle.privacy_policy": "プライバシーポリシーを読む",
+        "settings.subtitle.terms_of_service": "利用規約を読む",
+        "settings.subtitle.font_licensing": "Trapフォントファミリーのライセンス情報",
+        
+        // Add Form CTAs
+        "add.cta.add_transaction": "取引を追加",
+        "add.cta.create_budget": "予算を作成",
+        "add.cta.add_loan": "ローンを追加",
+        "add.cta.mark_as_paid": "支払済みとしてマーク",
+        "add.success.transaction_added": "取引が追加されました！",
+        "add.success.budget_created": "予算が作成されました！",
+        "add.success.loan_added": "ローンが追加されました！",
+        "add.success.payment_marked": "支払いがマークされました！",
+        "add.placeholder.transaction_title": "取引タイトルを入力",
+        "add.placeholder.loan_name": "ローン名を入力",
+        "add.action.add_new_loan": "新しいローンを追加",
+        "add.action.mark_loan_paid": "ローンを支払済みとしてマーク",
+        
+        // Add Form Categories
+        "add.category.food": "食事",
+        "add.category.transport": "交通",
+        "add.category.shopping": "ショッピング",
+        "add.category.entertainment": "エンターテイメント",
+        "add.category.bills": "請求書",
+        "add.category.income": "収入",
+        "add.category.savings": "貯蓄",
+        "add.category.other": "その他",
+        
+        // Add Form Periods
+        "add.period.weekly": "週次",
+        "add.period.monthly": "月次",
+        "add.period.yearly": "年次",
+        
+        // Add Form Days
+        "add.day.monday": "月曜日",
+        "add.day.tuesday": "火曜日",
+        "add.day.wednesday": "水曜日",
+        "add.day.thursday": "木曜日",
+        "add.day.friday": "金曜日",
+        "add.day.saturday": "土曜日",
+        "add.day.sunday": "日曜日",
+        
+        // Add Form Months
+        "add.month.january": "1月",
+        "add.month.february": "2月",
+        "add.month.march": "3月",
+        "add.month.april": "4月",
+        "add.month.may": "5月",
+        "add.month.june": "6月",
+        "add.month.july": "7月",
+        "add.month.august": "8月",
+        "add.month.september": "9月",
+        "add.month.october": "10月",
+        "add.month.november": "11月",
+        "add.month.december": "12月",
+        
         // Categories
         "category.food": "食事",
         "category.transport": "交通",
@@ -739,6 +1390,9 @@ class MultilingualContentManager: ObservableObject {
         "category.education": "教育",
         "category.travel": "旅行",
         "category.other": "その他",
+        "category.income": "収入",
+        "category.savings": "貯蓄",
+        "category.housing": "住宅",
         
         // Loan Categories
         "loan.student": "学生ローン",
@@ -746,7 +1400,7 @@ class MultilingualContentManager: ObservableObject {
         "loan.mortgage": "住宅ローン",
         "loan.personal": "個人ローン",
         "loan.credit_card": "クレジットカード",
-        "loan.home_improvement": "住宅改築",
+        "loan.other": "その他",
         
         // Alerts & Messages
         "alert.confirm_delete": "削除を確認",
@@ -799,6 +1453,23 @@ class MultilingualContentManager: ObservableObject {
         "onboarding.next": "次へ",
         "onboarding.skip": "スキップ",
         "onboarding.complete": "完了",
+        "onboarding.step_counter": "ステップ",
+        "onboarding.of": "/",
+        "onboarding.back": "戻る",
+        "onboarding.choose_currency": "通貨を選択",
+        "onboarding.currency_description": "あなたの財務ニーズと所在地に最適な通貨を選択してください",
+        "onboarding.starting_balance_title": "開始残高はいくらですか？",
+        "onboarding.starting_balance_description": "正確な財務追跡を開始するために、現在の口座残高を設定してください",
+        "onboarding.starting_balance_validation": "続行するには有効な開始残高を入力してください。",
+        "onboarding.starting_balance_label": "開始残高",
+        "onboarding.starting_balance_error": "有効な金額を入力してください",
+        "onboarding.quick_amounts": "クイック金額",
+        "onboarding.welcome_completion": "ようこそ！",
+        
+        // Insights Section
+        "insights.title": "インサイト",
+        "insights.coming_soon": "財務インサイトがここに表示されます",
+        "insights.description": "このセクションでは支出パターンと推奨事項が表示されます",
         
         // Add View
         "add.title": "何を追加しますか？",
@@ -856,7 +1527,6 @@ class MultilingualContentManager: ObservableObject {
         
         // Loan Messages
         "loan.all_paid": "すべてのローンが既に支払済みです！",
-        "loan.no_unpaid": "支払い済みとしてマークできる未払いローンがありません",
         "loan.select_to_pay": "支払い済みとしてマークするローンを選択",
         "loan.choose_to_pay": "支払い済みとしてマークしたいローンを選択",
         "loan.payment_due_description": "支払い期日となる月内の日付を選択（例：1日、15日、30日）",
@@ -885,6 +1555,11 @@ class MultilingualContentManager: ObservableObject {
         "chart.loading": "チャートデータを読み込み中...",
         "chart.total_balance": "総残高",
         "chart.new": "新規",
+        "chart.monthly_overview": "月次概要",
+        "chart.no_monthly_data": "月次データなし",
+        "chart.add_transactions_message": "取引を追加して月次収入と支出の概要を表示",
+        "chart.loading_monthly": "月次データを読み込み中...",
+        "chart.failed_load": "月次データの読み込みに失敗",
         
         // Settings Subtitles
         "settings.push_notifications_subtitle": "予算制限と支払いのアラートを受信",
@@ -914,7 +1589,210 @@ class MultilingualContentManager: ObservableObject {
         "font.licensing_title": "Trapフォントファミリーライセンス情報",
         
         // Clear Data Warning
-        "clear_data.warning": "これにより、すべての取引、予算、ローンが永久に削除されます。この操作は元に戻せません。新しい開始残高を設定するよう求められます。"
+        "clear_data.warning": "これにより、すべての取引、予算、ローンが永久に削除されます。この操作は元に戻せません。新しい開始残高を設定するよう求められます。",
+        
+        // Additional Loan Labels
+        "loan.principal": "元本",
+        "loan.monthly_payment_caps": "月次支払い",
+        "loan.interest_rate_caps": "金利",
+        "loan.edit": "編集",
+        "loan.delete": "削除",
+        "loan.edit_loan": "ローンを編集",
+        "loan.loan_name_caps": "ローン名",
+        "loan.principal_amount_caps": "元本金額",
+        "loan.remaining_amount_caps": "残高",
+        "budget.edit": "編集",
+        "budget.delete": "削除",
+        "budget.not_found": "予算が見つかりません",
+        "budget.may_have_been_deleted": "この予算は削除された可能性があります。",
+        "budget.used_percentage": "使用済み",
+        "budget.spent_caps": "支出",
+        "budget.remaining_caps": "残り",
+        "budget.over_by_caps": "超過",
+        "loan.paid_percentage": "支払済み",
+        "loan.due_date_caps": "支払期日",
+        "loan.auto_loan": "自動車ローン",
+        "loan.student_loan": "学生ローン",
+        "loan.home_loan": "住宅ローン",
+        "loan.personal_loan": "個人ローン",
+        "accessibility.add_loan": "ローンを追加",
+        "accessibility.edit_budget": "予算を編集",
+        "accessibility.delete_budget": "予算を削除",
+        "accessibility.edit_loan": "ローンを編集",
+        "accessibility.delete_loan": "ローンを削除",
+        "accessibility.start_reading": "読み上げ開始",
+        "accessibility.pause_reading": "読み上げ一時停止",
+        "accessibility.resume_reading": "読み上げ再開",
+        "accessibility.latest_version": "最新バージョン",
+        "accessibility.completed_version": "完了バージョン",
+        "version.performance_optimizations": "パフォーマンス最適化",
+        "version.settings_implementation": "設定実装",
+        "version.accessibility_improvements": "アクセシビリティ改善",
+        "version.chart_visualizations": "チャート可視化",
+        "budget.over_by_amount": "超過",
+        "chart.income_vs_expenses": "収入と支出",
+        "chart.no_data_available": "データなし",
+        "chart.add_transactions_analysis": "取引を追加して収入と支出の分析を表示",
+        "budget.save": "保存",
+        
+        // Budget Edit Form
+        "budget.category_caps": "カテゴリ",
+        "budget.allocated_amount_caps": "割り当て金額",
+        "budget.current_spending_caps": "現在の支出",
+        
+        // Budget Empty State
+        "budget.empty_title": "予算がありません",
+        "budget.empty_description": "支出を追跡し、財務目標を達成するために最初の予算を作成してください。",
+        
+        // Budgets Overview Section
+        "budgets_overview.title": "予算概要",
+        "budgets_overview.see_all": "すべて表示",
+        "budgets_overview.total_budget": "総予算",
+        "budgets_overview.budgeted": "予算済み",
+        "budgets_overview.spent": "支出済み",
+        
+        // Alert Messages
+        "alert.validation_error": "検証エラー",
+        "button.ok": "OK",
+        
+        // Budget Status Tags
+        "budget.over_budget": "予算超過",
+        "budget.on_track": "順調",
+        
+        // Budget Loading & Error Messages
+        "budget.loading": "予算を読み込み中...",
+        "budget.validation.select_category": "カテゴリを選択してください。",
+        "budget.validation.valid_amount": "0より大きい有効な割り当て金額を入力してください。",
+        
+        // Budget Filter
+        "budget.filter.all": "すべて",
+        
+        // Loan Loading & Error Messages
+        "loan.loading": "ローンを読み込み中...",
+        "loan.validation.name_required": "ローン名を入力してください。",
+        "loan.validation.principal_required": "0より大きい有効な元本金額を入力してください。",
+        "loan.validation.remaining_valid": "有効な残高金額（0以上）を入力してください。",
+        "loan.validation.interest_valid": "有効な金利（0以上）を入力してください。",
+        "loan.validation.payment_required": "0より大きい有効な月次支払いを入力してください。",
+        "loan.validation.remaining_less_principal": "残高金額は元本金額より大きくすることはできません。",
+        
+        // Loan Form Labels
+        "loan.enter_name": "ローン名を入力",
+        "loan.saving": "保存中...",
+        "loan.save": "保存",
+        
+        // Loan Search & Filter
+        "loan.search_placeholder": "ローンを検索...",
+        "loan.no_unpaid": "未払いローンなし",
+        "loan.no_found": "ローンが見つかりません",
+        "loan.try_different": "別の検索語を試してください",
+        "loan.filter.all": "すべて",
+        
+        // Loan Status
+        "loan.status.paid": "支払済み",
+        "loan.status.overdue": "期限切れ",
+        "loan.status.missed": "未払い",
+        "loan.status.current": "現在",
+        
+        // Loan Types
+        "loan.type.personal": "個人",
+        "loan.type.auto": "自動車",
+        "loan.type.home": "住宅",
+        "loan.type.student": "学生",
+        "loan.type.credit_card": "クレジットカード",
+        "loan.type.business": "ビジネス",
+        "loan.type.other": "その他",
+        
+        // Chart Symbols
+        "chart.up_arrow": "▲",
+        "chart.down_arrow": "▼",
+        
+        // Loan Empty State
+        "loan.empty_title": "ローンがありません",
+        "loan.empty_description": "最初のローンを追加して債務の追跡を開始してください。",
+        
+        // Transaction Edit
+        "transaction.edit_title": "取引を編集",
+        
+        // Section Placeholders
+        "budgets.overview_placeholder": "予算概要がここに表示されます",
+        "budgets.overview_description": "このセクションでは予算の進捗とステータスが表示されます",
+        "loans.overview_placeholder": "ローン概要がここに表示されます",
+        "loans.overview_description": "このセクションではアクティブなローンと支払いステータスが表示されます",
+        
+        // Notifications
+        "notifications.title": "通知",
+        "notifications.unread_count": "未読",
+        "notifications.clear_all": "すべてクリア",
+        "notifications.mark_all_read": "すべて既読にする",
+        "notifications.total": "合計",
+        "notifications.unread": "未読",
+        "notifications.today": "今日",
+        "notifications.done": "完了",
+        "notifications.empty_title": "通知がありません",
+        "notifications.empty_description": "すべて完了しました！重要なことがあるときにお知らせします。",
+        
+        // Onboarding Notifications
+        "onboarding.notifications.headline": "軌道に乗る",
+        "onboarding.notifications.body": "支出目標、請求書の期日、財務インサイトについてのスマートなリマインダーを受け取って、お金をコントロールしましょう",
+        "onboarding.notifications.enable_button": "通知を有効にする",
+        "onboarding.notifications.skip_button": "いいえ、大丈夫です",
+        
+        // Error States
+        "error.something_wrong": "何かが間違っています",
+        "error.try_again": "再試行",
+        
+        // Notification Alert Messages
+        "notification.success_title": "成功！",
+        "notification.success_message": "通知が有効になりました。財務目標についての有用なリマインダーを受け取ります。",
+        "notification.disabled_title": "通知が無効",
+        "notification.disabled_message": "後で設定で通知を有効にして、有用なリマインダーを受け取ることができます。",
+        "notification.error_title": "権限エラー",
+        "notification.error_message": "通知権限のリクエスト中にエラーが発生しました。再試行してください。",
+        
+        // Form Field Labels
+        "form.title_label": "タイトル",
+        "form.amount_label": "金額",
+        "form.type_label": "タイプ",
+        "form.date_label": "日付",
+        "form.category_label": "カテゴリ",
+        "form.income_type": "収入",
+        "form.expense_type": "支出",
+        
+        // Transaction Detail
+        "transaction.edit": "編集",
+        "transaction.delete": "削除",
+        "transaction.delete_alert_title": "取引を削除",
+        "transaction.delete_alert_message": "この取引を削除してもよろしいですか？この操作は元に戻せません。",
+        "transaction.not_found": "取引が見つかりません",
+        "transaction.may_have_been_deleted": "この取引は削除された可能性があります。",
+        
+        // Overview Sections
+        "overview.loans_title": "ローン概要",
+        "overview.financial_insights_title": "財務インサイト",
+        "overview.recent_transactions_title": "最近の取引",
+        "overview.spending_by_category": "カテゴリ別支出",
+        "overview.no_spending_data": "支出データなし",
+        "overview.add_transactions_spending": "取引を追加してカテゴリ別の支出内訳を表示",
+        
+        // Loan Overview Details
+        "loan.overview.active_loans": "アクティブローン",
+        "loan.overview.total_debt": "総債務",
+        "loan.overview.monthly_payments": "月次支払い",
+        "loan.overview.avg_interest_rate": "平均金利",
+        "loan.overview.highest_rate": "最高金利",
+        "loan.overview.debt_by_category": "カテゴリ別債務",
+        
+        // Loan Tags and Labels
+        "loan.remaining": "残り",
+        "loan.per_month": "/月",
+        "loan.count": "ローン",
+        "loan.count_plural": "ローン",
+        
+        // CTA Empty State Actions
+        "cta.add_transaction": "取引を追加",
+        "cta.add_loan": "ローンを追加",
+        "cta.create_budget": "予算を作成"
     ]
     
     // MARK: - Privacy Policy Content

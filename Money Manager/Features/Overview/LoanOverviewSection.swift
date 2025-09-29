@@ -9,6 +9,7 @@ struct LoanOverviewSection: View {
     @State private var loanOverviewItems: [LoanOverviewItem] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     let onTabSwitch: (Int) -> Void
     
@@ -16,7 +17,7 @@ struct LoanOverviewSection: View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // Section Header
             HStack {
-                Text("Loans Overview")
+                Text(contentManager.localizedString("overview.loans_title"))
                     .font(Constants.Typography.H2.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
@@ -26,7 +27,7 @@ struct LoanOverviewSection: View {
                 Button(action: {
                     onTabSwitch(3) // Switch to Loans tab
                 }) {
-                    Text("See All")
+                    Text(contentManager.localizedString("button.view_all"))
                         .font(Constants.Typography.BodySmall.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -41,7 +42,7 @@ struct LoanOverviewSection: View {
                 }
             } else if loanViewModel.loans.isEmpty {
                 LoanEmptyState(
-                    actionTitle: "Add Loan",
+                    actionTitle: contentManager.localizedString("cta.add_loan"),
                     action: {
                         // TODO: Navigate to add loan
                     }
@@ -149,6 +150,7 @@ private struct LoanOverviewCard: View {
     let overdueCount: Int
     let loanCount: Int
     let loanItems: [LoanOverviewItem]
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     private var categoryBreakdown: [(String, Double, Color)] {
         let grouped = Dictionary(grouping: loanItems) { $0.loan.category.displayName }
@@ -175,11 +177,11 @@ private struct LoanOverviewCard: View {
             // Header Section
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Active Loans")
+                    Text(contentManager.localizedString("loan.overview.active_loans"))
                         .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
-                    Text("\(loanCount) loan\(loanCount == 1 ? "" : "s")")
+                    Text("\\(loanCount) \\(loanCount == 1 ? contentManager.localizedString(\"loan.count\") : contentManager.localizedString(\"loan.count_plural\"))")
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -212,7 +214,7 @@ private struct LoanOverviewCard: View {
             ], spacing: Constants.UI.Spacing.medium) {
                 // Total Debt
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Total Debt")
+                    Text(contentManager.localizedString("loan.overview.total_debt"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
@@ -227,7 +229,7 @@ private struct LoanOverviewCard: View {
                 
                 // Monthly Payments
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Monthly Payments")
+                    Text(contentManager.localizedString("loan.overview.monthly_payments"))
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
@@ -246,7 +248,7 @@ private struct LoanOverviewCard: View {
                 // Interest Rate Insights
                 HStack(spacing: Constants.UI.Spacing.medium) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Avg Interest Rate")
+                        Text(contentManager.localizedString("loan.overview.avg_interest_rate"))
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                         
@@ -259,7 +261,7 @@ private struct LoanOverviewCard: View {
                     
                     if let highestLoan = highestInterestLoan {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Highest Rate")
+                            Text(contentManager.localizedString("loan.overview.highest_rate"))
                                 .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                             
@@ -282,7 +284,7 @@ private struct LoanOverviewCard: View {
                 // Category Breakdown
                 if !categoryBreakdown.isEmpty {
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                        Text("Debt by Category")
+                        Text(contentManager.localizedString("loan.overview.debt_by_category"))
                             .font(Constants.Typography.BodySmall.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .fontWeight(.medium)

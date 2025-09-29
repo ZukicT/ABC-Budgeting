@@ -95,6 +95,7 @@ struct EmptyStateView: View {
 struct ErrorStateView: View {
     let message: String
     let retryAction: (() -> Void)?
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
@@ -104,7 +105,7 @@ struct ErrorStateView: View {
                 .accessibilityHidden(true)
             
             VStack(spacing: Constants.UI.Spacing.small) {
-                Text("Something went wrong")
+                Text(contentManager.localizedString("error.something_wrong"))
                     .font(Constants.Typography.H2.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
@@ -116,12 +117,12 @@ struct ErrorStateView: View {
             }
             
             if let retryAction = retryAction {
-                Button("Try Again") {
+                Button(contentManager.localizedString("error.try_again")) {
                     retryAction()
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .accessibilityLabel("Retry action")
+                .accessibilityLabel(contentManager.localizedString("error.try_again"))
             }
         }
         .padding(Constants.UI.Spacing.large)

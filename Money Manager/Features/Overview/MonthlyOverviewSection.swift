@@ -51,6 +51,7 @@ struct MonthlyOverviewSection: View {
 private struct MonthlyOverviewCard: View {
     let data: MonthlyOverviewData
     let monthFormatter: DateFormatter
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
@@ -62,7 +63,7 @@ private struct MonthlyOverviewCard: View {
             ], spacing: Constants.UI.Spacing.small) {
                 // Monthly Income Card
                 MetricCard(
-                    title: "Income",
+                    title: contentManager.localizedString("income.label"),
                     value: data.currentMonth.income,
                     previousValue: data.previousMonth.income,
                     format: .currency,
@@ -73,7 +74,7 @@ private struct MonthlyOverviewCard: View {
                 
                 // Monthly Expenses Card
                 MetricCard(
-                    title: "Expenses",
+                    title: contentManager.localizedString("expense.label"),
                     value: data.currentMonth.expenses,
                     previousValue: data.previousMonth.expenses,
                     format: .currency,

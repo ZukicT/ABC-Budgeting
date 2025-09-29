@@ -20,6 +20,7 @@ import SwiftUI
 
 struct CurrencyScreen: View {
     @ObservedObject var viewModel: OnboardingViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var selectedCurrency: CurrencyUtility.Currency = .usd
     
     struct CurrencySection: Identifiable {
@@ -60,7 +61,7 @@ struct CurrencyScreen: View {
                                 .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(.white)
                             
-                            Text("Back")
+                            Text(contentManager.localizedString("onboarding.back"))
                                 .font(TrapFontUtility.trapFont(size: 16, weight: .bold))
                                 .foregroundColor(.white)
                         }
@@ -77,7 +78,7 @@ struct CurrencyScreen: View {
                 
                 // Header section
                 VStack(spacing: Constants.Currency.headerSpacing) {
-                    Text("Choose your currency")
+                    Text(contentManager.localizedString("onboarding.choose_currency"))
                         .font(TrapFontUtility.trapFont(size: 32, weight: .black))
                         .foregroundColor(Constants.Onboarding.yellowHex)
                         .multilineTextAlignment(.leading)
@@ -86,7 +87,7 @@ struct CurrencyScreen: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
                     
-                    Text("Select the currency that best fits your financial needs and location")
+                    Text(contentManager.localizedString("onboarding.currency_description"))
                         .font(TrapFontUtility.trapFont(size: 14, weight: .regular))
                         .foregroundColor(Constants.Colors.textPrimary)
                         .multilineTextAlignment(.leading)
