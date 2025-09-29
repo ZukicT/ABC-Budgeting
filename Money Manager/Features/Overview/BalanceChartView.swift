@@ -47,6 +47,7 @@ struct BalanceChartView: View {
     @ObservedObject var transactionViewModel: TransactionViewModel
     @ObservedObject var budgetViewModel: BudgetViewModel
     @ObservedObject var loanViewModel: LoanViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var selectedTimeRange: TimeRange = .oneMonth
     @State private var selectedDataPoint: BalanceDataPoint?
     @State private var isLoading = false
@@ -248,7 +249,7 @@ struct BalanceChartView: View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: Constants.Colors.success))
-            Text("Loading chart data...")
+            Text(contentManager.localizedString("chart.loading"))
                 .font(Constants.Typography.Body.font)
                 .foregroundColor(Constants.Colors.textSecondary)
         }
@@ -257,7 +258,7 @@ struct BalanceChartView: View {
     
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 1) {
-            Text("Total Balance")
+            Text(contentManager.localizedString("chart.total_balance"))
                 .font(Constants.Typography.Caption.font)
                 .foregroundColor(Constants.Colors.textSecondary)
             
@@ -278,7 +279,7 @@ struct BalanceChartView: View {
                         .foregroundColor(Constants.Colors.success)
                     
                     if getPreviousPeriodIncome() == 0 && currentPeriodIncome > 0 {
-                        Text("(New)")
+                        Text(contentManager.localizedString("chart.new"))
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.success)
                     } else {
@@ -306,7 +307,7 @@ struct BalanceChartView: View {
                         .foregroundColor(Constants.Colors.error)
                     
                     if getPreviousPeriodExpenses() == 0 && currentPeriodExpenses > 0 {
-                        Text("(New)")
+                        Text(contentManager.localizedString("chart.new"))
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.error)
                     } else {

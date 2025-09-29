@@ -5,6 +5,7 @@ import SwiftUI
 struct MonthlyOverviewSection: View {
     @ObservedObject var transactionViewModel: TransactionViewModel
     @StateObject private var viewModel = MonthlyOverviewViewModel()
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     /// Date formatter for displaying month abbreviation (e.g., "Sep 2024")
     private let monthAbbreviationFormatter: DateFormatter = {
@@ -17,7 +18,7 @@ struct MonthlyOverviewSection: View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // MARK: - Section Header
             HStack {
-                Text("Monthly Overview")
+                Text(contentManager.localizedString("chart.monthly_overview"))
                     .font(Constants.Typography.H2.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
@@ -89,17 +90,18 @@ private struct MonthlyOverviewCard: View {
 // MARK: - Monthly Overview Empty View
 /// Empty state view when no monthly data is available
 private struct MonthlyOverviewEmptyView: View {
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             Image(systemName: "chart.line.uptrend.xyaxis")
                 .font(.system(size: 48, weight: .light))
                 .foregroundColor(Constants.Colors.textTertiary)
             
-            Text("No Monthly Data")
+            Text(contentManager.localizedString("chart.no_monthly_data"))
                 .font(Constants.Typography.Body.font)
                 .foregroundColor(Constants.Colors.textSecondary)
             
-            Text("Add transactions to see your monthly income and expense overview")
+            Text(contentManager.localizedString("chart.add_transactions_message"))
                 .font(Constants.Typography.Caption.font)
                 .foregroundColor(Constants.Colors.textTertiary)
                 .multilineTextAlignment(.center)
@@ -185,6 +187,7 @@ private struct TrendIndicator: View {
     let currentValue: Double
     let previousValue: Double
     let color: Color
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     /// Determines trend direction based on value comparison
     private var trendDirection: TrendDirection {
@@ -228,7 +231,7 @@ private struct TrendIndicator: View {
             }
         } else {
             // Show "New" indicator when there's current data but no previous data
-            Text("New")
+            Text(contentManager.localizedString("chart.new"))
                 .font(Constants.Typography.Caption.font)
                 .foregroundColor(color)
                 .padding(.horizontal, 4)
@@ -267,10 +270,11 @@ private struct TrendIndicator: View {
 // MARK: - Loading View
 /// Loading state component displayed while fetching monthly data
 private struct MonthlyOverviewLoadingView: View {
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             HStack {
-                Text("Loading monthly data...")
+                Text(contentManager.localizedString("chart.loading_monthly"))
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textSecondary)
                 
@@ -288,6 +292,7 @@ private struct MonthlyOverviewLoadingView: View {
 /// Error state component displayed when data loading fails
 private struct MonthlyOverviewErrorView: View {
     let error: String
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
@@ -297,7 +302,7 @@ private struct MonthlyOverviewErrorView: View {
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(Constants.Colors.error)
                 
-                Text("Failed to load monthly data")
+                Text(contentManager.localizedString("chart.failed_load"))
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
