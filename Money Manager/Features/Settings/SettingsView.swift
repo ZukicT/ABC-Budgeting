@@ -4,6 +4,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var dataClearingService: DataClearingService
     @StateObject private var settingsViewModel = SettingsViewModel()
+    @StateObject private var contentManager = MultilingualContentManager.shared
     @State private var showClearDataConfirmation = false
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
@@ -199,6 +200,9 @@ struct SettingsView: View {
                     loanViewModel: dataClearingService.loanViewModel ?? LoanViewModel()
                 )
             }
+        }
+        .onChange(of: settingsViewModel.selectedLanguage) { _, newLanguage in
+            contentManager.updateLanguage(newLanguage)
         }
     }
     
