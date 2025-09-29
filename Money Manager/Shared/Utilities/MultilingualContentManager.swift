@@ -68,6 +68,7 @@ class MultilingualContentManager: ObservableObject {
         "transactions.all": "All",
         "transactions.no_transactions": "No transactions yet",
         "transactions.add_first": "Add your first transaction to get started",
+        "transactions.loading": "Loading transactions...",
         
         // Budget Tab
         "budget.title": "Budget",
@@ -242,6 +243,7 @@ class MultilingualContentManager: ObservableObject {
         "transactions.all": "全部",
         "transactions.no_transactions": "暂无交易",
         "transactions.add_first": "添加您的第一笔交易开始使用",
+        "transactions.loading": "正在加载交易...",
         
         // Budget Tab
         "budget.title": "预算",
@@ -416,6 +418,7 @@ class MultilingualContentManager: ObservableObject {
         "transactions.all": "すべて",
         "transactions.no_transactions": "取引がありません",
         "transactions.add_first": "最初の取引を追加して開始",
+        "transactions.loading": "取引を読み込み中...",
         
         // Budget Tab
         "budget.title": "予算",

@@ -5,28 +5,56 @@ struct TransactionView: View {
     @ObservedObject var dataClearingService: DataClearingService
     @ObservedObject var loanViewModel: LoanViewModel
     @ObservedObject var budgetViewModel: BudgetViewModel
-    @State private var selectedCategory = "All"
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
+    @State private var selectedCategory: String = ""
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
     @State private var selectedTransaction: Transaction?
     
-    private let categories = ["All", "Food", "Transport", "Shopping", "Entertainment", "Bills", "Other"]
+    private var categories: [String] {
+        [
+            contentManager.localizedString("transactions.all"),
+            contentManager.localizedString("category.food"),
+            contentManager.localizedString("category.transport"),
+            contentManager.localizedString("category.shopping"),
+            contentManager.localizedString("category.entertainment"),
+            contentManager.localizedString("category.bills"),
+            contentManager.localizedString("category.other")
+        ]
+    }
     
     // MARK: - Computed Properties
     private var groupedTransactions: [(month: String, transactions: [Transaction])] {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         
-        let filteredTransactions = selectedCategory == "All" 
+        let filteredTransactions = selectedCategory == contentManager.localizedString("transactions.all")
             ? viewModel.transactions 
-            : viewModel.transactions.filter { $0.category == selectedCategory }
+            : viewModel.transactions.filter { transaction in
+                // Map localized category back to original category for filtering
+                let originalCategory = getOriginalCategory(from: selectedCategory)
+                return transaction.category == originalCategory
+            }
         
         let grouped = Dictionary(grouping: filteredTransactions) { transaction in
             formatter.string(from: transaction.date)
         }
         
         return grouped.map { (month: $0.key, transactions: $0.value) }.sorted { $0.month > $1.month }
+    }
+    
+    // Helper function to map localized category back to original category
+    private func getOriginalCategory(from localizedCategory: String) -> String {
+        switch localizedCategory {
+        case contentManager.localizedString("category.food"): return "Food"
+        case contentManager.localizedString("category.transport"): return "Transport"
+        case contentManager.localizedString("category.shopping"): return "Shopping"
+        case contentManager.localizedString("category.entertainment"): return "Entertainment"
+        case contentManager.localizedString("category.bills"): return "Bills"
+        case contentManager.localizedString("category.other"): return "Other"
+        default: return localizedCategory
+        }
     }
     
     var body: some View {
@@ -42,6 +70,11 @@ struct TransactionView: View {
             }
             .background(Constants.Colors.backgroundPrimary)
             .onAppear {
+                // Initialize selectedCategory with localized "All"
+                if selectedCategory.isEmpty {
+                    selectedCategory = contentManager.localizedString("transactions.all")
+                }
+                
                 // Only load if data hasn't been loaded yet to prevent loading on every tab switch
                 if !viewModel.hasDataLoaded {
                     viewModel.loadTransactions()
@@ -75,7 +108,7 @@ struct TransactionView: View {
             // Header with title and total counter
             HStack(alignment: .center) {
                 // Title only
-                Text("Transactions")
+                Text(contentManager.localizedString("transactions.title"))
                     .font(Constants.Typography.H1.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
@@ -108,7 +141,7 @@ struct TransactionView: View {
     private var contentSection: some View {
         Group {
             if viewModel.isLoading {
-                LoadingStateView(message: "Loading transactions...")
+                LoadingStateView(message: contentManager.localizedString("transactions.loading"))
             } else if let errorMessage = viewModel.errorMessage {
                 ErrorStateView(message: errorMessage) {
                     viewModel.loadTransactions()

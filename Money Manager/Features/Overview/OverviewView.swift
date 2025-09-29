@@ -4,6 +4,7 @@ struct OverviewView: View {
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     let onTabSwitch: (Int) -> Void
     @ObservedObject var loanViewModel: LoanViewModel
@@ -19,7 +20,7 @@ struct OverviewView: View {
                     // Header with title and total counter
                     HStack(alignment: .center) {
                         // Title only
-                        Text("Overview")
+                        Text(contentManager.localizedString("overview.title"))
                             .font(Constants.Typography.H1.font)
                             .foregroundColor(Constants.Colors.textPrimary)
                         

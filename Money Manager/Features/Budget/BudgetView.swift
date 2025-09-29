@@ -24,6 +24,7 @@ struct BudgetView: View {
     @ObservedObject var dataClearingService: DataClearingService
     @ObservedObject var loanViewModel: LoanViewModel
     @ObservedObject var transactionViewModel: TransactionViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
@@ -68,7 +69,7 @@ struct BudgetView: View {
     private var headerSection: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             HStack(alignment: .center) {
-                Text("Budget")
+                Text(contentManager.localizedString("budget.title"))
                     .font(Constants.Typography.H1.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
@@ -136,7 +137,7 @@ struct BudgetView: View {
                     showAddView = true
                 }) {
                     Image(systemName: "plus")
-                        .accessibilityLabel("Create Budget")
+                        .accessibilityLabel(contentManager.localizedString("budget.add_budget"))
                 }
             }
             

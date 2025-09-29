@@ -5,6 +5,7 @@ struct LoanView: View {
     @ObservedObject var dataClearingService: DataClearingService
     @ObservedObject var budgetViewModel: BudgetViewModel
     @ObservedObject var transactionViewModel: TransactionViewModel
+    @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
@@ -52,7 +53,7 @@ struct LoanView: View {
             // Header with title and total counter
             HStack(alignment: .center) {
                 // Title only
-                Text("Loans")
+                Text(contentManager.localizedString("tab.loans"))
                     .font(Constants.Typography.H1.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
