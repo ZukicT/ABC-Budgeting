@@ -12,10 +12,12 @@ struct PrivacyPolicyView: View {
                         Text("Privacy Policy")
                             .font(Constants.Typography.H1.font)
                             .foregroundColor(Constants.Colors.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
                         
                         Text("Last updated: January 26, 2025")
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
+                            .accessibilityLabel("Last updated on January 26, 2025")
                     }
                     
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.large) {
@@ -109,10 +111,12 @@ struct TermsOfServiceView: View {
                         Text("Terms of Service")
                             .font(Constants.Typography.H1.font)
                             .foregroundColor(Constants.Colors.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
                         
                         Text("Last updated: January 26, 2025")
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
+                            .accessibilityLabel("Last updated on January 26, 2025")
                     }
                     
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.large) {
@@ -221,10 +225,12 @@ struct FontLicensingView: View {
                         Text("Font Licensing")
                             .font(Constants.Typography.H1.font)
                             .foregroundColor(Constants.Colors.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
                         
                         Text("Trap Font Family Licensing Information")
                             .font(Constants.Typography.Body.font)
                             .foregroundColor(Constants.Colors.textSecondary)
+                            .accessibilityLabel("Trap Font Family Licensing Information")
                     }
                     
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.large) {
@@ -347,10 +353,12 @@ struct VersionHistoryView: View {
                         Text("Version History")
                             .font(Constants.Typography.H1.font)
                             .foregroundColor(Constants.Colors.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
                         
                         Text("Track the evolution of Money Manager")
                             .font(Constants.Typography.Body.font)
                             .foregroundColor(Constants.Colors.textSecondary)
+                            .accessibilityLabel("Track the evolution of Money Manager")
                     }
                     
                     VStack(spacing: 0) {
@@ -393,12 +401,18 @@ private struct PolicySection: View {
                 .font(Constants.Typography.H3.font)
                 .fontWeight(.semibold)
                 .foregroundColor(Constants.Colors.textPrimary)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h3)
             
             Text(content)
                 .font(Constants.Typography.Body.font)
                 .foregroundColor(Constants.Colors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
+                .accessibilityLabel(content)
+                .accessibilityElement(children: .combine)
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("\(title). \(content)")
     }
 }
 
@@ -444,10 +458,13 @@ private struct GitStyleVersionCard: View {
                             .font(Constants.Typography.H3.font)
                             .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityHeading(.h3)
                         
                         Text(version.date)
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
+                            .accessibilityLabel("Released on \(version.date)")
                     }
                     
                     Spacer()
@@ -456,10 +473,12 @@ private struct GitStyleVersionCard: View {
                         Image(systemName: "star.fill")
                             .font(.title3)
                             .foregroundColor(Constants.Colors.warning)
+                            .accessibilityLabel("Latest version")
                     } else {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.title3)
                             .foregroundColor(Constants.Colors.success)
+                            .accessibilityLabel("Completed version")
                     }
                 }
                 
@@ -470,6 +489,7 @@ private struct GitStyleVersionCard: View {
                                 .font(.caption)
                                 .foregroundColor(Constants.Colors.success)
                                 .padding(.top, 2)
+                                .accessibilityHidden(true)
                             
                             Text(feature)
                                 .font(Constants.Typography.BodySmall.font)
@@ -478,12 +498,16 @@ private struct GitStyleVersionCard: View {
                         }
                     }
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Features: \(version.features.joined(separator: ", "))")
             }
             .padding(Constants.UI.Padding.cardInternal)
             .background(Constants.Colors.textPrimary.opacity(0.05))
             .cornerRadius(Constants.UI.CornerRadius.secondary)
         }
         .padding(.vertical, Constants.UI.Spacing.small)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Version \(version.version), released \(version.date). Features: \(version.features.joined(separator: ", "))")
     }
 }
 

@@ -21,10 +21,12 @@ struct ExportDataView: View {
                     Text("Export Data")
                         .font(Constants.Typography.H1.font)
                         .foregroundColor(Constants.Colors.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
                     
                     Text("Choose what data you want to export to CSV format")
                         .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textSecondary)
+                        .accessibilityLabel("Choose what data you want to export to CSV format")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -112,7 +114,7 @@ struct ExportDataView: View {
     }
     
     private func performExport() async {
-        exportFileURL = await exportService.exportData(type: selectedExportType)
+        exportFileURL = await exportService.createShareableFile(type: selectedExportType)
         if exportFileURL != nil {
             showingShareSheet = true
         }
@@ -133,11 +135,14 @@ private struct ExportTypeCard: View {
                         .font(Constants.Typography.H3.font)
                         .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityHeading(.h3)
                     
                     Text(exportType.description)
                         .font(Constants.Typography.BodySmall.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                         .multilineTextAlignment(.leading)
+                        .accessibilityLabel(exportType.description)
                 }
                 
                 Spacer()
@@ -145,6 +150,7 @@ private struct ExportTypeCard: View {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.title2)
                     .foregroundColor(isSelected ? Constants.Colors.primaryBlue : Constants.Colors.textSecondary)
+                    .accessibilityLabel(isSelected ? "Selected" : "Not selected")
             }
             .padding(Constants.UI.Padding.cardInternal)
             .background(
@@ -157,6 +163,9 @@ private struct ExportTypeCard: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("\(exportType.displayName). \(exportType.description). \(isSelected ? "Selected" : "Not selected")")
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }
 
@@ -166,6 +175,29 @@ struct ShareSheet: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+        // Configure for better iOS compatibility
+        controller.excludedActivityTypes = [
+            .assignToContact,
+            .saveToCameraRoll,
+            .addToReadingList,
+            .postToFlickr,
+            .postToVimeo,
+            .postToTencentWeibo,
+            .postToTwitter,
+            .postToFacebook
+        ]
+        
+        // Ensure proper presentation on iPad
+        if let popover = controller.popoverPresentationController {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                popover.sourceView = window.rootViewController?.view
+                popover.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
+                popover.permittedArrowDirections = []
+            }
+        }
+        
         return controller
     }
     

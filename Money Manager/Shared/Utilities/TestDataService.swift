@@ -20,20 +20,20 @@ class TestDataService: ObservableObject {
     private static func addTestTransactions(to viewModel: TransactionViewModel) {
         let testTransactions = [
             Transaction(title: "Salary Deposit", amount: 3500.00, date: Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date(), category: "Income"),
-            Transaction(title: "Grocery Shopping", amount: -125.50, date: Calendar.current.date(byAdding: .day, value: -4, to: Date()) ?? Date(), category: "Food & Dining"),
-            Transaction(title: "Gas Station", amount: -45.00, date: Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date(), category: "Transportation"),
+            Transaction(title: "Grocery Shopping", amount: -125.50, date: Calendar.current.date(byAdding: .day, value: -4, to: Date()) ?? Date(), category: "Food"),
+            Transaction(title: "Gas Station", amount: -45.00, date: Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date(), category: "Transport"),
             Transaction(title: "Netflix Subscription", amount: -15.99, date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), category: "Entertainment"),
-            Transaction(title: "Coffee Shop", amount: -8.50, date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), category: "Food & Dining"),
+            Transaction(title: "Coffee Shop", amount: -8.50, date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), category: "Food"),
             Transaction(title: "Freelance Work", amount: 500.00, date: Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date(), category: "Income"),
-            Transaction(title: "Electric Bill", amount: -85.25, date: Calendar.current.date(byAdding: .day, value: -6, to: Date()) ?? Date(), category: "Utilities"),
-            Transaction(title: "Restaurant Dinner", amount: -67.80, date: Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date(), category: "Food & Dining"),
-            Transaction(title: "Uber Ride", amount: -12.50, date: Calendar.current.date(byAdding: .day, value: -4, to: Date()) ?? Date(), category: "Transportation"),
+            Transaction(title: "Electric Bill", amount: -85.25, date: Calendar.current.date(byAdding: .day, value: -6, to: Date()) ?? Date(), category: "Bills"),
+            Transaction(title: "Restaurant Dinner", amount: -67.80, date: Calendar.current.date(byAdding: .day, value: -5, to: Date()) ?? Date(), category: "Food"),
+            Transaction(title: "Uber Ride", amount: -12.50, date: Calendar.current.date(byAdding: .day, value: -4, to: Date()) ?? Date(), category: "Transport"),
             Transaction(title: "Amazon Purchase", amount: -89.99, date: Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date(), category: "Shopping"),
-            Transaction(title: "Gym Membership", amount: -29.99, date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), category: "Health & Fitness"),
+            Transaction(title: "Gym Membership", amount: -29.99, date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(), category: "Healthcare"),
             Transaction(title: "Bank Transfer", amount: 200.00, date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(), category: "Income"),
-            Transaction(title: "Pharmacy", amount: -35.75, date: Calendar.current.date(byAdding: .day, value: -8, to: Date()) ?? Date(), category: "Health & Fitness"),
+            Transaction(title: "Pharmacy", amount: -35.75, date: Calendar.current.date(byAdding: .day, value: -8, to: Date()) ?? Date(), category: "Healthcare"),
             Transaction(title: "Movie Tickets", amount: -24.00, date: Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date(), category: "Entertainment"),
-            Transaction(title: "Parking Fee", amount: -15.00, date: Calendar.current.date(byAdding: .day, value: -6, to: Date()) ?? Date(), category: "Transportation")
+            Transaction(title: "Parking Fee", amount: -15.00, date: Calendar.current.date(byAdding: .day, value: -6, to: Date()) ?? Date(), category: "Transport")
         ]
         
         for transaction in testTransactions {
@@ -44,12 +44,12 @@ class TestDataService: ObservableObject {
     /// Add sample budgets
     private static func addTestBudgets(to viewModel: BudgetViewModel) {
         let testBudgets = [
-            Budget(category: "Food & Dining", allocatedAmount: 500.00, spentAmount: 201.80, remainingAmount: 298.20),
-            Budget(category: "Transportation", allocatedAmount: 200.00, spentAmount: 72.50, remainingAmount: 127.50),
+            Budget(category: "Food", allocatedAmount: 500.00, spentAmount: 201.80, remainingAmount: 298.20),
+            Budget(category: "Transport", allocatedAmount: 200.00, spentAmount: 72.50, remainingAmount: 127.50),
             Budget(category: "Entertainment", allocatedAmount: 150.00, spentAmount: 39.99, remainingAmount: 110.01),
-            Budget(category: "Utilities", allocatedAmount: 300.00, spentAmount: 85.25, remainingAmount: 214.75),
+            Budget(category: "Bills", allocatedAmount: 300.00, spentAmount: 85.25, remainingAmount: 214.75),
             Budget(category: "Shopping", allocatedAmount: 200.00, spentAmount: 89.99, remainingAmount: 110.01),
-            Budget(category: "Health & Fitness", allocatedAmount: 100.00, spentAmount: 65.74, remainingAmount: 34.26),
+            Budget(category: "Healthcare", allocatedAmount: 100.00, spentAmount: 65.74, remainingAmount: 34.26),
             Budget(category: "Income", allocatedAmount: 4000.00, spentAmount: 0.00, remainingAmount: 4000.00),
             Budget(category: "Savings", allocatedAmount: 800.00, spentAmount: 0.00, remainingAmount: 800.00)
         ]

@@ -41,6 +41,25 @@ class DataExportService: ObservableObject {
         }
     }
     
+    /// Create a shareable file URL for the specified data type
+    func createShareableFile(type: ExportDataType) async -> URL? {
+        isExporting = true
+        exportError = nil
+        
+        do {
+            let csvContent = try generateCSVContent(for: type)
+            let fileName = generateFileName(for: type)
+            let url = try createShareableFile(content: csvContent, fileName: fileName)
+            
+            isExporting = false
+            return url
+        } catch {
+            exportError = error.localizedDescription
+            isExporting = false
+            return nil
+        }
+    }
+    
     /// Generate CSV content for the specified data type
     private func generateCSVContent(for type: ExportDataType) throws -> String {
         switch type {
@@ -170,12 +189,46 @@ class DataExportService: ObservableObject {
         }
     }
     
-    /// Save CSV content to a temporary file
+    /// Save CSV content to a file in Documents directory
     private func saveCSVToFile(content: String, fileName: String) throws -> URL {
+        // Use Documents directory instead of temporary directory for better iOS compatibility
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        
+        // Remove existing file if it exists
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            try FileManager.default.removeItem(at: fileURL)
+        }
+        
+        try content.write(to: fileURL, atomically: true, encoding: .utf8)
+        
+        // Ensure file is accessible for sharing
+        var resourceValues = URLResourceValues()
+        resourceValues.isExcludedFromBackup = true
+        var mutableFileURL = fileURL
+        try mutableFileURL.setResourceValues(resourceValues)
+        
+        return fileURL
+    }
+    
+    /// Create a shareable file with proper iOS permissions
+    private func createShareableFile(content: String, fileName: String) throws -> URL {
+        // Create a temporary file with proper permissions
         let tempDirectory = FileManager.default.temporaryDirectory
         let fileURL = tempDirectory.appendingPathComponent(fileName)
         
+        // Remove existing file if it exists
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            try FileManager.default.removeItem(at: fileURL)
+        }
+        
+        // Write content to file
         try content.write(to: fileURL, atomically: true, encoding: .utf8)
+        
+        // Set proper file attributes for sharing
+        var attributes: [FileAttributeKey: Any] = [:]
+        attributes[.posixPermissions] = 0o644
+        try FileManager.default.setAttributes(attributes, ofItemAtPath: fileURL.path)
         
         return fileURL
     }
