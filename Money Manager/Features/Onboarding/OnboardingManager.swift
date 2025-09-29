@@ -17,12 +17,18 @@ class OnboardingManager: ObservableObject {
     }
     
     func completeOnboarding() {
+        #if DEBUG
         print("🎯 OnboardingManager.completeOnboarding() called")
+        #endif
         userDefaults.set(true, forKey: onboardingCompletedKey)
+        #if DEBUG
         print("🎯 UserDefaults set: onboarding_completed = true")
+        #endif
         shouldShowOnboarding = false
+        #if DEBUG
         print("🎯 shouldShowOnboarding set to: \(shouldShowOnboarding)")
         print("🎯 Navigation should now switch to ContentView")
+        #endif
     }
     
     func resetOnboarding() {

@@ -1,8 +1,8 @@
 # iOS Design System Specifications
-## ABC Budgeting & Expense Tracking App
+## Money Manager & Expense Tracking App
 
 ### Overview
-This document outlines the comprehensive design system for the ABC Budgeting app, implementing the 8pt grid system, typography hierarchy, and spacing rules to ensure consistent, scalable design across all screen sizes while maintaining the clean, professional fintech aesthetic.
+This document outlines the comprehensive design system for the Money Manager app, implementing the 8pt grid system, typography hierarchy, and spacing rules to ensure consistent, scalable design across all screen sizes while maintaining the clean, professional fintech aesthetic.
 
 ---
 
@@ -262,4 +262,4 @@ Button("Primary Action") {
 - **Animation**: Spacing and typography for smooth transitions
 - **Internationalization**: Typography adjustments for different languages
 
-This design system ensures consistent, scalable, and accessible design across your entire ABC Budgeting app while maintaining the clean, professional fintech aesthetic.
+This design system ensures consistent, scalable, and accessible design across your entire Money Manager app while maintaining the clean, professional fintech aesthetic.

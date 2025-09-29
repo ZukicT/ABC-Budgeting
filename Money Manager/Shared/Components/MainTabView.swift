@@ -7,6 +7,8 @@ struct MainTabView: View {
     @StateObject private var loanViewModel = LoanViewModel()
     @StateObject private var budgetViewModel = BudgetViewModel()
     @StateObject private var transactionViewModel = TransactionViewModel()
+    @StateObject private var dataClearingService = DataClearingService()
+    @StateObject private var budgetTransactionService = BudgetTransactionService()
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -16,7 +18,8 @@ struct MainTabView: View {
                 },
                 loanViewModel: loanViewModel,
                 budgetViewModel: budgetViewModel,
-                transactionViewModel: transactionViewModel
+                transactionViewModel: transactionViewModel,
+                dataClearingService: dataClearingService
             )
                 .tabItem {
                     Image(systemName: "chart.pie.fill")
@@ -26,7 +29,12 @@ struct MainTabView: View {
                 .accessibilityLabel("Overview tab")
                 .accessibilityHint("View your financial overview and summary")
             
-            TransactionView(viewModel: transactionViewModel)
+            TransactionView(
+                viewModel: transactionViewModel, 
+                dataClearingService: dataClearingService,
+                loanViewModel: loanViewModel,
+                budgetViewModel: budgetViewModel
+            )
                 .tabItem {
                     Image(systemName: "list.bullet")
                     Text("Transactions")
@@ -35,7 +43,12 @@ struct MainTabView: View {
                 .accessibilityLabel("Transactions tab")
                 .accessibilityHint("View and manage your transactions")
             
-            BudgetView(viewModel: budgetViewModel)
+            BudgetView(
+                viewModel: budgetViewModel, 
+                dataClearingService: dataClearingService,
+                loanViewModel: loanViewModel,
+                transactionViewModel: transactionViewModel
+            )
                 .tabItem {
                     Image(systemName: "dollarsign.circle.fill")
                     Text("Budget")
@@ -44,7 +57,12 @@ struct MainTabView: View {
                 .accessibilityLabel("Budget tab")
                 .accessibilityHint("Manage your budget and spending limits")
             
-            LoanView(viewModel: loanViewModel)
+            LoanView(
+                viewModel: loanViewModel, 
+                dataClearingService: dataClearingService,
+                budgetViewModel: budgetViewModel,
+                transactionViewModel: transactionViewModel
+            )
                 .tabItem {
                     Image(systemName: "creditcard.fill")
                     Text("Loans")
@@ -53,9 +71,25 @@ struct MainTabView: View {
                 .accessibilityLabel("Loans tab")
                 .accessibilityHint("View and manage your loans")
         }
-        .accentColor(Constants.Colors.robinNeonGreen)
+        .accentColor(Constants.Colors.accentColor)
         .preferredColorScheme(.none) // Respects system appearance
         .onAppear {
+            // Set up DataClearingService with ViewModels
+            dataClearingService.setViewModels(
+                transactionViewModel: transactionViewModel,
+                budgetViewModel: budgetViewModel,
+                loanViewModel: loanViewModel
+            )
+            
+            // Set up BudgetTransactionService
+            budgetTransactionService.setViewModels(
+                transactionViewModel: transactionViewModel,
+                budgetViewModel: budgetViewModel
+            )
+            
+            // Connect TransactionViewModel to BudgetTransactionService
+            transactionViewModel.setBudgetTransactionService(budgetTransactionService)
+            
             // Preload all data when the app starts for seamless tab switching
             preloadAllData()
         }

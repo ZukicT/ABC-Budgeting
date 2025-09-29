@@ -2,27 +2,15 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var notificationsEnabled = true
-    @State private var darkModeEnabled = false
-    @State private var biometricEnabled = true
-    @State private var currency = "USD"
-    @State private var budgetPeriod = "Monthly"
-    
-    private let currencies = [
-        // Major Global Currencies
-        "USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "NZD",
-        // Asian Currencies
-        "CNY", "HKD", "SGD", "KRW", "THB", "MYR", "PHP", "IDR", "VND", "INR", "PKR", "BDT", "LKR", "NPR", "MMK", "KHR", "LAK", "BND", "TWD", "MOP",
-        // European Currencies
-        "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "RON", "BGN", "HRK", "RSD", "UAH", "RUB", "TRY", "ISK",
-        // Middle East & Africa
-        "AED", "SAR", "QAR", "KWD", "BHD", "OMR", "JOD", "ILS", "EGP", "ZAR", "NGN", "KES", "GHS", "MAD", "TND", "DZD",
-        // Americas
-        "BRL", "MXN", "ARS", "CLP", "COP", "PEN", "UYU", "BOB", "PYG", "VES", "GTQ", "HNL", "NIO", "CRC", "PAB", "DOP", "JMD", "TTD", "BBD", "XCD",
-        // Other Major Currencies
-        "RUB", "ZAR", "BRL", "MXN", "INR", "CNY", "KRW", "SGD", "HKD", "TWD"
-    ]
-    private let budgetPeriods = ["Weekly", "Monthly", "Yearly"]
+    @ObservedObject var dataClearingService: DataClearingService
+    @StateObject private var settingsViewModel = SettingsViewModel()
+    @State private var showClearDataConfirmation = false
+    @State private var showPrivacyPolicy = false
+    @State private var showTermsOfService = false
+    @State private var showVersionHistory = false
+    @State private var showFontLicensing = false
+    @State private var showExportData = false
+    @State private var hasTestData = false
     
     var body: some View {
         NavigationStack {
@@ -36,43 +24,13 @@ struct SettingsView: View {
                                 SettingsToggle(
                                     title: "Push Notifications",
                                     subtitle: "Receive alerts for budget limits and payments",
-                                    isOn: $notificationsEnabled
+                                    isOn: $settingsViewModel.notificationsEnabled
                                 )
                                 
                                 SettingsToggle(
                                     title: "Budget Alerts",
                                     subtitle: "Get notified when approaching budget limits",
-                                    isOn: $notificationsEnabled
-                                )
-                            }
-                        }
-                        
-                        // Security Section
-                        SettingsSection(title: "Security", icon: "lock.fill") {
-                            VStack(spacing: Constants.UI.Spacing.medium) {
-                                SettingsToggle(
-                                    title: "Biometric Authentication",
-                                    subtitle: "Use Face ID or Touch ID to secure the app",
-                                    isOn: $biometricEnabled
-                                )
-                                
-                                SettingsButton(
-                                    title: "Change Passcode",
-                                    subtitle: "Update your app passcode",
-                                    action: {
-                                        // TODO: Implement change passcode
-                                    }
-                                )
-                            }
-                        }
-                        
-                        // Appearance Section
-                        SettingsSection(title: "Appearance", icon: "paintbrush.fill") {
-                            VStack(spacing: Constants.UI.Spacing.medium) {
-                                SettingsToggle(
-                                    title: "Dark Mode",
-                                    subtitle: "Switch between light and dark themes",
-                                    isOn: $darkModeEnabled
+                                    isOn: $settingsViewModel.budgetAlertsEnabled
                                 )
                             }
                         }
@@ -83,14 +41,16 @@ struct SettingsView: View {
                                 SettingsCurrencyPicker(
                                     title: "Default Currency",
                                     subtitle: "Choose your preferred currency",
-                                    selection: $currency
+                                    selection: $settingsViewModel.selectedCurrency,
+                                    currencies: SettingsViewModel.availableCurrencies,
+                                    currencyNames: SettingsViewModel.currencyDisplayNames
                                 )
                                 
                                 SettingsPicker(
                                     title: "Budget Period",
                                     subtitle: "Set your default budget timeframe",
-                                    selection: $budgetPeriod,
-                                    options: budgetPeriods
+                                    selection: $settingsViewModel.budgetPeriod,
+                                    options: SettingsViewModel.availableBudgetPeriods
                                 )
                             }
                         }
@@ -100,19 +60,42 @@ struct SettingsView: View {
                             VStack(spacing: Constants.UI.Spacing.medium) {
                                 SettingsButton(
                                     title: "Export Data",
-                                    subtitle: "Download your budget data",
+                                    subtitle: "Download your financial data as CSV",
                                     action: {
-                                        // TODO: Implement export data
+                                        showExportData = true
                                     }
                                 )
                                 
-                                SettingsButton(
+                                SettingsDestructiveButton(
                                     title: "Clear All Data",
                                     subtitle: "Remove all transactions and budgets",
                                     action: {
-                                        // TODO: Implement clear data
+                                        showClearDataConfirmation = true
                                     }
                                 )
+                            }
+                        }
+                        
+                        // Test Data Section (Development Only)
+                        SettingsSection(title: "Test Data", icon: "testtube.2") {
+                            VStack(spacing: Constants.UI.Spacing.medium) {
+                                if hasTestData {
+                                    SettingsButton(
+                                        title: "Remove Test Data",
+                                        subtitle: "Clear all sample data",
+                                        action: {
+                                            removeTestData()
+                                        }
+                                    )
+                                } else {
+                                    SettingsButton(
+                                        title: "Add Test Data",
+                                        subtitle: "Add sample transactions, budgets, and loans",
+                                        action: {
+                                            addTestData()
+                                        }
+                                    )
+                                }
                             }
                         }
                         
@@ -121,14 +104,14 @@ struct SettingsView: View {
                             VStack(spacing: Constants.UI.Spacing.medium) {
                                 SettingsAboutItem(
                                     title: "App Version",
-                                    value: "1.0.0"
+                                    value: settingsViewModel.appVersion
                                 )
                                 
                                 SettingsButton(
                                     title: "Version History",
                                     subtitle: "View recent updates and changes",
                                     action: {
-                                        // TODO: Implement version history
+                                        showVersionHistory = true
                                     }
                                 )
                                 
@@ -136,7 +119,7 @@ struct SettingsView: View {
                                     title: "Privacy Policy",
                                     subtitle: "Read our privacy policy",
                                     action: {
-                                        // TODO: Implement privacy policy
+                                        showPrivacyPolicy = true
                                     }
                                 )
                                 
@@ -144,7 +127,15 @@ struct SettingsView: View {
                                     title: "Terms of Service",
                                     subtitle: "Read our terms of service",
                                     action: {
-                                        // TODO: Implement terms of service
+                                        showTermsOfService = true
+                                    }
+                                )
+                                
+                                SettingsButton(
+                                    title: "Font Licensing",
+                                    subtitle: "Trap font family licensing information",
+                                    action: {
+                                        showFontLicensing = true
                                     }
                                 )
                             }
@@ -165,7 +156,71 @@ struct SettingsView: View {
                     .foregroundColor(Constants.Colors.textPrimary)
                 }
             }
+            .alert("Clear All Data", isPresented: $showClearDataConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Clear All Data", role: .destructive) {
+                    dataClearingService.clearAllData()
+                }
+            } message: {
+                Text("This will permanently delete all your transactions, budgets, and loans. This action cannot be undone. You will be asked to set a new starting balance.")
+            }
+            .fullScreenCover(isPresented: $dataClearingService.showStartingBalancePrompt) {
+                StartingBalancePromptView(dataClearingService: dataClearingService)
+            }
+            .sheet(isPresented: $showPrivacyPolicy) {
+                PrivacyPolicyView()
+            }
+            .sheet(isPresented: $showTermsOfService) {
+                TermsOfServiceView()
+            }
+            .sheet(isPresented: $showVersionHistory) {
+                VersionHistoryView()
+            }
+            .sheet(isPresented: $showFontLicensing) {
+                FontLicensingView()
+            }
+            .sheet(isPresented: $showExportData) {
+                ExportDataView(
+                    transactionViewModel: dataClearingService.transactionViewModel ?? TransactionViewModel(),
+                    budgetViewModel: dataClearingService.budgetViewModel ?? BudgetViewModel(),
+                    loanViewModel: dataClearingService.loanViewModel ?? LoanViewModel()
+                )
+            }
         }
+    }
+    
+    // MARK: - Test Data Functions
+    
+    private func addTestData() {
+        guard let transactionViewModel = dataClearingService.transactionViewModel,
+              let budgetViewModel = dataClearingService.budgetViewModel,
+              let loanViewModel = dataClearingService.loanViewModel else {
+            return
+        }
+        
+        TestDataService.addTestData(
+            transactionViewModel: transactionViewModel,
+            budgetViewModel: budgetViewModel,
+            loanViewModel: loanViewModel
+        )
+        
+        hasTestData = true
+    }
+    
+    private func removeTestData() {
+        guard let transactionViewModel = dataClearingService.transactionViewModel,
+              let budgetViewModel = dataClearingService.budgetViewModel,
+              let loanViewModel = dataClearingService.loanViewModel else {
+            return
+        }
+        
+        TestDataService.clearTestData(
+            transactionViewModel: transactionViewModel,
+            budgetViewModel: budgetViewModel,
+            loanViewModel: loanViewModel
+        )
+        
+        hasTestData = false
     }
 }
 
@@ -265,37 +320,45 @@ private struct SettingsButton: View {
     }
 }
 
+// MARK: - Settings Destructive Button
+private struct SettingsDestructiveButton: View {
+    let title: String
+    let subtitle: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: Constants.UI.Spacing.medium) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(Constants.Typography.Body.font)
+                        .fontWeight(.medium)
+                        .foregroundColor(Color(hex: "#FE3A01"))
+                    
+                    Text(subtitle)
+                        .font(Constants.Typography.Caption.font)
+                        .foregroundColor(Constants.Colors.textSecondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(Constants.Colors.textSecondary)
+            }
+            .padding(Constants.UI.Padding.cardInternal)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
 // MARK: - Settings Currency Picker
 private struct SettingsCurrencyPicker: View {
     let title: String
     let subtitle: String
     @Binding var selection: String
-    
-    private let currencyNames: [String: String] = [
-        // Major Global Currencies
-        "USD": "US Dollar", "EUR": "Euro", "GBP": "British Pound", "JPY": "Japanese Yen", "CHF": "Swiss Franc", "CAD": "Canadian Dollar", "AUD": "Australian Dollar", "NZD": "New Zealand Dollar",
-        // Asian Currencies
-        "CNY": "Chinese Yuan", "HKD": "Hong Kong Dollar", "SGD": "Singapore Dollar", "KRW": "South Korean Won", "THB": "Thai Baht", "MYR": "Malaysian Ringgit", "PHP": "Philippine Peso", "IDR": "Indonesian Rupiah", "VND": "Vietnamese Dong", "INR": "Indian Rupee", "PKR": "Pakistani Rupee", "BDT": "Bangladeshi Taka", "LKR": "Sri Lankan Rupee", "NPR": "Nepalese Rupee", "MMK": "Myanmar Kyat", "KHR": "Cambodian Riel", "LAK": "Lao Kip", "BND": "Brunei Dollar", "TWD": "Taiwan Dollar", "MOP": "Macanese Pataca",
-        // European Currencies
-        "SEK": "Swedish Krona", "NOK": "Norwegian Krone", "DKK": "Danish Krone", "PLN": "Polish Złoty", "CZK": "Czech Koruna", "HUF": "Hungarian Forint", "RON": "Romanian Leu", "BGN": "Bulgarian Lev", "HRK": "Croatian Kuna", "RSD": "Serbian Dinar", "UAH": "Ukrainian Hryvnia", "RUB": "Russian Ruble", "TRY": "Turkish Lira", "ISK": "Icelandic Króna",
-        // Middle East & Africa
-        "AED": "UAE Dirham", "SAR": "Saudi Riyal", "QAR": "Qatari Riyal", "KWD": "Kuwaiti Dinar", "BHD": "Bahraini Dinar", "OMR": "Omani Rial", "JOD": "Jordanian Dinar", "ILS": "Israeli Shekel", "EGP": "Egyptian Pound", "ZAR": "South African Rand", "NGN": "Nigerian Naira", "KES": "Kenyan Shilling", "GHS": "Ghanaian Cedi", "MAD": "Moroccan Dirham", "TND": "Tunisian Dinar", "DZD": "Algerian Dinar",
-        // Americas
-        "BRL": "Brazilian Real", "MXN": "Mexican Peso", "ARS": "Argentine Peso", "CLP": "Chilean Peso", "COP": "Colombian Peso", "PEN": "Peruvian Sol", "UYU": "Uruguayan Peso", "BOB": "Bolivian Boliviano", "PYG": "Paraguayan Guarani", "VES": "Venezuelan Bolívar", "GTQ": "Guatemalan Quetzal", "HNL": "Honduran Lempira", "NIO": "Nicaraguan Córdoba", "CRC": "Costa Rican Colón", "PAB": "Panamanian Balboa", "DOP": "Dominican Peso", "JMD": "Jamaican Dollar", "TTD": "Trinidad and Tobago Dollar", "BBD": "Barbadian Dollar", "XCD": "East Caribbean Dollar"
-    ]
-    
-    private let currencies = [
-        // Major Global Currencies
-        "USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "NZD",
-        // Asian Currencies
-        "CNY", "HKD", "SGD", "KRW", "THB", "MYR", "PHP", "IDR", "VND", "INR", "PKR", "BDT", "LKR", "NPR", "MMK", "KHR", "LAK", "BND", "TWD", "MOP",
-        // European Currencies
-        "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "RON", "BGN", "HRK", "RSD", "UAH", "RUB", "TRY", "ISK",
-        // Middle East & Africa
-        "AED", "SAR", "QAR", "KWD", "BHD", "OMR", "JOD", "ILS", "EGP", "ZAR", "NGN", "KES", "GHS", "MAD", "TND", "DZD",
-        // Americas
-        "BRL", "MXN", "ARS", "CLP", "COP", "PEN", "UYU", "BOB", "PYG", "VES", "GTQ", "HNL", "NIO", "CRC", "PAB", "DOP", "JMD", "TTD", "BBD", "XCD"
-    ]
+    let currencies: [String]
+    let currencyNames: [String: String]
     
     var body: some View {
         HStack(spacing: Constants.UI.Spacing.medium) {
@@ -387,5 +450,5 @@ private struct SettingsPicker: View {
 }
 
 #Preview {
-    SettingsView()
+    SettingsView(dataClearingService: DataClearingService())
 }

@@ -48,7 +48,7 @@ struct AddView: View {
         var color: Color {
             switch self {
             case .transaction: return Constants.Colors.cleanBlack
-            case .budget: return Constants.Colors.robinNeonGreen
+            case .budget: return Constants.Colors.accentColor
             case .loan: return Constants.Colors.softRed
             }
         }
@@ -59,14 +59,26 @@ struct AddView: View {
             ScrollView {
                 VStack(spacing: Constants.UI.Spacing.large) {
                     // Type Selector
-                    HStack(spacing: Constants.UI.Spacing.small) {
-                        ForEach(AddType.allCases, id: \.self) { type in
-                            TypeButton(
-                                type: type,
-                                isSelected: selectedType == type,
-                                action: { selectedType = type }
-                            )
+                    VStack(spacing: Constants.UI.Spacing.medium) {
+                        Text("What would you like to add?")
+                            .font(Constants.Typography.H3.font)
+                            .fontWeight(.semibold)
+                            .foregroundColor(Constants.Colors.textPrimary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Picker("Type", selection: $selectedType) {
+                            ForEach(AddType.allCases, id: \.self) { type in
+                                Text(type.rawValue)
+                                    .font(Constants.Typography.Body.font)
+                                    .fontWeight(.medium)
+                                    .tag(type)
+                            }
                         }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Constants.Colors.textPrimary.opacity(0.05))
+                        )
                     }
                     .padding(.horizontal, Constants.UI.Padding.screenMargin)
                     .padding(.top, Constants.UI.Spacing.medium)
@@ -101,36 +113,6 @@ struct AddView: View {
     }
 }
 
-// MARK: - Type Button
-private struct TypeButton: View {
-    let type: AddView.AddType
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: Constants.UI.Spacing.small) {
-                Image(systemName: type.icon)
-                    .font(.title2)
-                    .foregroundColor(isSelected ? .white : type.color)
-                
-                Text(type.rawValue)
-                    .font(Constants.Typography.Caption.font)
-                    .fontWeight(isSelected ? .semibold : .medium)
-                    .foregroundColor(isSelected ? .white : Constants.Colors.textPrimary)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, Constants.UI.Spacing.medium)
-            .background(
-                RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
-                    .fill(isSelected ? type.color : Constants.Colors.backgroundSecondary)
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-        .accessibilityLabel("Add \(type.rawValue)")
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-    }
-}
 
 // MARK: - Transaction Form
 private struct TransactionForm: View {
@@ -142,6 +124,7 @@ private struct TransactionForm: View {
     @State private var date = Date()
     @State private var isExpense = true
     @State private var showingSuccess = false
+    @State private var isSubmitting = false
     @State private var isRecurring = false
     @State private var recurringFrequency = "Monthly"
     @State private var weeklyDay = "Monday"
@@ -166,47 +149,28 @@ private struct TransactionForm: View {
     }
     
     private var isValid: Bool {
-        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        !amount.isEmpty &&
-        Double(amount) != nil &&
-        Double(amount)! > 0
+        guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !amount.isEmpty,
+              let amountValue = Double(amount),
+              amountValue > 0 else {
+            return false
+        }
+        return true
     }
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
-            // Transaction Type Toggle
-            HStack(spacing: 0) {
-                Button(action: { isExpense = true }) {
-                    Text("Expense")
-                        .font(Constants.Typography.Body.font)
-                        .fontWeight(.medium)
-                        .foregroundColor(isExpense ? .white : Constants.Colors.textPrimary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, Constants.UI.Spacing.medium)
-                        .background(
-                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                .fill(isExpense ? Constants.Colors.softRed : Constants.Colors.backgroundSecondary)
-                        )
-                }
-                .buttonStyle(PlainButtonStyle())
-                
-                Button(action: { isExpense = false }) {
-                    Text("Income")
-                        .font(Constants.Typography.Body.font)
-                        .fontWeight(.medium)
-                        .foregroundColor(!isExpense ? .white : Constants.Colors.textPrimary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, Constants.UI.Spacing.medium)
-                        .background(
-                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                .fill(!isExpense ? Constants.Colors.robinNeonGreen : Constants.Colors.backgroundSecondary)
-                        )
-                }
-                .buttonStyle(PlainButtonStyle())
+            // Transaction Type Picker
+            Picker("Transaction Type", selection: $isExpense) {
+                Text("Expense")
+                    .tag(true)
+                Text("Income")
+                    .tag(false)
             }
+            .pickerStyle(SegmentedPickerStyle())
             .background(
-                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                    .fill(Constants.Colors.backgroundSecondary)
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Constants.Colors.textPrimary.opacity(0.05))
             )
             
             // Form Fields
@@ -221,8 +185,8 @@ private struct TransactionForm: View {
                     TextField("Enter transaction title", text: $title)
                         .font(Constants.Typography.Body.font)
                         .padding(Constants.UI.Spacing.medium)
-                        .background(Constants.Colors.backgroundSecondary)
-                        .cornerRadius(Constants.UI.cardCornerRadius)
+                        .background(Constants.Colors.textPrimary.opacity(0.05))
+                        .cornerRadius(8)
                 }
                 
                 // Amount
@@ -243,8 +207,8 @@ private struct TransactionForm: View {
                             .font(Constants.Typography.Body.font)
                     }
                     .padding(Constants.UI.Spacing.medium)
-                    .background(Constants.Colors.backgroundSecondary)
-                    .cornerRadius(Constants.UI.cardCornerRadius)
+                    .background(Constants.Colors.textPrimary.opacity(0.05))
+                    .cornerRadius(8)
                 }
                 
                 // Category
@@ -265,8 +229,8 @@ private struct TransactionForm: View {
                                         .padding(.horizontal, Constants.UI.Spacing.medium)
                                         .padding(.vertical, Constants.UI.Spacing.small)
                                         .background(
-                                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
-                                                .fill(category == cat ? Constants.Colors.cleanBlack : Constants.Colors.backgroundSecondary)
+                                            RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
+                                                .fill(category == cat ? Constants.Colors.cleanBlack : Constants.Colors.textPrimary.opacity(0.05))
                                         )
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -400,30 +364,40 @@ private struct TransactionForm: View {
             
             // Submit Button
             Button(action: submitTransaction) {
-                Text(showingSuccess ? "Transaction Added!" : "Add Transaction")
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, Constants.UI.Spacing.medium)
-                    .background(isValid ? Constants.Colors.cleanBlack : Constants.Colors.textTertiary)
-                    .cornerRadius(Constants.UI.cardCornerRadius)
+                HStack {
+                    if isSubmitting {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(0.8)
+                    }
+                    
+                    Text(showingSuccess ? "Transaction Added!" : "Add Transaction")
+                        .font(Constants.Typography.Body.font)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background((isValid && !isSubmitting) ? Constants.Colors.cleanBlack : Constants.Colors.textTertiary)
+                .cornerRadius(Constants.UI.cardCornerRadius)
             }
-            .disabled(!isValid)
+            .disabled(!isValid || isSubmitting)
             .animation(.easeInOut(duration: 0.2), value: isValid)
             .animation(.easeInOut(duration: 0.3), value: showingSuccess)
             
             if showingSuccess {
                 Text("Transaction added successfully!")
                     .font(Constants.Typography.Caption.font)
-                    .foregroundColor(Constants.Colors.robinNeonGreen)
+                    .foregroundColor(Constants.Colors.accentColor)
                     .transition(.opacity)
             }
         }
     }
     
     private func submitTransaction() {
-        guard isValid else { return }
+        guard isValid && !isSubmitting else { return }
+        
+        isSubmitting = true
         
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.impactOccurred()
@@ -447,6 +421,7 @@ private struct TransactionForm: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             withAnimation(.easeInOut(duration: 0.3)) {
                 showingSuccess = false
+                isSubmitting = false
                 // Reset form
                 title = ""
                 amount = ""
@@ -469,18 +444,23 @@ private struct TransactionForm: View {
 // MARK: - Budget Form
 private struct BudgetForm: View {
     @ObservedObject var budgetViewModel: BudgetViewModel
+    @Environment(\.dismiss) var dismiss
     @State private var category = "Food"
     @State private var amount = ""
     @State private var period = "Monthly"
     @State private var showingSuccess = false
+    @State private var isSubmitting = false
     
     private let categories = ["Food", "Transport", "Shopping", "Entertainment", "Bills", "Savings", "Other"]
     private let periods = ["Weekly", "Monthly", "Yearly"]
     
     private var isValid: Bool {
-        !amount.isEmpty &&
-        Double(amount) != nil &&
-        Double(amount)! > 0
+        guard !amount.isEmpty,
+              let amountValue = Double(amount),
+              amountValue > 0 else {
+            return false
+        }
+        return true
     }
     
     var body: some View {
@@ -505,8 +485,8 @@ private struct BudgetForm: View {
                                         .padding(.horizontal, Constants.UI.Spacing.medium)
                                         .padding(.vertical, Constants.UI.Spacing.small)
                                         .background(
-                                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
-                                                .fill(category == cat ? Constants.Colors.cleanBlack : Constants.Colors.backgroundSecondary)
+                                            RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
+                                                .fill(category == cat ? Constants.Colors.cleanBlack : Constants.Colors.textPrimary.opacity(0.05))
                                         )
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -534,8 +514,8 @@ private struct BudgetForm: View {
                             .font(Constants.Typography.Body.font)
                     }
                     .padding(Constants.UI.Spacing.medium)
-                    .background(Constants.Colors.backgroundSecondary)
-                    .cornerRadius(Constants.UI.cardCornerRadius)
+                    .background(Constants.Colors.textPrimary.opacity(0.05))
+                    .cornerRadius(8)
                 }
                 
                 // Period
@@ -557,30 +537,40 @@ private struct BudgetForm: View {
             
             // Submit Button
             Button(action: submitBudget) {
-                Text(showingSuccess ? "Budget Created!" : "Create Budget")
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, Constants.UI.Spacing.medium)
-                    .background(isValid ? Constants.Colors.robinNeonGreen : Constants.Colors.textTertiary)
-                    .cornerRadius(Constants.UI.cardCornerRadius)
+                HStack {
+                    if isSubmitting {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(0.8)
+                    }
+                    
+                    Text(showingSuccess ? "Budget Created!" : "Create Budget")
+                        .font(Constants.Typography.Body.font)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background((isValid && !isSubmitting) ? Constants.Colors.cleanBlack : Constants.Colors.textTertiary)
+                .cornerRadius(Constants.UI.cardCornerRadius)
             }
-            .disabled(!isValid)
+            .disabled(!isValid || isSubmitting)
             .animation(.easeInOut(duration: 0.2), value: isValid)
             .animation(.easeInOut(duration: 0.3), value: showingSuccess)
             
             if showingSuccess {
                 Text("Budget created successfully!")
                     .font(Constants.Typography.Caption.font)
-                    .foregroundColor(Constants.Colors.robinNeonGreen)
+                    .foregroundColor(Constants.Colors.accentColor)
                     .transition(.opacity)
             }
         }
     }
     
     private func submitBudget() {
-        guard isValid else { return }
+        guard isValid && !isSubmitting else { return }
+        
+        isSubmitting = true
         
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.impactOccurred()
@@ -603,7 +593,10 @@ private struct BudgetForm: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             withAnimation(.easeInOut(duration: 0.3)) {
                 showingSuccess = false
+                isSubmitting = false
                 amount = ""
+                // Dismiss the view
+                dismiss()
             }
         }
         
@@ -614,17 +607,20 @@ private struct BudgetForm: View {
 // MARK: - Loan Form
 private struct LoanForm: View {
     @ObservedObject var loanViewModel: LoanViewModel
+    @Environment(\.dismiss) var dismiss
     @State private var loanAction: LoanAction = .addNew
     @State private var name = ""
     @State private var principal = ""
     @State private var interestRate = ""
     @State private var monthlyPayment = ""
+    @State private var loanTerm = "30" // Default to 30 years
     @State private var dueDate = 1
     @State private var category = LoanCategory.personal
     @State private var paymentStatus = LoanPaymentStatus.current
     @State private var lastPaymentDate = Date()
     @State private var nextPaymentDueDate = Date()
     @State private var showingSuccess = false
+    @State private var isSubmitting = false
     @State private var selectedLoan: Loan?
     @State private var availableLoans: [Loan] = []
     
@@ -649,19 +645,45 @@ private struct LoanForm: View {
         }
     }
     
+    private var calculatedMonthlyPayment: String {
+        guard let principalAmount = Double(principal),
+              let interestRateValue = Double(interestRate),
+              let termYears = Int(loanTerm),
+              principalAmount > 0,
+              interestRateValue >= 0,
+              termYears > 0 else {
+            return "0.00"
+        }
+        
+        let monthlyRate = interestRateValue / 100 / 12
+        let numberOfPayments = termYears * 12
+        
+        if monthlyRate == 0 {
+            // No interest case
+            return String(format: "%.2f", principalAmount / Double(numberOfPayments))
+        } else {
+            // Standard loan calculation
+            let monthlyPayment = principalAmount * (monthlyRate * pow(1 + monthlyRate, Double(numberOfPayments))) / (pow(1 + monthlyRate, Double(numberOfPayments)) - 1)
+            return String(format: "%.2f", monthlyPayment)
+        }
+    }
+    
     private var isValid: Bool {
         switch loanAction {
         case .addNew:
-            return !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-                   !principal.isEmpty &&
-                   !interestRate.isEmpty &&
-                   !monthlyPayment.isEmpty &&
-                   Double(principal) != nil &&
-                   Double(interestRate) != nil &&
-                   Double(monthlyPayment) != nil &&
-                   Double(principal)! > 0 &&
-                   Double(interestRate)! >= 0 &&
-                   Double(monthlyPayment)! > 0
+            guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                  !principal.isEmpty,
+                  !interestRate.isEmpty,
+                  !loanTerm.isEmpty,
+                  let principalValue = Double(principal),
+                  let interestRateValue = Double(interestRate),
+                  let termYears = Int(loanTerm),
+                  principalValue > 0,
+                  interestRateValue >= 0,
+                  termYears > 0 else {
+                return false
+            }
+            return true
         case .markPaid:
             return selectedLoan != nil
         }
@@ -670,32 +692,22 @@ private struct LoanForm: View {
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // Action Selector
-            HStack(spacing: 0) {
+            Picker("Loan Action", selection: $loanAction) {
                 ForEach(LoanAction.allCases, id: \.self) { action in
-                    Button(action: { 
-                        loanAction = action
-                        selectedLoan = nil // Reset selection when switching actions
-                    }) {
-                        Text(action.rawValue)
-                            .font(Constants.Typography.Body.font)
-                            .fontWeight(.medium)
-                            .foregroundColor(loanAction == action ? .white : Constants.Colors.textPrimary)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, Constants.UI.Spacing.medium)
-                            .background(
-                                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                    .fill(loanAction == action ? action.color : Constants.Colors.backgroundSecondary)
-                            )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .accessibilityLabel("\(action.rawValue) action")
-                    .accessibilityAddTraits(loanAction == action ? .isSelected : [])
+                    Text(action.rawValue)
+                        .font(Constants.Typography.Body.font)
+                        .fontWeight(.medium)
+                        .tag(action)
                 }
             }
+            .pickerStyle(SegmentedPickerStyle())
             .background(
-                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                    .fill(Constants.Colors.backgroundSecondary)
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Constants.Colors.textPrimary.opacity(0.05))
             )
+            .onChange(of: loanAction) {
+                selectedLoan = nil // Reset selection when switching actions
+            }
             
             // Conditional Content
             switch loanAction {
@@ -708,6 +720,31 @@ private struct LoanForm: View {
         .onAppear {
             loadAvailableLoans()
         }
+    }
+    
+    // MARK: - Helper Functions
+    private func calculateMonthlyPayment() {
+        // This function is called by onChange modifiers
+        // The calculatedMonthlyPayment computed property handles the actual calculation
+    }
+    
+    private func calculateNextPaymentDate() -> Date {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // Get the current month and year
+        let currentMonth = calendar.component(.month, from: now)
+        let currentYear = calendar.component(.year, from: now)
+        
+        // Create a date for the due day in the current month
+        var nextPaymentDate = calendar.date(from: DateComponents(year: currentYear, month: currentMonth, day: dueDate)) ?? now
+        
+        // If the due date has already passed this month, move to next month
+        if nextPaymentDate <= now {
+            nextPaymentDate = calendar.date(byAdding: .month, value: 1, to: nextPaymentDate) ?? now
+        }
+        
+        return nextPaymentDate
     }
     
     // MARK: - Add New Loan Form
@@ -723,8 +760,8 @@ private struct LoanForm: View {
                 TextField("Enter loan name", text: $name)
                     .font(Constants.Typography.Body.font)
                     .padding(Constants.UI.Spacing.medium)
-                    .background(Constants.Colors.backgroundSecondary)
-                    .cornerRadius(Constants.UI.cardCornerRadius)
+                    .background(Constants.Colors.textPrimary.opacity(0.05))
+                    .cornerRadius(8)
             }
             
             // Category
@@ -745,8 +782,8 @@ private struct LoanForm: View {
                                     .padding(.horizontal, Constants.UI.Spacing.medium)
                                     .padding(.vertical, Constants.UI.Spacing.small)
                                     .background(
-                                        RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
-                                            .fill(category == cat ? Constants.Colors.cleanBlack : Constants.Colors.backgroundSecondary)
+                                        RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
+                                            .fill(category == cat ? Constants.Colors.cleanBlack : Constants.Colors.textPrimary.opacity(0.05))
                                     )
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -772,10 +809,13 @@ private struct LoanForm: View {
                     TextField("0.00", text: $principal)
                         .keyboardType(.decimalPad)
                         .font(Constants.Typography.Body.font)
+                        .onChange(of: principal) { _, _ in
+                            calculateMonthlyPayment()
+                        }
                 }
                 .padding(Constants.UI.Spacing.medium)
-                .background(Constants.Colors.backgroundSecondary)
-                .cornerRadius(Constants.UI.cardCornerRadius)
+                .background(Constants.Colors.textPrimary.opacity(0.05))
+                .cornerRadius(8)
             }
             
             // Interest Rate
@@ -789,6 +829,9 @@ private struct LoanForm: View {
                     TextField("0.0", text: $interestRate)
                         .keyboardType(.decimalPad)
                         .font(Constants.Typography.Body.font)
+                        .onChange(of: interestRate) { _, _ in
+                            calculateMonthlyPayment()
+                        }
                     
                     Text("%")
                         .font(Constants.Typography.Body.font)
@@ -796,13 +839,38 @@ private struct LoanForm: View {
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
                 .padding(Constants.UI.Spacing.medium)
-                .background(Constants.Colors.backgroundSecondary)
-                .cornerRadius(Constants.UI.cardCornerRadius)
+                .background(Constants.Colors.textPrimary.opacity(0.05))
+                .cornerRadius(8)
             }
             
-            // Monthly Payment
+            // Loan Term (Years)
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Monthly Payment")
+                Text("Loan Term")
+                    .font(Constants.Typography.H3.font)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                
+                HStack {
+                    TextField("30", text: $loanTerm)
+                        .keyboardType(.numberPad)
+                        .font(Constants.Typography.Body.font)
+                        .onChange(of: loanTerm) { _, _ in
+                            calculateMonthlyPayment()
+                        }
+                    
+                    Text("years")
+                        .font(Constants.Typography.Body.font)
+                        .fontWeight(.medium)
+                        .foregroundColor(Constants.Colors.textSecondary)
+                }
+                .padding(Constants.UI.Spacing.medium)
+                .background(Constants.Colors.textPrimary.opacity(0.05))
+                .cornerRadius(8)
+            }
+            
+            // Calculated Monthly Payment (Read-only)
+            VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
+                Text("Calculated Monthly Payment")
                     .font(Constants.Typography.H3.font)
                     .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
@@ -813,13 +881,18 @@ private struct LoanForm: View {
                         .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
-                    TextField("0.00", text: $monthlyPayment)
-                        .keyboardType(.decimalPad)
+                    Text(calculatedMonthlyPayment)
                         .font(Constants.Typography.Body.font)
+                        .foregroundColor(Constants.Colors.textPrimary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(Constants.UI.Spacing.medium)
-                .background(Constants.Colors.backgroundSecondary)
-                .cornerRadius(Constants.UI.cardCornerRadius)
+                .background(Constants.Colors.textPrimary.opacity(0.05))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Constants.Colors.primaryOrange, lineWidth: 1)
+                )
             }
             
             // Due Date
@@ -843,69 +916,33 @@ private struct LoanForm: View {
                 .accentColor(Constants.Colors.cleanBlack)
             }
             
-            // Payment Status
-            VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Payment Status")
-                    .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Constants.Colors.textPrimary)
-                
-                Picker("Payment Status", selection: $paymentStatus) {
-                    ForEach(LoanPaymentStatus.allCases, id: \.self) { status in
-                        Text(status.displayName).tag(status)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .accentColor(Constants.Colors.cleanBlack)
-            }
-            
-            // Last Payment Date
-            VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Last Payment Date")
-                    .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Constants.Colors.textPrimary)
-                
-                DatePicker("", selection: $lastPaymentDate, in: ...Date(), displayedComponents: .date)
-                    .datePickerStyle(.compact)
-                    .accentColor(Constants.Colors.cleanBlack)
-                    .labelsHidden()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            
-            // Next Payment Due Date
-            VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                Text("Next Payment Due Date")
-                    .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Constants.Colors.textPrimary)
-                
-                DatePicker("", selection: $nextPaymentDueDate, in: Date()..., displayedComponents: .date)
-                    .datePickerStyle(.compact)
-                    .accentColor(Constants.Colors.cleanBlack)
-                    .labelsHidden()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            
             // Submit Button
             Button(action: submitLoan) {
-                Text(showingSuccess ? (loanAction == .addNew ? "Loan Added!" : "Payment Marked!") : (loanAction == .addNew ? "Add Loan" : "Mark as Paid"))
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, Constants.UI.Spacing.medium)
-                    .background(isValid ? (loanAction == .addNew ? Constants.Colors.softRed : Constants.Colors.success) : Constants.Colors.textTertiary)
-                    .cornerRadius(Constants.UI.cardCornerRadius)
+                HStack {
+                    if isSubmitting {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(0.8)
+                    }
+                    
+                    Text(showingSuccess ? (loanAction == .addNew ? "Loan Added!" : "Payment Marked!") : (loanAction == .addNew ? "Add Loan" : "Mark as Paid"))
+                        .font(Constants.Typography.Body.font)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background((isValid && !isSubmitting) ? Constants.Colors.cleanBlack : Constants.Colors.textTertiary)
+                .cornerRadius(Constants.UI.cardCornerRadius)
             }
-            .disabled(!isValid)
+            .disabled(!isValid || isSubmitting)
             .animation(.easeInOut(duration: 0.2), value: isValid)
             .animation(.easeInOut(duration: 0.3), value: showingSuccess)
             
             if showingSuccess {
                 Text(loanAction == .addNew ? "Loan added successfully!" : "Payment marked successfully!")
                     .font(Constants.Typography.Caption.font)
-                    .foregroundColor(Constants.Colors.robinNeonGreen)
+                    .foregroundColor(Constants.Colors.accentColor)
                     .transition(.opacity)
             }
         }
@@ -947,23 +984,31 @@ private struct LoanForm: View {
                 
                 // Submit Button for Mark Paid
                 Button(action: submitLoan) {
-                    Text(showingSuccess ? "Payment Marked!" : "Mark as Paid")
-                        .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, Constants.UI.Spacing.medium)
-                        .background(isValid ? Constants.Colors.success : Constants.Colors.textTertiary)
-                        .cornerRadius(Constants.UI.cardCornerRadius)
+                    HStack {
+                        if isSubmitting {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                        }
+                        
+                        Text(showingSuccess ? "Payment Marked!" : "Mark as Paid")
+                            .font(Constants.Typography.Body.font)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Constants.UI.Spacing.medium)
+                    .background((isValid && !isSubmitting) ? Constants.Colors.cleanBlack : Constants.Colors.textTertiary)
+                    .cornerRadius(8)
                 }
-                .disabled(!isValid)
+                .disabled(!isValid || isSubmitting)
                 .animation(.easeInOut(duration: 0.2), value: isValid)
                 .animation(.easeInOut(duration: 0.3), value: showingSuccess)
                 
                 if showingSuccess {
                     Text("Payment marked successfully!")
                         .font(Constants.Typography.Caption.font)
-                        .foregroundColor(Constants.Colors.robinNeonGreen)
+                        .foregroundColor(Constants.Colors.accentColor)
                         .transition(.opacity)
                 }
             }
@@ -977,7 +1022,9 @@ private struct LoanForm: View {
     }
     
     private func submitLoan() {
-        guard isValid else { return }
+        guard isValid && !isSubmitting else { return }
+        
+        isSubmitting = true
         
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.impactOccurred()
@@ -993,12 +1040,12 @@ private struct LoanForm: View {
                 name: name,
                 principalAmount: Double(principal) ?? 0.0,
                 interestRate: Double(interestRate) ?? 0.0,
-                monthlyPayment: Double(monthlyPayment) ?? 0.0,
+                monthlyPayment: Double(calculatedMonthlyPayment) ?? 0.0,
                 dueDay: dueDate,
                 category: category,
-                paymentStatus: paymentStatus,
-                lastPaymentDate: lastPaymentDate,
-                nextPaymentDueDate: nextPaymentDueDate
+                paymentStatus: .current, // New loans start as current
+                lastPaymentDate: Date(), // Set to current date for new loans
+                nextPaymentDueDate: calculateNextPaymentDate()
             )
             // Loan successfully added to view model
         case .markPaid:
@@ -1012,18 +1059,19 @@ private struct LoanForm: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             withAnimation(.easeInOut(duration: 0.3)) {
                 showingSuccess = false
+                isSubmitting = false
                 if loanAction == .addNew {
                     name = ""
                     principal = ""
                     interestRate = ""
-                    monthlyPayment = ""
+                    loanTerm = "30"
                     dueDate = 1
-                    paymentStatus = .current
-                    lastPaymentDate = Date()
-                    nextPaymentDueDate = Date()
+                    category = .personal
                 } else {
                     selectedLoan = nil
                 }
+                // Dismiss the view
+                dismiss()
             }
         }
     }

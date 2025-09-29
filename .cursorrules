@@ -1,0 +1,171 @@
+# Money Manager - Cursor Rules
+
+## Project Overview
+This is a SwiftUI-based iOS money management app built with Swift 6, Core Data, and following Apple's Human Interface Guidelines. The app provides budget tracking, transaction management, and financial goal setting with a professional flat design aesthetic.
+
+## Technology Stack
+- **Language**: Swift 6
+- **UI Framework**: SwiftUI (iOS 18+)
+- **Data Persistence**: Core Data
+- **Notifications**: UserNotifications
+- **Widgets**: WidgetKit (for future implementation)
+- **Charts**: Swift Charts
+- **Accessibility**: Full VoiceOver and Dynamic Type support
+
+## Design Principles & Apple HIG Compliance
+
+### Core Design Rules
+- **NO DROP SHADOWS** - Use flat design principles only
+- **Professional Appearance** - Clean, minimal, business-focused UI
+- **Tight Padding/Margins** - Efficient use of space with 4pt base unit
+- **No Gradients** - Use solid colors and semantic color system
+- **Value-Added Charts** - Professional data visualizations only
+
+### Apple HIG Requirements
+- Use SF Pro font system exclusively
+- Follow 44pt minimum touch target sizes
+- Implement proper Dynamic Type support
+- Support both light and dark mode
+- Use SF Symbols for all icons
+- Follow iOS navigation patterns (tab bars, navigation stacks)
+- Provide haptic feedback for key interactions
+
+### Color System
+- Primary: #007AFF (system blue)
+- Secondary: #8E8E93 (system gray)  
+- Success: #34C759 (system green)
+- Warning: #FF9500 (system orange)
+- Error: #FF3B30 (system red)
+- Background: systemBackground
+- Label: label (adapts to light/dark mode)
+
+## Code Standards
+
+### Swift Style Guide
+- Follow Apple's Swift style guide
+- Use SwiftLint for code formatting
+- Implement proper error handling patterns
+- Use Core Data migrations for schema changes
+- Maintain existing logging patterns
+
+### Architecture Patterns
+- Follow MVVM architecture
+- Use SwiftUI ViewModels for data binding
+- Implement proper separation of concerns
+- Use Core Data for data persistence
+- Follow existing API compatibility patterns
+
+### File Organization
+- Group files by feature (Overview, Transactions, Budget, Settings)
+- Use Components folder for reusable UI elements
+- Place shared utilities in Shared/Utilities
+- Keep documentation in Docs/ folder
+
+## Development Guidelines
+
+### UI Development
+- Create reusable SwiftUI components
+- Use proper accessibility labels
+- Implement proper state management
+- Follow existing design patterns
+- Test on multiple device sizes
+
+### Data Management
+- Use Core Data for all data persistence
+- Implement proper data validation
+- Handle offline functionality
+- Maintain data integrity
+- Support CSV import/export
+
+### Performance Requirements
+- Maintain 60fps animations
+- Load data within 2 seconds
+- Support up to 10,000 transactions
+- Keep memory usage below 100MB
+- Provide smooth user experience
+
+## Feature-Specific Rules
+
+### Overview Tab
+- Display current balance with monthly change indicator
+- Show quick action buttons (Add Income/Expense)
+- Include interactive charts for income analysis
+- Provide recent transactions preview
+- Show saving goals preview
+
+### Transactions Tab
+- Support category filtering and search
+- Implement swipe actions (edit/delete)
+- Provide bulk operations
+- Show transaction count
+- Support real-time search
+
+### Budget Tab
+- Display goal cards with progress indicators
+- Support goal categorization
+- Show visual progress indicators
+- Allow goal creation and editing
+- Track goal progress automatically
+
+### Settings Tab
+- Support user configuration
+- Provide notification preferences
+- Include CSV import/export
+- Support data management
+- Allow currency selection
+
+## Testing Requirements
+- Unit tests for all ViewModels
+- UI tests for critical user flows
+- Accessibility testing with VoiceOver
+- Performance testing on various devices
+- Dark mode and Dynamic Type testing
+
+## Accessibility Requirements
+- Full VoiceOver support
+- Dynamic Type support (12pt-34pt)
+- High contrast mode support
+- Reduce Motion support
+- Switch Control compatibility
+- Proper accessibility labels for all elements
+
+## Memory & Performance
+- Use efficient data structures
+- Implement proper memory management
+- Avoid memory leaks
+- Optimize Core Data queries
+- Use lazy loading where appropriate
+
+## Security & Privacy
+- Store all data locally (no external APIs)
+- Implement proper data validation
+- Use secure Core Data storage
+- Follow iOS privacy guidelines
+- No sensitive data in logs
+
+## Build & Deployment
+- Support iOS 18+ only
+- Use Swift 6 features
+- Maintain clean build with zero warnings
+- Support all iPhone sizes
+- Follow App Store guidelines
+
+## Documentation Standards
+- Document all public APIs
+- Use Apple's documentation style
+- Maintain README files
+- Document architectural decisions
+- Keep user stories updated
+
+## Code Review Checklist
+- [ ] Follows Swift style guide
+- [ ] Implements proper error handling
+- [ ] Uses appropriate design patterns
+- [ ] Includes proper accessibility support
+- [ ] Maintains performance requirements
+- [ ] Follows Apple HIG guidelines
+- [ ] Includes proper documentation
+- [ ] Passes all tests
+- [ ] No memory leaks
+- [ ] Clean build with zero warnings
+

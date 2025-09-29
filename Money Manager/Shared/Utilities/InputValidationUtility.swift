@@ -23,7 +23,10 @@ struct InputValidationUtility {
         }
         
         // Check if the result is a valid positive number
-        let isValid = Double(currentValue) != nil && Double(currentValue)! >= 0
+        guard let amountValue = Double(currentValue) else {
+            return (currentValue, false)
+        }
+        let isValid = amountValue >= 0
         
         return (currentValue, isValid)
     }

@@ -18,7 +18,7 @@ struct MoneyManagerApp: App {
                 // Test font loading
                 print("🚀 App launched - checking fonts...")
                 TrapFontUtility.listAllAvailableFonts()
-                TrapFontUtility.verifyFontsLoaded()
+                _ = TrapFontUtility.verifyFontsLoaded()
             }
         }
     }

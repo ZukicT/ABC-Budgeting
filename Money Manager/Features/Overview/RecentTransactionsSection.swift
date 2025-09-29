@@ -28,10 +28,7 @@ struct RecentTransactionsSection: View {
             }
             
             if transactionViewModel.transactions.isEmpty {
-                EmptyStateView(
-                    icon: "list.bullet",
-                    title: "No Transactions",
-                    message: "Your recent transactions will appear here.",
+                TransactionEmptyState(
                     actionTitle: "Add Transaction",
                     action: {
                         // TODO: Navigate to add transaction

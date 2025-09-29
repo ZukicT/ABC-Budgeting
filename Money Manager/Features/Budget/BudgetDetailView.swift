@@ -43,191 +43,184 @@ struct BudgetDetailView: View {
     var body: some View {
         Group {
             if let budget = budget {
-                NavigationStack {
-            ScrollView {
-                VStack(spacing: Constants.UI.Spacing.large) {
-                    // Header Section
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Category Icon
-                        ZStack {
-                            Circle()
-                                .fill(categoryColor(for: budget.category))
-                                .frame(width: 80, height: 80)
+                VStack(spacing: 0) {
+                    // Header Section - Compact layout with icon repositioned
+                    VStack(spacing: 16) {
+                        // Top row with icon and amount
+                        HStack(spacing: 16) {
+                            // Category Icon - Visual category indicator (smaller size)
+                            CategoryIcon(category: budget.category, size: 50)
+                                .accessibilityLabel("Category: \(budget.category)")
                             
-                            Image(systemName: categoryIcon(for: budget.category))
-                                .font(.system(size: 32, weight: .semibold))
-                                .foregroundColor(.white)
-                        }
-                        .accessibilityHidden(true)
-                        
-                        // Budget Category
-                        Text(budget.category)
-                            .font(Constants.Typography.H1.font)
-                            .fontWeight(.bold)
-                            .foregroundColor(Constants.Colors.textPrimary)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(2)
-                        
-                        // Allocated Amount
-                        Text(budget.allocatedAmount, format: .currency(code: "USD"))
-                            .font(.system(size: 36, weight: .bold, design: .rounded))
-                            .foregroundColor(Constants.Colors.textPrimary)
-                            .accessibilityLabel("Allocated amount: \(budget.allocatedAmount, format: .currency(code: "USD"))")
-                    }
-                    .padding(.top, Constants.UI.Spacing.large)
-                    
-                    // Progress Section
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Progress Bar
-                        VStack(spacing: Constants.UI.Spacing.small) {
-                            HStack {
-                                Text("Progress")
-                                    .font(Constants.Typography.H3.font)
-                                    .fontWeight(.semibold)
+                            VStack(alignment: .leading, spacing: 4) {
+                                // Allocated Amount - Primary focus (smaller font)
+                                Text(budget.allocatedAmount.formatted(.currency(code: "USD")))
+                                    .font(.system(size: 32, weight: .bold))
                                     .foregroundColor(Constants.Colors.textPrimary)
+                                    .accessibilityLabel("Allocated amount: \(budget.allocatedAmount.formatted(.currency(code: "USD")))")
+                                    .accessibilityAddTraits(.isStaticText)
                                 
-                                Spacer()
-                                
-                                Text("\(Int(progressPercentage * 100))%")
-                                    .font(Constants.Typography.H3.font)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(progressColor)
+                                // Category Name - Secondary
+                                Text(budget.category)
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(Constants.Colors.textPrimary)
+                                    .accessibilityLabel("Budget category: \(budget.category)")
+                                    .accessibilityAddTraits(.isStaticText)
                             }
                             
-                            GeometryReader { geometry in
-                                ZStack(alignment: .leading) {
-                                    // Background
-                                    Rectangle()
-                                        .fill(Constants.Colors.backgroundSecondary)
-                                        .frame(height: 12)
-                                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
-                                    
-                                    // Progress Fill
-                                    Rectangle()
-                                        .fill(progressColor)
-                                        .frame(width: geometry.size.width * progressPercentage, height: 12)
-                                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
-                                }
-                            }
-                            .frame(height: 12)
+                            Spacer()
                         }
-                        .padding(.horizontal, Constants.UI.Spacing.medium)
-                        .padding(.vertical, Constants.UI.Spacing.medium)
-                        .background(Constants.Colors.backgroundSecondary)
-                        .cornerRadius(Constants.UI.cardCornerRadius)
+                        
+                        // Progress Percentage - Tertiary
+                        Text("\(Int(progressPercentage * 100))% Used")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(progressColor)
+                            .accessibilityLabel("Progress: \(Int(progressPercentage * 100)) percent used")
+                            .accessibilityAddTraits(.isStaticText)
                     }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .padding(.bottom, 12)
                     
-                    // Details Section
-                    VStack(spacing: Constants.UI.Spacing.medium) {
+                    // Progress Bar Section
+                    VStack(spacing: 12) {
+                        // Progress Bar
+                        GeometryReader { geometry in
+                            ZStack(alignment: .leading) {
+                                // Background
+                                Rectangle()
+                                    .fill(Constants.Colors.textTertiary.opacity(0.2))
+                                    .frame(height: 8)
+                                    .cornerRadius(4)
+                                
+                                // Progress Fill
+                                Rectangle()
+                                    .fill(progressColor)
+                                    .frame(width: geometry.size.width * progressPercentage, height: 8)
+                                    .cornerRadius(4)
+                            }
+                        }
+                        .frame(height: 8)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 20)
+                    
+                    // Details Section - Essential information only
+                    VStack(spacing: 16) {
                         // Spent Amount
-                        DetailRow(
-                            title: "Spent Amount",
-                            value: budget.spentAmount.formatted(.currency(code: "USD")),
-                            icon: "dollarsign.circle.fill",
-                            iconColor: Constants.Colors.error
-                        )
+                        HStack {
+                            Text("SPENT")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(Constants.Colors.textTertiary)
+                                .tracking(1.0)
+                            Spacer()
+                            Text(budget.spentAmount.formatted(.currency(code: "USD")))
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(Constants.Colors.error)
+                        }
+                        .padding(.horizontal, 24)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Spent amount: \(budget.spentAmount.formatted(.currency(code: "USD")))")
+                        
+                        Divider()
+                            .background(Constants.Colors.textTertiary.opacity(0.3))
+                            .padding(.horizontal, 24)
                         
                         // Remaining Amount
-                        DetailRow(
-                            title: "Remaining Amount",
-                            value: budget.remainingAmount.formatted(.currency(code: "USD")),
-                            icon: "minus.circle.fill",
-                            iconColor: isOverBudget ? Constants.Colors.error : Constants.Colors.success
-                        )
-                        
-                        // Budget Status
-                        DetailRow(
-                            title: "Status",
-                            value: isOverBudget ? "Over Budget" : "On Track",
-                            icon: isOverBudget ? "exclamationmark.triangle.fill" : "checkmark.circle.fill",
-                            iconColor: progressColor
-                        )
+                        HStack {
+                            Text("REMAINING")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundColor(Constants.Colors.textTertiary)
+                                .tracking(1.0)
+                            Spacer()
+                            Text(budget.remainingAmount.formatted(.currency(code: "USD")))
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(isOverBudget ? Constants.Colors.error : Constants.Colors.success)
+                        }
+                        .padding(.horizontal, 24)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Remaining amount: \(budget.remainingAmount.formatted(.currency(code: "USD")))")
                         
                         // Over Budget Amount (if applicable)
                         if isOverBudget {
-                            DetailRow(
-                                title: "Over by",
-                                value: (budget.spentAmount - budget.allocatedAmount).formatted(.currency(code: "USD")),
-                                icon: "exclamationmark.triangle.fill",
-                                iconColor: Constants.Colors.error
-                            )
+                            Divider()
+                                .background(Constants.Colors.textTertiary.opacity(0.3))
+                                .padding(.horizontal, 24)
+                            
+                            HStack {
+                                Text("OVER BY")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundColor(Constants.Colors.textTertiary)
+                                    .tracking(1.0)
+                                Spacer()
+                                Text((budget.spentAmount - budget.allocatedAmount).formatted(.currency(code: "USD")))
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(Constants.Colors.error)
+                            }
+                            .padding(.horizontal, 24)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("Over budget by: \((budget.spentAmount - budget.allocatedAmount).formatted(.currency(code: "USD")))")
                         }
-                        
-                        // Category
-                        DetailRow(
-                            title: "Category",
-                            value: budget.category,
-                            icon: "tag.fill",
-                            iconColor: categoryColor(for: budget.category)
-                        )
                     }
-                    .padding(.horizontal, Constants.UI.Padding.screenMargin)
+                    .padding(.bottom, 20)
                     
-                    // Action Buttons
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Edit Button
+                    // Action Buttons - Horizontal layout for compact design
+                    HStack(spacing: 12) {
+                        // Edit Button - Primary action
                         Button(action: {
                             showingEditSheet = true
                         }) {
-                            HStack {
+                            HStack(spacing: 8) {
                                 Image(systemName: "pencil")
-                                Text("Edit Budget")
+                                    .font(.system(size: 14, weight: .semibold))
+                                Text("Edit")
+                                    .font(.system(size: 14, weight: .semibold))
                             }
-                            .font(Constants.Typography.Body.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, Constants.UI.Spacing.medium)
+                            .frame(height: 44)
                             .background(Constants.Colors.cleanBlack)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
+                            .cornerRadius(12)
                         }
                         .accessibilityLabel("Edit budget")
+                        .accessibilityHint("Double tap to edit this budget")
                         
-                        // Delete Button
+                        // Delete Button - Secondary action
                         Button(action: {
                             showingDeleteAlert = true
                         }) {
-                            HStack {
+                            HStack(spacing: 8) {
                                 Image(systemName: "trash")
-                                Text("Delete Budget")
+                                    .font(.system(size: 14, weight: .semibold))
+                                Text("Delete")
+                                    .font(.system(size: 14, weight: .semibold))
                             }
-                            .font(Constants.Typography.Body.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, Constants.UI.Spacing.medium)
+                            .frame(height: 44)
                             .background(Constants.Colors.error)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
+                            .cornerRadius(12)
                         }
                         .accessibilityLabel("Delete budget")
+                        .accessibilityHint("Double tap to delete this budget")
                     }
-                    .padding(.horizontal, Constants.UI.Padding.screenMargin)
-                    .padding(.bottom, Constants.UI.Spacing.section)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 32)
                 }
-            }
-            .navigationTitle("Budget Details")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                .sheet(isPresented: $showingEditSheet) {
+                    BudgetEditView(budget: budgetBinding)
+                        .presentationDetents([.height(450), .medium])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(20)
+                }
+                .alert("Delete Budget", isPresented: $showingDeleteAlert) {
+                    Button("Cancel", role: .cancel) { }
+                    Button("Delete", role: .destructive) {
+                        budgetViewModel.deleteBudget(budget)
                         dismiss()
                     }
-                    .font(Constants.Typography.Body.font)
-                    .foregroundColor(Constants.Colors.textPrimary)
-                }
-            }
-            .sheet(isPresented: $showingEditSheet) {
-                BudgetEditView(budget: budgetBinding)
-            }
-            .alert("Delete Budget", isPresented: $showingDeleteAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete", role: .destructive) {
-                    // TODO: Implement delete functionality
-                    dismiss()
-                }
-            }             message: {
-                Text("Are you sure you want to delete this budget? This action cannot be undone.")
-            }
+                } message: {
+                    Text("Are you sure you want to delete this budget? This action cannot be undone.")
                 }
             } else {
                 // Budget not found
@@ -259,76 +252,6 @@ struct BudgetDetailView: View {
                 .padding(Constants.UI.Padding.screenMargin)
             }
         }
-    }
-    
-    // MARK: - Helper Functions
-    private func categoryIcon(for category: String) -> String {
-        switch category.lowercased() {
-        case "food": return "fork.knife"
-        case "transport": return "car.fill"
-        case "shopping": return "bag.fill"
-        case "entertainment": return "tv.fill"
-        case "bills": return "doc.text.fill"
-        case "savings": return "banknote.fill"
-        default: return "dollarsign.circle.fill"
-        }
-    }
-    
-    private func categoryColor(for category: String) -> Color {
-        switch category.lowercased() {
-        case "food": return .green
-        case "transport": return .blue
-        case "shopping": return .orange
-        case "entertainment": return .purple
-        case "bills": return .red
-        case "savings": return .green
-        case "other": return .gray
-        default: return .blue
-        }
-    }
-}
-
-// MARK: - Detail Row Component
-private struct DetailRow: View {
-    let title: String
-    let value: String
-    let icon: String
-    let iconColor: Color
-    
-    var body: some View {
-        HStack(spacing: Constants.UI.Spacing.medium) {
-            // Icon
-            ZStack {
-                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                    .fill(iconColor.opacity(0.1))
-                    .frame(width: 40, height: 40)
-                
-                Image(systemName: icon)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundColor(iconColor)
-            }
-            .accessibilityHidden(true)
-            
-            // Content
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(Constants.Typography.Caption.font)
-                    .fontWeight(.medium)
-                    .foregroundColor(Constants.Colors.textSecondary)
-                
-                Text(value)
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Constants.Colors.textPrimary)
-            }
-            
-            Spacer()
-        }
-        .padding(.vertical, Constants.UI.Spacing.small)
-        .padding(.horizontal, Constants.UI.Spacing.medium)
-        .background(Constants.Colors.backgroundSecondary)
-        .cornerRadius(Constants.UI.cardCornerRadius)
     }
 }
 

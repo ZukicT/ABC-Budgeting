@@ -5,7 +5,8 @@ struct BudgetEditView: View {
     @Environment(\.dismiss) var dismiss
     @State private var category: String
     @State private var allocatedAmount: String
-    @State private var showingCategoryPicker = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
     
     private let categories = CategoryUtilities.budgetCategories
     
@@ -29,206 +30,190 @@ struct BudgetEditView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: Constants.UI.Spacing.large) {
-                    // Header Section
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Category Icon
-                        ZStack {
-                            Circle()
-                                .fill(budgetCategoryColor)
-                                .frame(width: 80, height: 80)
-                            
-                            Image(systemName: category.categoryIcon)
-                                .font(.system(size: 32, weight: .semibold))
-                                .foregroundColor(.white)
-                        }
-                        .accessibilityHidden(true)
-                        
-                        Text("Edit Budget")
-                            .font(Constants.Typography.H1.font)
-                            .fontWeight(.bold)
-                            .foregroundColor(Constants.Colors.textPrimary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.top, Constants.UI.Spacing.large)
+        VStack(spacing: 0) {
+            // Header Section - Compact layout
+            VStack(spacing: 16) {
+                // Top Row: Title + Close Button
+                HStack {
+                    Text("Edit Budget")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(Constants.Colors.textPrimary)
+                        .accessibilityLabel("Edit Budget")
+                        .accessibilityAddTraits(.isHeader)
                     
-                    // Form Section
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Category Field
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Category")
-                                .font(Constants.Typography.Body.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            Button(action: {
-                                showingCategoryPicker = true
-                            }) {
-                                HStack {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                            .fill(budgetCategoryColor.opacity(0.1))
-                                            .frame(width: 40, height: 40)
-                                        
-                                        Image(systemName: category.categoryIcon)
-                                            .font(.title3)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(budgetCategoryColor)
-                                    }
-                                    
-                                    Text(category)
-                                        .font(Constants.Typography.Body.font)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Constants.Colors.textPrimary)
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .font(.caption)
-                                        .foregroundColor(Constants.Colors.textSecondary)
-                                }
-                                .padding(.horizontal, Constants.UI.Spacing.medium)
-                                .padding(.vertical, Constants.UI.Spacing.small)
-                                .background(Constants.Colors.backgroundSecondary)
-                                .cornerRadius(Constants.UI.cardCornerRadius)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
+                    Spacer()
+                    
+                    // Close Button
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(Constants.Colors.textSecondary)
+                            .frame(width: 32, height: 32)
+                            .background(Constants.Colors.textTertiary.opacity(0.1))
+                            .clipShape(Circle())
+                    }
+                    .accessibilityLabel("Close edit view")
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 20)
+            .padding(.bottom, 16)
+            
+            // Form Section - Compact layout
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Category Field
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("CATEGORY")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
                         
-                        // Allocated Amount Field
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Allocated Amount")
-                                .font(Constants.Typography.Body.font)
-                                .fontWeight(.semibold)
+                        Picker("Category", selection: $category) {
+                            ForEach(categories, id: \.self) { categoryOption in
+                                HStack {
+                                    CategoryIcon(category: categoryOption, size: 20)
+                                    Text(categoryOption)
+                                        .font(.system(size: 16, weight: .medium))
+                                }
+                                .tag(categoryOption)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    
+                    // Allocated Amount Field
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("ALLOCATED AMOUNT")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
+                        
+                        HStack {
+                            Text("$")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textSecondary)
+                            
+                            TextField("0.00", text: $allocatedAmount)
+                                .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(Constants.Colors.textPrimary)
+                                .keyboardType(.decimalPad)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Constants.Colors.textPrimary.opacity(0.05))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(!isValidAmount ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
+                        )
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Allocated amount")
+                        .accessibilityHint("Enter the dollar amount allocated for this budget")
+                    }
+                    
+                    // Current Spending Info (Read-only)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("CURRENT SPENDING")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
+                        
+                        VStack(spacing: 12) {
+                            HStack {
+                                Text("Spent")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(Constants.Colors.textSecondary)
+                                Spacer()
+                                Text(budget.spentAmount.formatted(.currency(code: "USD")))
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(Constants.Colors.error)
+                            }
                             
                             HStack {
-                                Text("$")
-                                    .font(Constants.Typography.H3.font)
-                                    .fontWeight(.semibold)
+                                Text("Remaining")
+                                    .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(Constants.Colors.textSecondary)
-                                
-                                TextField("0.00", text: $allocatedAmount)
-                                    .keyboardType(.decimalPad)
-                                    .textFieldStyle(EditFieldStyle())
+                                Spacer()
+                                Text(budget.remainingAmount.formatted(.currency(code: "USD")))
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(Constants.Colors.success)
                             }
                         }
-                        
-                        // Current Spending Info (Read-only)
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Current Spending")
-                                .font(Constants.Typography.Body.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            VStack(spacing: Constants.UI.Spacing.small) {
-                                HStack {
-                                    Text("Spent Amount")
-                                        .font(Constants.Typography.Caption.font)
-                                        .foregroundColor(Constants.Colors.textSecondary)
-                                    
-                                    Spacer()
-                                    
-                                    Text(budget.spentAmount, format: .currency(code: "USD"))
-                                        .font(Constants.Typography.Body.font)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Constants.Colors.error)
-                                }
-                                
-                                HStack {
-                                    Text("Remaining Amount")
-                                        .font(Constants.Typography.Caption.font)
-                                        .foregroundColor(Constants.Colors.textSecondary)
-                                    
-                                    Spacer()
-                                    
-                                    Text(budget.remainingAmount, format: .currency(code: "USD"))
-                                        .font(Constants.Typography.Body.font)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Constants.Colors.success)
-                                }
-                            }
-                            .padding(.horizontal, Constants.UI.Spacing.medium)
-                            .padding(.vertical, Constants.UI.Spacing.small)
-                            .background(Constants.Colors.backgroundSecondary)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                        
-                        // Progress Section
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Current Progress")
-                                .font(Constants.Typography.Body.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            VStack(spacing: Constants.UI.Spacing.small) {
-                                HStack {
-                                    Text("Progress")
-                                        .font(Constants.Typography.Caption.font)
-                                        .foregroundColor(Constants.Colors.textSecondary)
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(Int((budget.spentAmount / budget.allocatedAmount) * 100))%")
-                                        .font(Constants.Typography.Caption.font)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(progressColor)
-                                }
-                                
-                                GeometryReader { geometry in
-                                    ZStack(alignment: .leading) {
-                                        // Background
-                                        Rectangle()
-                                            .fill(Constants.Colors.backgroundSecondary)
-                                            .frame(height: 8)
-                                            .cornerRadius(Constants.UI.CornerRadius.quaternary)
-                                        
-                                        // Progress Fill
-                                        Rectangle()
-                                            .fill(progressColor)
-                                            .frame(width: geometry.size.width * min(budget.spentAmount / budget.allocatedAmount, 1.0), height: 8)
-                                            .cornerRadius(Constants.UI.CornerRadius.quaternary)
-                                    }
-                                }
-                                .frame(height: 8)
-                            }
-                            .padding(.horizontal, Constants.UI.Spacing.medium)
-                            .padding(.vertical, Constants.UI.Spacing.small)
-                            .background(Constants.Colors.backgroundSecondary)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Constants.Colors.textPrimary.opacity(0.05))
+                        .cornerRadius(12)
                     }
-                    .padding(.horizontal, Constants.UI.Padding.screenMargin)
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 20)
+            }
+            
+            // Action Buttons - Horizontal layout for compact design
+            HStack(spacing: 12) {
+                // Save Button - Primary action
+                Button(action: {
+                    // Haptic feedback
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
                     
-                    Spacer(minLength: Constants.UI.Spacing.section)
-                }
-            }
-            .navigationTitle("Edit Budget")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
+                    saveBudget()
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("Save")
+                            .font(.system(size: 14, weight: .semibold))
                     }
-                    .font(Constants.Typography.Body.font)
-                    .foregroundColor(Constants.Colors.textPrimary)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(Constants.Colors.cleanBlack)
+                    .cornerRadius(12)
                 }
+                .disabled(!canSave)
+                .accessibilityLabel("Save budget changes")
+                .accessibilityHint("Double tap to save your changes to this budget")
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        saveBudget()
+                // Cancel Button - Secondary action
+                Button(action: {
+                    dismiss()
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("Cancel")
+                            .font(.system(size: 14, weight: .semibold))
                     }
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Constants.Colors.primaryBlue)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(Constants.Colors.textPrimary.opacity(0.05))
+                    .cornerRadius(12)
                 }
+                .accessibilityLabel("Cancel editing")
+                .accessibilityHint("Double tap to discard changes and return to budget details")
             }
-            .sheet(isPresented: $showingCategoryPicker) {
-                CategoryPickerView(selectedCategory: $category, categories: categories)
-            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 32)
         }
+        .alert("Validation Error", isPresented: $showingErrorAlert) {
+            Button("OK") { }
+        } message: {
+            Text(errorMessage)
+        }
+    }
+    
+    // MARK: - Computed Properties
+    private var isValidAmount: Bool {
+        guard let amountValue = Double(allocatedAmount) else { return false }
+        return amountValue > 0
+    }
+    
+    private var canSave: Bool {
+        !category.isEmpty && isValidAmount
     }
     
     private var progressColor: Color {
@@ -240,7 +225,18 @@ struct BudgetEditView: View {
     }
     
     private func saveBudget() {
-        guard let allocatedValue = Double(allocatedAmount), allocatedValue > 0 else { return }
+        // Validate input
+        guard !category.isEmpty else {
+            errorMessage = "Please select a category."
+            showingErrorAlert = true
+            return
+        }
+        
+        guard let allocatedValue = Double(allocatedAmount), allocatedValue > 0 else {
+            errorMessage = "Please enter a valid allocated amount greater than 0."
+            showingErrorAlert = true
+            return
+        }
         
         // Calculate new remaining amount
         let newRemainingAmount = allocatedValue - budget.spentAmount
@@ -262,66 +258,6 @@ struct BudgetEditView: View {
 
 // MARK: - Edit Field Style
 // EditFieldStyle now handled by Shared/Components/EditFieldStyle.swift
-
-// MARK: - Category Picker View
-private struct CategoryPickerView: View {
-    @Binding var selectedCategory: String
-    let categories: [String]
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        NavigationStack {
-            List {
-                ForEach(categories, id: \.self) { category in
-                    Button(action: {
-                        selectedCategory = category
-                        dismiss()
-                    }) {
-                        HStack {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                    .fill(category.categoryColor.opacity(0.1))
-                                    .frame(width: 40, height: 40)
-                                
-                                Image(systemName: category.categoryIcon)
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(category.categoryColor)
-                            }
-                            
-                            Text(category)
-                                .font(Constants.Typography.Body.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            Spacer()
-                            
-                            if selectedCategory == category {
-                                Image(systemName: "checkmark")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Constants.Colors.primaryBlue)
-                            }
-                        }
-                        .padding(.vertical, Constants.UI.Spacing.small)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
-            .navigationTitle("Select Category")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-    
-    // Category utilities now handled by CategoryUtilities.swift
-}
 
 #Preview {
     BudgetEditView(budget: .constant(Budget(

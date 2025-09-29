@@ -162,7 +162,7 @@ struct CurrencyScreen: View {
                     .padding(.horizontal, Constants.Currency.sectionHeaderHorizontalPadding)
                     .padding(.vertical, Constants.Currency.sectionHeaderPadding)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.gray.opacity(0.1))
+                    .background(Constants.Colors.textPrimary.opacity(0.05))
                 
                 ForEach(section.currencies, id: \.self) { currency in
                     CurrencyListItem(
@@ -176,7 +176,7 @@ struct CurrencyScreen: View {
             .cornerRadius(Constants.Currency.sectionCornerRadius)
             .overlay(
                 RoundedRectangle(cornerRadius: Constants.Currency.sectionCornerRadius)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: Constants.Currency.sectionBorderWidth)
+                    .stroke(Constants.Colors.textPrimary.opacity(0.1), lineWidth: Constants.Currency.sectionBorderWidth)
             )
             .padding(.bottom, Constants.Currency.sectionBottomPadding)
         }
@@ -193,7 +193,7 @@ struct CurrencyScreen: View {
                     .font(.system(size: Constants.Currency.currencySymbolSize, weight: .bold))
                     .foregroundColor(Constants.Colors.textPrimary)
                     .frame(width: Constants.Currency.currencySymbolFrameSize, height: Constants.Currency.currencySymbolFrameSize)
-                    .background(Color.gray.opacity(0.1))
+                    .background(Constants.Colors.textPrimary.opacity(0.05))
                     .cornerRadius(Constants.Currency.currencySymbolCornerRadius)
                 
                 VStack(alignment: .leading, spacing: 2) {

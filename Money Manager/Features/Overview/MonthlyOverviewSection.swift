@@ -3,6 +3,7 @@ import SwiftUI
 /// Monthly Overview Section displaying key financial metrics for the current month
 /// Shows income, expenses, and trend indicators with month-over-month comparison
 struct MonthlyOverviewSection: View {
+    @ObservedObject var transactionViewModel: TransactionViewModel
     @StateObject private var viewModel = MonthlyOverviewViewModel()
     
     /// Date formatter for displaying month abbreviation (e.g., "Sep 2024")
@@ -24,19 +25,22 @@ struct MonthlyOverviewSection: View {
             }
             
             // MARK: - Content Area
-            // Display loading, data, or error state based on view model state
+            // Display loading, data, empty state, or error state based on view model state
             if viewModel.isLoading {
                 MonthlyOverviewLoadingView()
             } else if let data = viewModel.monthlyData {
                 MonthlyOverviewCard(data: data, monthFormatter: monthAbbreviationFormatter)
             } else if let error = viewModel.errorMessage {
                 MonthlyOverviewErrorView(error: error)
+            } else {
+                // Empty state when no data is available
+                MonthlyOverviewEmptyView()
             }
         }
         .onAppear {
-            // TODO: @dev - Consider implementing pull-to-refresh functionality
-            // TODO: @dev - Add error retry mechanism for failed data loads
-            viewModel.refreshData()
+            // Note: Consider implementing pull-to-refresh functionality
+            // Note: Add error retry mechanism for failed data loads
+            viewModel.refreshData(transactions: transactionViewModel.transactions)
         }
     }
 }
@@ -80,6 +84,32 @@ private struct MonthlyOverviewCard: View {
         }
     }
     
+}
+
+// MARK: - Monthly Overview Empty View
+/// Empty state view when no monthly data is available
+private struct MonthlyOverviewEmptyView: View {
+    var body: some View {
+        VStack(spacing: Constants.UI.Spacing.medium) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.system(size: 48, weight: .light))
+                .foregroundColor(Constants.Colors.textTertiary)
+            
+            Text("No Monthly Data")
+                .font(Constants.Typography.Body.font)
+                .foregroundColor(Constants.Colors.textSecondary)
+            
+            Text("Add transactions to see your monthly income and expense overview")
+                .font(Constants.Typography.Caption.font)
+                .foregroundColor(Constants.Colors.textTertiary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(height: 200)
+        .frame(maxWidth: .infinity)
+        .background(Constants.Colors.cardBackground)
+        .cornerRadius(Constants.UI.cardCornerRadius)
+        .shadow(color: Constants.Colors.borderPrimary, radius: 0)
+    }
 }
 
 // MARK: - Metric Card
@@ -135,7 +165,7 @@ private struct MetricCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Constants.UI.Spacing.small)
         .background(Constants.Colors.textPrimary.opacity(0.05)) // WCAG AA compliant background
-        .cornerRadius(Constants.UI.CornerRadius.secondary)
+        .cornerRadius(Constants.UI.cardCornerRadius)
     }
     
     /// Formats the value based on the specified format type
@@ -169,22 +199,42 @@ private struct TrendIndicator: View {
     
     /// Calculates percentage change from previous value
     private var changePercentage: Double {
-        guard previousValue != 0 else { return 0 }
+        guard previousValue != 0 else { 
+            // If no previous data, show 100% for any current value > 0
+            return currentValue > 0 ? 100.0 : 0.0
+        }
         return ((currentValue - previousValue) / abs(previousValue)) * 100
     }
     
+    /// Determines if we should show the trend indicator
+    private var shouldShowTrend: Bool {
+        // Show trend if we have current data, regardless of previous data
+        return currentValue > 0 || previousValue > 0
+    }
+    
     var body: some View {
-        HStack(spacing: Constants.UI.Spacing.micro) {
-            // Trend triangle icon
-            Image(systemName: trendDirection.symbol)
-                .font(.system(size: 10, weight: .medium))
-                .foregroundColor(color)
-                .rotationEffect(trendDirection.rotation)
-            
-            // Percentage change text
-            Text("\(String(format: "%.1f", abs(changePercentage)))%")
+        if shouldShowTrend {
+            HStack(spacing: Constants.UI.Spacing.micro) {
+                // Trend triangle icon
+                Image(systemName: trendDirection.symbol)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(color)
+                    .rotationEffect(trendDirection.rotation)
+                
+                // Percentage change text
+                Text("\(String(format: "%.1f", abs(changePercentage)))%")
+                    .font(Constants.Typography.Caption.font)
+                    .foregroundColor(color)
+            }
+        } else {
+            // Show "New" indicator when there's current data but no previous data
+            Text("New")
                 .font(Constants.Typography.Caption.font)
                 .foregroundColor(color)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .background(color.opacity(0.1))
+                .cornerRadius(4)
         }
     }
     
@@ -276,7 +326,7 @@ private let currencyFormatter: NumberFormatter = {
 
 
 #Preview {
-    MonthlyOverviewSection()
+    MonthlyOverviewSection(transactionViewModel: TransactionViewModel())
         .padding()
         .background(Constants.Colors.backgroundPrimary)
 }

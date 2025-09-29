@@ -9,8 +9,8 @@ struct TransactionCard: View {
         HStack(spacing: Constants.UI.Spacing.medium) {
             // Category Icon - Fixed Size
             ZStack {
-                Rectangle()
-                    .fill(categoryColor(for: transaction.category))
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Constants.Colors.cleanBlack)
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: categoryIcon(for: transaction.category))
@@ -84,19 +84,6 @@ struct TransactionCard: View {
         }
     }
     
-    private func categoryColor(for category: String) -> Color {
-        switch category.lowercased() {
-        case "food": return .green
-        case "transport": return .blue
-        case "shopping": return .orange
-        case "entertainment": return .purple
-        case "bills": return .red
-        case "income": return .green
-        case "savings": return .green
-        case "other": return .gray
-        default: return .blue
-        }
-    }
 }
 
 #Preview {

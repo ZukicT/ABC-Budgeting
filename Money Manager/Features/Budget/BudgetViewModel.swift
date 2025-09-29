@@ -63,6 +63,10 @@ class BudgetViewModel: ObservableObject {
         hasDataLoaded = false
         loadBudgets()
     }
+    
+    func deleteBudget(_ budget: Budget) {
+        budgets.removeAll { $0.id == budget.id }
+    }
 }
 
 struct Budget: Identifiable {

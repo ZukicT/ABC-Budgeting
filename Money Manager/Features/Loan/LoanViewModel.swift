@@ -10,32 +10,32 @@ class LoanViewModel: ObservableObject {
     
     var hasDataLoaded = false
     
-    // Counter for tab display
+    // Counter for tab display (based on filtered loans)
     var loanCount: Int {
-        loans.count
+        filteredLoans.count
     }
     
-    // Total debt calculation
+    // Total debt calculation (based on filtered loans)
     var totalDebt: Double {
-        loans.reduce(0) { $0 + $1.remainingAmount }
+        filteredLoans.reduce(0) { $0 + $1.remainingAmount }
     }
     
     var formattedTotalDebt: String {
         totalDebt.formatted(.currency(code: "USD"))
     }
     
-    // Total monthly payment calculation
+    // Total monthly payment calculation (based on filtered loans)
     var totalMonthlyPayment: Double {
-        loans.reduce(0) { $0 + $1.monthlyPayment }
+        filteredLoans.reduce(0) { $0 + $1.monthlyPayment }
     }
     
     var formattedTotalMonthlyPayment: String {
         totalMonthlyPayment.formatted(.currency(code: "USD"))
     }
     
-    // Next due date calculation
+    // Next due date calculation (based on filtered loans)
     var nextDueDate: Date? {
-        loans.min { $0.dueDate < $1.dueDate }?.dueDate
+        filteredLoans.min { $0.dueDate < $1.dueDate }?.dueDate
     }
     
     // Filtered loans based on selected category
@@ -60,60 +60,8 @@ class LoanViewModel: ObservableObject {
         
         // TODO: Implement loan loading logic
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            // Sample data for demonstration
-            let now = Date()
-            let calendar = Calendar.current
-            
-            self.loans = [
-                Loan(
-                    name: "Auto Loan", 
-                    principalAmount: 25000.0, 
-                    remainingAmount: 18500.0, 
-                    interestRate: 4.5, 
-                    monthlyPayment: 450.0, 
-                    dueDate: now.addingTimeInterval(86400 * 15),
-                    paymentStatus: .current,
-                    lastPaymentDate: calendar.date(byAdding: .month, value: -1, to: now),
-                    nextPaymentDueDate: now.addingTimeInterval(86400 * 15),
-                    category: .auto
-                ),
-                Loan(
-                    name: "Student Loan", 
-                    principalAmount: 15000.0, 
-                    remainingAmount: 12000.0, 
-                    interestRate: 3.2, 
-                    monthlyPayment: 280.0, 
-                    dueDate: now.addingTimeInterval(86400 * 5),
-                    paymentStatus: .overdue,
-                    lastPaymentDate: calendar.date(byAdding: .month, value: -1, to: now),
-                    nextPaymentDueDate: now.addingTimeInterval(86400 * -2), // 2 days overdue
-                    category: .student
-                ),
-                Loan(
-                    name: "Credit Card", 
-                    principalAmount: 5000.0, 
-                    remainingAmount: 3200.0, 
-                    interestRate: 18.9, 
-                    monthlyPayment: 150.0, 
-                    dueDate: now.addingTimeInterval(86400 * 3),
-                    paymentStatus: .missed,
-                    lastPaymentDate: calendar.date(byAdding: .month, value: -2, to: now),
-                    nextPaymentDueDate: now.addingTimeInterval(86400 * -5), // 5 days overdue (missed)
-                    category: .creditCard
-                ),
-                Loan(
-                    name: "Personal Loan", 
-                    principalAmount: 8000.0, 
-                    remainingAmount: 0.0, 
-                    interestRate: 6.5, 
-                    monthlyPayment: 200.0, 
-                    dueDate: now.addingTimeInterval(86400 * 10),
-                    paymentStatus: .paid,
-                    lastPaymentDate: now.addingTimeInterval(86400 * -5),
-                    nextPaymentDueDate: nil, // Fully paid
-                    category: .personal
-                )
-            ]
+            // Start with empty loans for new users
+            self.loans = []
             self.isLoading = false
             self.hasDataLoaded = true
         }

@@ -28,7 +28,6 @@ class RecentTransactionsViewModel: ObservableObject {
     
     private func generateSampleData() {
         // Sample transaction data
-        let calendar = Calendar.current
         let now = Date()
         
         let sampleTransactions = [

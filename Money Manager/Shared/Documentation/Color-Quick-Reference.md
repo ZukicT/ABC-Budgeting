@@ -1,5 +1,5 @@
 # Color Quick Reference - WCAG AA Compliant Fintech
-## ABC Budgeting App
+## Money Manager App
 
 ### 🎨 Primary Colors (WCAG AA Compliant)
 | Color | Hex | Contrast | Usage |
@@ -23,7 +23,7 @@
 | Medium Gray | `#808080` | 4.5:1+ | Less important info |
 | Light Gray | `#999999` | 4.5:1+ | Subtle labels |
 
-### 🎨 Minimalist Design Rules (Robinhood Style)
+### 🎨 Minimalist Design Rules (Professional Flat Design Style)
 | Rule | Value | Usage |
 |------|-------|-------|
 | No Shadows | `shadowRadius: 0` | All elements flat |

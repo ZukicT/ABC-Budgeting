@@ -58,210 +58,201 @@ struct LoanDetailView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: Constants.UI.Spacing.large) {
-                    // Header Section
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Loan Type Icon
-                        ZStack {
-                            Circle()
-                                .fill(loanTypeColor)
-                                .frame(width: 80, height: 80)
-                            
-                            Image(systemName: loanTypeIcon)
-                                .font(.system(size: 32, weight: .semibold))
-                                .foregroundColor(.white)
-                        }
-                        .accessibilityHidden(true)
+        VStack(spacing: 0) {
+            // Header Section - Compact layout with icon repositioned
+            VStack(spacing: 16) {
+                // Top row with icon and amount
+                HStack(spacing: 16) {
+                    // Loan Type Icon - Visual loan indicator (smaller size)
+                    LoanTypeIcon(loanName: loan.name, size: 50)
+                        .accessibilityLabel("Loan type: \(loan.name)")
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        // Remaining Amount - Primary focus (smaller font)
+                        Text(loan.remainingAmount.formatted(.currency(code: "USD")))
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundColor(Constants.Colors.textPrimary)
+                            .accessibilityLabel("Remaining amount: \(loan.remainingAmount.formatted(.currency(code: "USD")))")
+                            .accessibilityAddTraits(.isStaticText)
                         
-                        // Loan Name
+                        // Loan Name - Secondary
                         Text(loan.name)
-                            .font(Constants.Typography.H1.font)
-                            .fontWeight(.bold)
+                            .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(Constants.Colors.textPrimary)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(3)
-                        
-                        // Remaining Amount
-                        Text(loan.remainingAmount, format: .currency(code: "USD"))
-                            .font(.system(size: 36, weight: .bold, design: .rounded))
-                            .foregroundColor(Constants.Colors.textPrimary)
-                            .accessibilityLabel("Remaining amount: \(loan.remainingAmount, format: .currency(code: "USD"))")
+                            .accessibilityLabel("Loan name: \(loan.name)")
+                            .accessibilityAddTraits(.isStaticText)
                     }
-                    .padding(.top, Constants.UI.Spacing.large)
                     
-                    // Key Metrics Card
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Progress Section
-                        VStack(spacing: Constants.UI.Spacing.small) {
-                            HStack {
-                                Text("Progress")
-                                    .font(Constants.Typography.H3.font)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Constants.Colors.textPrimary)
-                                
-                                Spacer()
-                                
-                                Text("\(Int(progressPercentage * 100))%")
-                                    .font(Constants.Typography.H3.font)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(loanTypeColor)
-                            }
-                            
-                            // Progress Bar
-                            GeometryReader { geometry in
-                                ZStack(alignment: .leading) {
-                                    // Background
-                                    Rectangle()
-                                        .fill(Constants.Colors.backgroundTertiary)
-                                        .frame(height: 6)
-                                        .cornerRadius(Constants.UI.CornerRadius.quaternary)
-                                    
-                                    // Progress Fill
-                                    Rectangle()
-                                        .fill(loanTypeColor)
-                                        .frame(width: geometry.size.width * progressPercentage, height: 6)
-                                        .cornerRadius(Constants.UI.CornerRadius.quaternary)
-                                }
-                            }
-                            .frame(height: 6)
-                        }
-                        
-                        // Payment Status
-                        HStack {
-                            Text("Payment Status")
-                                .font(Constants.Typography.Body.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            Spacer()
-                            
-                            StatusTag(status: loan.calculatedStatus)
-                        }
-                    }
-                    .padding(.horizontal, Constants.UI.Spacing.medium)
-                    .padding(.vertical, Constants.UI.Spacing.medium)
-                    .background(Constants.Colors.backgroundSecondary)
-                    .cornerRadius(Constants.UI.cardCornerRadius)
-                    
-                    // Details Section
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Principal Amount
-                        DetailRow(
-                            title: "Principal Amount",
-                            value: loan.principalAmount.formatted(.currency(code: "USD")),
-                            icon: "dollarsign.circle.fill",
-                            iconColor: Constants.Colors.textPrimary
-                        )
-                        
-                        // Total Paid
-                        DetailRow(
-                            title: "Total Paid",
-                            value: totalPaid.formatted(.currency(code: "USD")),
-                            icon: "checkmark.circle.fill",
-                            iconColor: Constants.Colors.success
-                        )
-                        
-                        // Interest Rate
-                        DetailRow(
-                            title: "Interest Rate (APR)",
-                            value: String(format: "%.2f%%", loan.interestRate),
-                            icon: "percent",
-                            iconColor: Constants.Colors.warning
-                        )
-                        
-                        // Monthly Payment
-                        DetailRow(
-                            title: "Monthly Payment",
-                            value: loan.monthlyPayment.formatted(.currency(code: "USD")),
-                            icon: "calendar",
-                            iconColor: Constants.Colors.error
-                        )
-                        
-                        // Due Date
-                        DetailRow(
-                            title: "Next Payment Due",
-                            value: loan.dueDate.formatted(date: .abbreviated, time: .omitted),
-                            icon: "clock",
-                            iconColor: Constants.Colors.info
-                        )
-                        
-                        // Estimated Months Remaining
-                        DetailRow(
-                            title: "Estimated Months Remaining",
-                            value: "\(estimatedMonthsRemaining) months",
-                            icon: "hourglass",
-                            iconColor: Constants.Colors.textSecondary
-                        )
-                    }
-                    .padding(.horizontal, Constants.UI.Padding.screenMargin)
-                    
-                    // Action Buttons
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Edit Button
-                        Button(action: {
-                            showingEditSheet = true
-                        }) {
-                            HStack {
-                                Image(systemName: "pencil")
-                                Text("Edit Loan")
-                            }
-                            .font(Constants.Typography.Button.font)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, Constants.UI.Spacing.medium)
-                            .background(Constants.Colors.cleanBlack)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                        .accessibilityLabel("Edit loan")
-                        
-                        // Delete Button
-                        Button(action: {
-                            showingDeleteAlert = true
-                        }) {
-                            HStack {
-                                Image(systemName: "trash")
-                                Text("Delete Loan")
-                            }
-                            .font(Constants.Typography.Button.font)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, Constants.UI.Spacing.medium)
-                            .background(Constants.Colors.error)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                        .accessibilityLabel("Delete loan")
-                    }
-                    .padding(.horizontal, Constants.UI.Padding.screenMargin)
-                    .padding(.bottom, Constants.UI.Spacing.section)
+                    Spacer()
                 }
+                
+                // Progress Percentage - Tertiary
+                Text("\(Int(progressPercentage * 100))% Paid")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(loanTypeColor)
+                    .accessibilityLabel("Progress: \(Int(progressPercentage * 100)) percent paid")
+                    .accessibilityAddTraits(.isStaticText)
             }
-            .navigationTitle("Loan Details")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
+            .padding(.horizontal, 24)
+            .padding(.top, 16)
+            .padding(.bottom, 12)
+            
+            // Progress Bar Section
+            VStack(spacing: 12) {
+                // Progress Bar
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        // Background
+                        Rectangle()
+                            .fill(Constants.Colors.textTertiary.opacity(0.2))
+                            .frame(height: 8)
+                            .cornerRadius(4)
+                        
+                        // Progress Fill
+                        Rectangle()
+                            .fill(loanTypeColor)
+                            .frame(width: geometry.size.width * progressPercentage, height: 8)
+                            .cornerRadius(4)
                     }
-                    .font(Constants.Typography.Body.font)
-                    .foregroundColor(Constants.Colors.textPrimary)
                 }
+                .frame(height: 8)
             }
-            .sheet(isPresented: $showingEditSheet) {
-                LoanEditView(loan: $editableLoan, viewModel: viewModel)
-            }
-            .alert("Delete Loan", isPresented: $showingDeleteAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete", role: .destructive) {
-                    viewModel.deleteLoan(loan)
-                    dismiss()
+            .padding(.horizontal, 24)
+            .padding(.bottom, 20)
+            
+            // Details Section - Essential information only
+            VStack(spacing: 16) {
+                // Principal Amount
+                HStack {
+                    Text("PRINCIPAL")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(Constants.Colors.textTertiary)
+                        .tracking(1.0)
+                    Spacer()
+                    Text(loan.principalAmount.formatted(.currency(code: "USD")))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Constants.Colors.textPrimary)
                 }
-            } message: {
-                Text("Are you sure you want to delete this loan? This action cannot be undone.")
+                .padding(.horizontal, 24)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Principal amount: \(loan.principalAmount.formatted(.currency(code: "USD")))")
+                
+                Divider()
+                    .background(Constants.Colors.textTertiary.opacity(0.3))
+                    .padding(.horizontal, 24)
+                
+                // Monthly Payment
+                HStack {
+                    Text("MONTHLY PAYMENT")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(Constants.Colors.textTertiary)
+                        .tracking(1.0)
+                    Spacer()
+                    Text(loan.monthlyPayment.formatted(.currency(code: "USD")))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Constants.Colors.error)
+                }
+                .padding(.horizontal, 24)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Monthly payment: \(loan.monthlyPayment.formatted(.currency(code: "USD")))")
+                
+                Divider()
+                    .background(Constants.Colors.textTertiary.opacity(0.3))
+                    .padding(.horizontal, 24)
+                
+                // Interest Rate
+                HStack {
+                    Text("INTEREST RATE")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(Constants.Colors.textTertiary)
+                        .tracking(1.0)
+                    Spacer()
+                    Text(String(format: "%.2f%%", loan.interestRate))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Constants.Colors.warning)
+                }
+                .padding(.horizontal, 24)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Interest rate: \(String(format: "%.2f%%", loan.interestRate))")
+                
+                Divider()
+                    .background(Constants.Colors.textTertiary.opacity(0.3))
+                    .padding(.horizontal, 24)
+                
+                // Due Date
+                HStack {
+                    Text("DUE DATE")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(Constants.Colors.textTertiary)
+                        .tracking(1.0)
+                    Spacer()
+                    Text(loan.dueDate.formatted(date: .abbreviated, time: .omitted))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Constants.Colors.info)
+                }
+                .padding(.horizontal, 24)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Due date: \(loan.dueDate.formatted(date: .abbreviated, time: .omitted))")
             }
+            .padding(.bottom, 20)
+            
+            // Action Buttons - Horizontal layout for compact design
+            HStack(spacing: 12) {
+                // Edit Button - Primary action
+                Button(action: {
+                    showingEditSheet = true
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "pencil")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("Edit")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(Constants.Colors.cleanBlack)
+                    .cornerRadius(12)
+                }
+                .accessibilityLabel("Edit loan")
+                .accessibilityHint("Double tap to edit this loan")
+                
+                // Delete Button - Secondary action
+                Button(action: {
+                    showingDeleteAlert = true
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("Delete")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(Constants.Colors.error)
+                    .cornerRadius(12)
+                }
+                .accessibilityLabel("Delete loan")
+                .accessibilityHint("Double tap to delete this loan")
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 32)
+        }
+        .sheet(isPresented: $showingEditSheet) {
+            LoanEditView(loan: $editableLoan, viewModel: viewModel)
+                .presentationDetents([.height(650), .medium])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(20)
+        }
+        .alert("Delete Loan", isPresented: $showingDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                viewModel.deleteLoan(loan)
+                dismiss()
+            }
+        } message: {
+            Text("Are you sure you want to delete this loan? This action cannot be undone.")
         }
     }
     
@@ -282,47 +273,38 @@ struct LoanDetailView: View {
     }
 }
 
-// MARK: - Detail Row Component
-private struct DetailRow: View {
-    let title: String
-    let value: String
-    let icon: String
-    let iconColor: Color
+// MARK: - Loan Type Icon Component
+private struct LoanTypeIcon: View {
+    let loanName: String
+    let size: CGFloat
+    
+    private var iconInfo: (name: String, color: Color) {
+        switch loanName.lowercased() {
+        case let name where name.contains("auto") || name.contains("car"):
+            return ("car.fill", Constants.Colors.info)
+        case let name where name.contains("student"):
+            return ("graduationcap.fill", Constants.Colors.success)
+        case let name where name.contains("credit"):
+            return ("creditcard.fill", Constants.Colors.error)
+        case let name where name.contains("home") || name.contains("mortgage"):
+            return ("house.fill", Constants.Colors.warning)
+        default:
+            return ("doc.text.fill", Constants.Colors.textSecondary)
+        }
+    }
     
     var body: some View {
-        HStack(spacing: Constants.UI.Spacing.medium) {
-            // Icon
-            ZStack {
-                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                    .fill(iconColor.opacity(0.1))
-                    .frame(width: 40, height: 40)
-                
-                Image(systemName: icon)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundColor(iconColor)
-            }
-            .accessibilityHidden(true)
+        ZStack {
+            RoundedRectangle(cornerRadius: size / 4)
+                .fill(iconInfo.color.opacity(0.15))
+                .frame(width: size, height: size)
             
-            // Content
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(Constants.Typography.Caption.font)
-                    .fontWeight(.medium)
-                    .foregroundColor(Constants.Colors.textSecondary)
-                
-                Text(value)
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Constants.Colors.textPrimary)
-            }
-            
-            Spacer()
+            Image(systemName: iconInfo.name)
+                .font(.system(size: size * 0.5, weight: .medium))
+                .foregroundColor(iconInfo.color)
         }
-        .padding(.vertical, Constants.UI.Spacing.small)
-        .padding(.horizontal, Constants.UI.Spacing.medium)
-        .background(Constants.Colors.backgroundSecondary)
-        .cornerRadius(Constants.UI.cardCornerRadius)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Loan type icon for \(loanName)")
     }
 }
 

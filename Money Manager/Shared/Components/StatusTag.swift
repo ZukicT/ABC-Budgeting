@@ -20,7 +20,7 @@ struct StatusTag: View {
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
                 .background(
-                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(isSelected ? status.color : status.color.opacity(0.1))
                 )
         }

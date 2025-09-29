@@ -292,7 +292,7 @@ struct Constants {
         static let separator = Color.clear // No separators in minimalist design
         
         // Legacy support (keeping for compatibility)
-        static let robinNeonGreen = primaryBlue // Map old name to new primary color
+        static let accentColor = primaryBlue // Map old name to new primary color
         static let cleanBlack = textPrimary
         static let softRed = primaryOrange
         static let primaryBlueDark = primaryBlue.opacity(0.8)
@@ -417,7 +417,7 @@ struct Constants {
             static let sectionCornerRadius: CGFloat = 12
         }
     
-    // MARK: - Minimalist Design Tokens (Robinhood/Public Style - No Visual Effects)
+    // MARK: - Minimalist Design Tokens (Professional Flat Design Style - No Visual Effects)
     struct MinimalistDesign {
         static let cornerRadius: CGFloat = 0 // No rounded corners in minimalist design
         static let borderWidth: CGFloat = 0 // No borders in minimalist design

@@ -2,6 +2,9 @@ import SwiftUI
 
 struct LoanView: View {
     @ObservedObject var viewModel: LoanViewModel
+    @ObservedObject var dataClearingService: DataClearingService
+    @ObservedObject var budgetViewModel: BudgetViewModel
+    @ObservedObject var transactionViewModel: TransactionViewModel
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
@@ -26,16 +29,19 @@ struct LoanView: View {
                 }
             }
             .sheet(isPresented: $showSettings) {
-                SettingsView()
+                SettingsView(dataClearingService: dataClearingService)
             }
             .sheet(isPresented: $showNotifications) {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
-                AddView(loanViewModel: viewModel, budgetViewModel: BudgetViewModel(), transactionViewModel: TransactionViewModel())
+                AddView(loanViewModel: viewModel, budgetViewModel: budgetViewModel, transactionViewModel: transactionViewModel)
             }
             .sheet(item: $selectedLoan) { loan in
                 LoanDetailView(loan: loan, viewModel: viewModel)
+                    .presentationDetents([.height(550), .medium])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
         }
     }
@@ -63,23 +69,23 @@ struct LoanView: View {
     
     // MARK: - Content Section
     private var contentSection: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                if viewModel.isLoading {
-                    LoadingStateView(message: "Loading loans...")
-                } else if let errorMessage = viewModel.errorMessage {
-                    ErrorStateView(message: errorMessage) {
-                        viewModel.loadLoans()
-                    }
-                } else if viewModel.loans.isEmpty {
-                    LoanBlankStateView {
-                        showAddView = true
-                    }
-                } else {
+        Group {
+            if viewModel.isLoading {
+                LoadingStateView(message: "Loading loans...")
+            } else if let errorMessage = viewModel.errorMessage {
+                ErrorStateView(message: errorMessage) {
+                    viewModel.loadLoans()
+                }
+            } else if viewModel.loans.isEmpty {
+                LoanEmptyState {
+                    showAddView = true
+                }
+            } else {
+                ScrollView {
                     loanContent
+                        .padding(Constants.UI.Padding.screenMargin)
                 }
             }
-            .padding(Constants.UI.Padding.screenMargin)
         }
     }
     
@@ -113,9 +119,9 @@ struct LoanView: View {
             }
         }
         .background(Constants.Colors.backgroundPrimary)
-        .cornerRadius(Constants.UI.CornerRadius.secondary)
+        .cornerRadius(Constants.UI.cardCornerRadius)
         .overlay(
-            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
+            RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
                 .stroke(Constants.Colors.textPrimary.opacity(0.1), lineWidth: 1)
         )
     }
@@ -231,10 +237,10 @@ private struct LoanSummarySection: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 24)
         .background(
-            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
-                .fill(Constants.Colors.textPrimary.opacity(0.08))
+            RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
+                .fill(Constants.Colors.textPrimary.opacity(0.05))
                 .overlay(
-                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
+                    RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
                         .stroke(Constants.Colors.textPrimary.opacity(0.1), lineWidth: 1)
                 )
         )
@@ -279,8 +285,8 @@ private struct LoanCard: View {
             HStack(spacing: Constants.UI.Spacing.medium) {
                 // Loan Type Icon
                 ZStack {
-                    Rectangle()
-                        .fill(loanTypeColor)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Constants.Colors.cleanBlack)
                         .frame(width: 40, height: 40)
                     
                     Image(systemName: loanTypeIcon)
@@ -367,7 +373,7 @@ private struct LoanTableHeader: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Constants.Colors.textPrimary.opacity(0.08))
+        .background(Constants.Colors.textPrimary.opacity(0.05))
     }
 }
 
@@ -406,8 +412,8 @@ private struct MobileLoanRow: View {
             HStack(spacing: 12) {
                 // Loan Type Icon
                 ZStack {
-                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                        .fill(loanTypeColor)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Constants.Colors.cleanBlack)
                         .frame(width: 40, height: 40)
                     
                     Image(systemName: loanTypeIcon)
@@ -483,7 +489,7 @@ private struct MobileLoanRow: View {
         )
         .overlay(
             Rectangle()
-                .fill(Constants.Colors.textPrimary.opacity(0.08))
+                .fill(Constants.Colors.textPrimary.opacity(0.05))
                 .frame(height: 0.5),
             alignment: .bottom
         )
@@ -493,5 +499,10 @@ private struct MobileLoanRow: View {
 }
 
 #Preview {
-    LoanView(viewModel: LoanViewModel())
+    LoanView(
+        viewModel: LoanViewModel(), 
+        dataClearingService: DataClearingService(),
+        budgetViewModel: BudgetViewModel(),
+        transactionViewModel: TransactionViewModel()
+    )
 }

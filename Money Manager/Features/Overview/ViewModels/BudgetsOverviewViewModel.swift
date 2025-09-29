@@ -11,16 +11,20 @@ class BudgetsOverviewViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     init() {
-        generateSampleData()
+        // Start with empty data - no sample data
+        budgetOverviewItems = []
+        totalBudgeted = 0.0
+        totalSpent = 0.0
+        overallProgress = 0.0
     }
     
     func refreshData() {
         isLoading = true
         errorMessage = nil
         
-        // Simulate data refresh
+        // Simulate data refresh - no sample data generated
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.generateSampleData()
+            // Keep empty data to show empty states
             self.isLoading = false
         }
     }

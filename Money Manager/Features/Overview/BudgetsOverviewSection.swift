@@ -1,9 +1,12 @@
 import SwiftUI
 
 struct BudgetsOverviewSection: View {
-    @StateObject private var viewModel = BudgetsOverviewViewModel()
-    @State private var selectedBudget: Budget?
     @ObservedObject var budgetViewModel: BudgetViewModel
+    @State private var totalBudgeted: Double = 0.0
+    @State private var totalSpent: Double = 0.0
+    @State private var overallProgress: Double = 0.0
+    @State private var isLoading = false
+    @State private var errorMessage: String?
     
     let onTabSwitch: (Int) -> Void
     
@@ -28,17 +31,14 @@ struct BudgetsOverviewSection: View {
                 .accessibilityLabel("View all budgets")
             }
             
-            if viewModel.isLoading {
+            if isLoading {
                 LoadingStateView(message: "Loading budgets...")
-            } else if let errorMessage = viewModel.errorMessage {
+            } else if let errorMessage = errorMessage {
                 ErrorStateView(message: errorMessage) {
-                    viewModel.refreshData()
+                    refreshData()
                 }
-            } else if viewModel.budgetOverviewItems.isEmpty {
-                EmptyStateView(
-                    icon: "dollarsign.circle",
-                    title: "No Budgets",
-                    message: "Create your first budget to start tracking your spending.",
+            } else if budgetViewModel.budgets.isEmpty {
+                BudgetEmptyState(
                     actionTitle: "Create Budget",
                     action: {
                         // TODO: Navigate to create budget
@@ -49,41 +49,49 @@ struct BudgetsOverviewSection: View {
                 VStack(spacing: Constants.UI.Spacing.medium) {
                     // Main Summary Card
                     BudgetSummaryCard(
-                        totalBudgeted: viewModel.totalBudgeted,
-                        totalSpent: viewModel.totalSpent,
-                        overallProgress: viewModel.overallProgress
+                        totalBudgeted: totalBudgeted,
+                        totalSpent: totalSpent,
+                        overallProgress: overallProgress
                     )
-                    
-                    // Compact Budget List
-                    LazyVStack(spacing: 0) {
-                        ForEach(Array(viewModel.budgetOverviewItems.enumerated()), id: \.element.id) { index, item in
-                            VStack(spacing: 0) {
-                                Button(action: {
-                                    selectedBudget = item.budget
-                                }) {
-                                    CompactBudgetItem(item: item)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                // Separation line (except for last item)
-                                if index < viewModel.budgetOverviewItems.count - 1 {
-                                    Rectangle()
-                                        .fill(Color(red: 0.9, green: 0.9, blue: 0.9))
-                                        .frame(height: 1)
-                                        .padding(.horizontal, Constants.UI.Padding.screenMargin)
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
         .onAppear {
-            viewModel.refreshData()
+            refreshData()
         }
-        .sheet(item: $selectedBudget) { budget in
-            BudgetDetailView(budgetId: budget.id, budgetViewModel: budgetViewModel)
+        .onChange(of: budgetViewModel.budgets.count) { _, _ in
+            refreshData()
         }
+    }
+    
+    // MARK: - Data Processing
+    private func refreshData() {
+        isLoading = true
+        errorMessage = nil
+        
+        // Calculate budget data from actual budgetViewModel
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.calculateBudgetData()
+            self.isLoading = false
+        }
+    }
+    
+    private func calculateBudgetData() {
+        guard !budgetViewModel.budgets.isEmpty else {
+            totalBudgeted = 0.0
+            totalSpent = 0.0
+            overallProgress = 0.0
+            return
+        }
+        
+        // Calculate total budgeted amount
+        totalBudgeted = budgetViewModel.budgets.reduce(0) { $0 + $1.allocatedAmount }
+        
+        // Calculate total spent
+        totalSpent = budgetViewModel.budgets.reduce(0) { $0 + $1.spentAmount }
+        
+        // Calculate overall progress
+        overallProgress = totalBudgeted > 0 ? totalSpent / totalBudgeted : 0.0
     }
 }
 
@@ -130,13 +138,13 @@ private struct BudgetSummaryCard: View {
                     Rectangle()
                         .fill(Constants.Colors.backgroundSecondary)
                         .frame(height: 12)
-                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
+                        .cornerRadius(8)
                     
                     // Progress Fill
                     Rectangle()
                         .fill(progressColor)
                         .frame(width: geometry.size.width * min(overallProgress, 1.0), height: 12)
-                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
+                        .cornerRadius(8)
                 }
             }
             .frame(height: 12)
@@ -170,69 +178,7 @@ private struct BudgetSummaryCard: View {
         }
         .padding(Constants.UI.Spacing.medium)
         .background(Constants.Colors.textPrimary.opacity(0.05)) // WCAG AA compliant background
-        .cornerRadius(Constants.UI.CornerRadius.secondary)
-    }
-}
-
-// MARK: - Compact Budget Item
-private struct CompactBudgetItem: View {
-    let item: BudgetOverviewItem
-    
-    var body: some View {
-        HStack(spacing: Constants.UI.Spacing.medium) {
-            // Category Name
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.budget.category)
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Constants.Colors.textPrimary)
-                
-                Text("\(Int(item.progressPercentage * 100))% used")
-                    .font(Constants.Typography.Caption.font)
-                    .foregroundColor(Constants.Colors.textSecondary)
-            }
-            
-            // Progress Line
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // Background
-                    Rectangle()
-                        .fill(Constants.Colors.backgroundSecondary)
-                        .frame(height: 4)
-                        .cornerRadius(Constants.UI.CornerRadius.quaternary)
-                    
-                    // Progress Fill
-                    Rectangle()
-                        .fill(item.statusColor)
-                        .frame(width: geometry.size.width * min(item.progressPercentage, 1.0), height: 4)
-                        .cornerRadius(Constants.UI.CornerRadius.quaternary)
-                }
-            }
-            .frame(height: 4)
-            
-            // Amount and Status
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(item.spentAmount, format: .currency(code: "USD"))
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.bold)
-                    .foregroundColor(item.statusColor)
-                
-                if item.isOverBudget {
-                    Text("Over")
-                        .font(.caption2)
-                        .fontWeight(.medium)
-                        .foregroundColor(Constants.Colors.error)
-                } else {
-                    Text("On Track")
-                        .font(.caption2)
-                        .fontWeight(.medium)
-                        .foregroundColor(Constants.Colors.success)
-                }
-            }
-        }
-        .padding(Constants.UI.Spacing.small)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(item.budget.category) budget: \(item.spentAmount, format: .currency(code: "USD")) spent out of \(item.budget.allocatedAmount, format: .currency(code: "USD")) allocated")
+        .cornerRadius(Constants.UI.cardCornerRadius)
     }
 }
 

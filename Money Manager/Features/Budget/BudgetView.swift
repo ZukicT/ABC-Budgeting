@@ -21,7 +21,9 @@ import SwiftUI
 
 struct BudgetView: View {
     @ObservedObject var viewModel: BudgetViewModel
-    @StateObject private var loanViewModel = LoanViewModel()
+    @ObservedObject var dataClearingService: DataClearingService
+    @ObservedObject var loanViewModel: LoanViewModel
+    @ObservedObject var transactionViewModel: TransactionViewModel
     @State private var showSettings = false
     @State private var showNotifications = false
     @State private var showAddView = false
@@ -46,16 +48,19 @@ struct BudgetView: View {
                 }
             }
             .sheet(isPresented: $showSettings) {
-                SettingsView()
+                SettingsView(dataClearingService: dataClearingService)
             }
             .sheet(isPresented: $showNotifications) {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
-                AddView(loanViewModel: loanViewModel, budgetViewModel: viewModel, transactionViewModel: TransactionViewModel())
+                AddView(loanViewModel: loanViewModel, budgetViewModel: viewModel, transactionViewModel: transactionViewModel)
             }
             .sheet(item: $selectedBudget) { budget in
                 BudgetDetailView(budgetId: budget.id, budgetViewModel: viewModel)
+                    .presentationDetents([.height(450), .medium])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
         }
     }
@@ -117,9 +122,9 @@ struct BudgetView: View {
             }
         }
         .background(Constants.Colors.backgroundPrimary)
-        .cornerRadius(Constants.UI.CornerRadius.secondary)
+        .cornerRadius(Constants.UI.cardCornerRadius)
         .overlay(
-            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
+            RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
                 .stroke(Constants.Colors.textPrimary.opacity(0.1), lineWidth: 1)
         )
     }
@@ -174,7 +179,7 @@ private struct BudgetTableHeader: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Constants.Colors.textPrimary.opacity(0.08))
+        .background(Constants.Colors.textPrimary.opacity(0.05))
     }
 }
 
@@ -219,8 +224,8 @@ private struct MobileBudgetRow: View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                        .fill(budgetCategoryColor)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Constants.Colors.cleanBlack)
                         .frame(width: 40, height: 40)
                     
                     Image(systemName: budgetCategoryIcon)
@@ -309,7 +314,7 @@ private struct MobileBudgetRow: View {
         )
         .overlay(
             Rectangle()
-                .fill(Constants.Colors.textPrimary.opacity(0.08))
+                .fill(Constants.Colors.textPrimary.opacity(0.05))
                 .frame(height: 0.5),
             alignment: .bottom
         )
@@ -442,7 +447,7 @@ private struct BudgetCard: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(progressColor.opacity(0.1))
-                    .cornerRadius(Constants.UI.CornerRadius.tertiary)
+                    .cornerRadius(8)
             }
         }
         .padding(Constants.UI.Padding.cardInternal)
@@ -535,10 +540,10 @@ private struct BudgetSummaryCard: View {
             }
         }
         .padding(Constants.UI.Spacing.large)
-        .background(Constants.Colors.textPrimary.opacity(0.08))
-        .cornerRadius(Constants.UI.CornerRadius.secondary)
+        .background(Constants.Colors.textPrimary.opacity(0.05))
+        .cornerRadius(Constants.UI.cardCornerRadius)
         .overlay(
-            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
+            RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
                 .stroke(Constants.Colors.textPrimary.opacity(0.1), lineWidth: 1)
         )
         .accessibilityElement(children: .combine)
@@ -547,5 +552,10 @@ private struct BudgetSummaryCard: View {
 }
 
 #Preview {
-    BudgetView(viewModel: BudgetViewModel())
+    BudgetView(
+        viewModel: BudgetViewModel(), 
+        dataClearingService: DataClearingService(),
+        loanViewModel: LoanViewModel(),
+        transactionViewModel: TransactionViewModel()
+    )
 }

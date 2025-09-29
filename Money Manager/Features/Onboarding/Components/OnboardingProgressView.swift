@@ -14,7 +14,7 @@ struct OnboardingProgressView: View {
                 ForEach(0..<OnboardingStep.allCases.count, id: \.self) { index in
                     RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.quaternary)
                         .fill(index <= currentStep.rawValue ? 
-                              Constants.Colors.robinNeonGreen : 
+                              Constants.Colors.accentColor : 
                               Constants.Colors.textTertiary.opacity(0.2))
                         .frame(height: 4)
                         .frame(maxWidth: .infinity)

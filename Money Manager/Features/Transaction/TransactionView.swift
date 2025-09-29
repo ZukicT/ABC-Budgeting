@@ -2,6 +2,9 @@ import SwiftUI
 
 struct TransactionView: View {
     @ObservedObject var viewModel: TransactionViewModel
+    @ObservedObject var dataClearingService: DataClearingService
+    @ObservedObject var loanViewModel: LoanViewModel
+    @ObservedObject var budgetViewModel: BudgetViewModel
     @State private var selectedCategory = "All"
     @State private var showSettings = false
     @State private var showNotifications = false
@@ -45,20 +48,23 @@ struct TransactionView: View {
                 }
             }
             .sheet(isPresented: $showSettings) {
-                SettingsView()
+                SettingsView(dataClearingService: dataClearingService)
             }
             .sheet(isPresented: $showNotifications) {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
                 AddView(
-                    loanViewModel: LoanViewModel(), 
-                    budgetViewModel: BudgetViewModel(),
+                    loanViewModel: loanViewModel, 
+                    budgetViewModel: budgetViewModel,
                     transactionViewModel: viewModel
                 )
             }
             .sheet(item: $selectedTransaction) { transaction in
                 TransactionDetailView(transactionId: transaction.id, transactionViewModel: viewModel)
+                    .presentationDetents([.height(280), .medium])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(20)
             }
         }
     }
@@ -229,8 +235,8 @@ private struct CategoryTag: View {
             .padding(.horizontal, Constants.UI.Spacing.medium)
             .padding(.vertical, Constants.UI.Spacing.small)
             .background(
-                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
-                    .fill(isSelected ? Constants.Colors.textPrimary : Constants.Colors.textPrimary.opacity(0.08))
+                RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
+                    .fill(isSelected ? Constants.Colors.textPrimary : Constants.Colors.textPrimary.opacity(0.05))
             )
         }
         .accessibilityLabel("\(title) category")
@@ -258,11 +264,16 @@ private struct MonthHeader: View {
         }
         .padding(.vertical, Constants.UI.Spacing.medium)
         .padding(.horizontal, Constants.UI.Padding.screenMargin)
-        .background(Constants.Colors.textPrimary.opacity(0.08))
-        .cornerRadius(Constants.UI.CornerRadius.secondary)
+        .background(Constants.Colors.textPrimary.opacity(0.05))
+        .cornerRadius(Constants.UI.cardCornerRadius)
     }
 }
 
 #Preview {
-    TransactionView(viewModel: TransactionViewModel())
+    TransactionView(
+        viewModel: TransactionViewModel(), 
+        dataClearingService: DataClearingService(),
+        loanViewModel: LoanViewModel(),
+        budgetViewModel: BudgetViewModel()
+    )
 }

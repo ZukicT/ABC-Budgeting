@@ -18,15 +18,23 @@ class OnboardingViewModel: ObservableObject {
     }
     
     func nextStep() {
+        #if DEBUG
         print("DEBUG: nextStep() called. Current step: \(currentStep)")
+        #endif
         guard let nextStep = OnboardingStep(rawValue: currentStep.rawValue + 1) else {
+            #if DEBUG
             print("DEBUG: No next step available, completing onboarding")
+            #endif
             completeOnboarding()
             return
         }
+        #if DEBUG
         print("DEBUG: Moving to next step: \(nextStep)")
+        #endif
         currentStep = nextStep
+        #if DEBUG
         print("DEBUG: Current step updated to: \(currentStep)")
+        #endif
     }
     
     func previousStep() {
@@ -38,11 +46,17 @@ class OnboardingViewModel: ObservableObject {
     
     
     func completeOnboarding() {
+        #if DEBUG
         print("🎯 OnboardingViewModel.completeOnboarding() called")
+        #endif
         isCompleted = true
+        #if DEBUG
         print("🎯 Calling onboardingManager?.completeOnboarding()")
+        #endif
         onboardingManager?.completeOnboarding()
+        #if DEBUG
         print("🎯 Onboarding completion flow initiated")
+        #endif
     }
     
     func setOnboardingManager(_ manager: OnboardingManager) {

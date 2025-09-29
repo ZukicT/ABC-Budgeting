@@ -9,6 +9,7 @@ struct OverviewView: View {
     @ObservedObject var loanViewModel: LoanViewModel
     @ObservedObject var budgetViewModel: BudgetViewModel
     @ObservedObject var transactionViewModel: TransactionViewModel
+    @ObservedObject var dataClearingService: DataClearingService
     
     var body: some View {
         NavigationStack {
@@ -74,13 +75,13 @@ struct OverviewView: View {
             }
             .background(Constants.Colors.backgroundPrimary)
             .sheet(isPresented: $showSettings) {
-                SettingsView()
+                SettingsView(dataClearingService: dataClearingService)
             }
             .sheet(isPresented: $showNotifications) {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
-                AddView(loanViewModel: loanViewModel, budgetViewModel: budgetViewModel, transactionViewModel: TransactionViewModel())
+                AddView(loanViewModel: loanViewModel, budgetViewModel: budgetViewModel, transactionViewModel: transactionViewModel)
             }
         }
     }
@@ -103,7 +104,7 @@ private struct OverviewContent: View {
             )
             
             // Monthly Overview Section
-            MonthlyOverviewSection()
+            MonthlyOverviewSection(transactionViewModel: transactionViewModel)
             
             // Recent Transactions Section
             RecentTransactionsSection(
@@ -118,7 +119,7 @@ private struct OverviewContent: View {
             LoanOverviewSection(loanViewModel: loanViewModel, onTabSwitch: onTabSwitch)
             
             // Financial Insights Section
-            FinancialInsightsSection()
+            FinancialInsightsSection(transactionViewModel: transactionViewModel)
             
             Spacer(minLength: Constants.UI.Spacing.xl)
         }
@@ -130,6 +131,7 @@ private struct OverviewContent: View {
         onTabSwitch: { _ in },
         loanViewModel: LoanViewModel(),
         budgetViewModel: BudgetViewModel(),
-        transactionViewModel: TransactionViewModel()
+        transactionViewModel: TransactionViewModel(),
+        dataClearingService: DataClearingService()
     )
 }

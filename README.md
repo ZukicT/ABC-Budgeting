@@ -4,25 +4,51 @@ A comprehensive iOS personal finance management application built with SwiftUI.
 
 ## 📱 Overview
 
-Money Manager is a modern, intuitive iOS app designed to help users take control of their personal finances. Currently in active development, the app will provide essential budgeting, loan tracking, and financial insights in a clean, user-friendly interface built with SwiftUI.
+Money Manager is a modern, intuitive iOS app designed to help users take control of their personal finances. The app provides essential budgeting, loan tracking, and financial insights in a clean, user-friendly interface built with SwiftUI.
 
 ## ✨ Features
 
-### Planned Core Functionality
-- **Budget Management** - Create, edit, and track personal budgets (In Development)
-- **Loan Tracking** - Monitor loans with detailed payment schedules (Planned)
-- **Financial Overview** - Comprehensive dashboard with key metrics (Planned)
-- **Transaction Management** - Track income and expenses (Planned)
-- **Analytics** - Visual charts and financial insights (Planned)
+### ✅ Implemented Core Functionality
+- **Onboarding Flow** - Complete 5-screen onboarding experience with currency selection and balance setup
+- **Overview Dashboard** - Financial dashboard with balance display, charts, and quick actions
+- **Transaction Management** - Add, edit, and track transactions with category filtering and search
+- **Budget Management** - Create and track budget goals with visual progress indicators
+- **Loan Management** - Track loans with payment schedules and progress monitoring
+- **Settings & Data Management** - User preferences, CSV import/export, and data clearing
 
 ### Key Highlights
-- Clean, modern SwiftUI interface (Implemented)
-- Intuitive navigation and user experience (In Development)
+- Clean, modern SwiftUI interface with professional flat design
+- Apple Human Interface Guidelines compliance
+- Full accessibility support (VoiceOver, Dynamic Type)
+- Custom Trap Font integration with SF Pro fallback
+- 8pt grid system for consistent spacing
+- Comprehensive error handling and user feedback
 - Real-time financial calculations (Planned)
 - Comprehensive data visualization (Planned)
 - Offline-first design (Planned)
 
-## 🛠️ Technical Stack
+## 📋 Project Management
+
+### Linear Integration
+This project uses **Linear** for project management and ticket tracking:
+- **Issues**: Track bugs, features, and improvements
+- **Projects**: Organize work into focused initiatives
+- **Cycles**: Sprint-based development cycles
+- **Teams**: Cross-functional team collaboration
+- **Labels**: Categorize and prioritize work items
+
+### Development Workflow
+- **Feature Development**: Create Linear issues for new features
+- **Bug Tracking**: Report and track bugs through Linear
+- **Code Reviews**: Link pull requests to Linear issues
+- **Release Planning**: Use Linear projects for release management
+- **Documentation**: Keep documentation updated with Linear issues
+
+### Current Status
+- **Phase**: Production Ready
+- **Active Development**: Ongoing feature enhancements
+- **Next Milestone**: iOS Widgets and Advanced Analytics
+- **Team**: Cross-functional development team
 
 - **Platform**: iOS 18.0+
 - **Framework**: SwiftUI
@@ -70,8 +96,8 @@ Money Manager/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/ZukicT/ABC-Budgeting.git
-   cd ABC-Budgeting
+   git clone https://github.com/ZukicT/Money-Manager.git
+   cd Money-Manager
    ```
 
 2. **Open in Xcode**

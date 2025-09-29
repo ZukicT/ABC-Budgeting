@@ -57,20 +57,14 @@ struct TransactionEmptyState: View {
             
             // Brand yellow call-to-action button
             Button(action: action) {
-                HStack(spacing: Constants.UI.Spacing.small) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.white)
-                    
-                    Text(actionTitle)
-                        .font(Constants.Typography.Button.font)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(Constants.Onboarding.yellowHex)
-                .cornerRadius(Constants.UI.CornerRadius.primary)
+                Text(actionTitle)
+                    .font(Constants.Typography.Button.font)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(Color.black)
+                    .cornerRadius(Constants.UI.CornerRadius.primary)
             }
             .accessibilityLabel(actionTitle)
             .accessibilityHint("Tap to add your first transaction")
@@ -84,6 +78,8 @@ struct TransactionEmptyState: View {
 
 #Preview {
     TransactionEmptyState {
+        #if DEBUG
         print("Add Transaction tapped")
+        #endif
     }
 }

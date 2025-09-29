@@ -7,38 +7,27 @@ class MonthlyOverviewViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    // Sample data for now - will be replaced with real data integration
-    private let sampleTransactions: [TransactionData] = [
-        TransactionData(id: UUID(), amount: 5000, category: "Salary", type: .income, date: Date(), description: "Monthly Salary"),
-        TransactionData(id: UUID(), amount: 1200, category: "Rent", type: .expense, date: Date(), description: "Monthly Rent"),
-        TransactionData(id: UUID(), amount: 300, category: "Groceries", type: .expense, date: Date(), description: "Weekly Groceries"),
-        TransactionData(id: UUID(), amount: 150, category: "Utilities", type: .expense, date: Date(), description: "Electric Bill"),
-        TransactionData(id: UUID(), amount: 200, category: "Transportation", type: .expense, date: Date(), description: "Gas & Public Transport"),
-        TransactionData(id: UUID(), amount: 100, category: "Entertainment", type: .expense, date: Date(), description: "Movies & Dining"),
-        TransactionData(id: UUID(), amount: 4000, category: "Salary", type: .income, date: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), description: "Previous Month Salary"),
-        TransactionData(id: UUID(), amount: 1100, category: "Rent", type: .expense, date: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), description: "Previous Month Rent"),
-        TransactionData(id: UUID(), amount: 280, category: "Groceries", type: .expense, date: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), description: "Previous Month Groceries"),
-        TransactionData(id: UUID(), amount: 140, category: "Utilities", type: .expense, date: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), description: "Previous Month Electric"),
-        TransactionData(id: UUID(), amount: 180, category: "Transportation", type: .expense, date: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), description: "Previous Month Transport"),
-        TransactionData(id: UUID(), amount: 120, category: "Entertainment", type: .expense, date: Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date(), description: "Previous Month Entertainment")
-    ]
+    // Real transaction data from TransactionViewModel
+    private var transactions: [Transaction] = []
     
     init() {
-        loadMonthlyData()
+        // Start with empty data - will be populated from real data
+        monthlyData = nil
     }
     
     func loadMonthlyData() {
         isLoading = true
         errorMessage = nil
         
-        // Simulate network delay
+        // Load real data from starting balance and transactions
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.calculateMonthlyData()
             self.isLoading = false
         }
     }
     
-    func refreshData() {
+    func refreshData(transactions: [Transaction] = []) {
+        self.transactions = transactions
         loadMonthlyData()
     }
     
@@ -54,33 +43,43 @@ class MonthlyOverviewViewModel: ObservableObject {
         let previousMonthStart = calendar.date(byAdding: .month, value: -1, to: currentMonthStart) ?? now
         let previousMonthEnd = calendar.date(byAdding: .month, value: -1, to: currentMonthEnd) ?? now
         
-        // Filter transactions for current month
-        let currentMonthTransactions = sampleTransactions.filter { transaction in
+        // Get starting balance from onboarding
+        _ = CurrencyUtility.startingBalance
+        
+        // Filter transactions by month
+        let currentMonthTransactions = transactions.filter { transaction in
             transaction.date >= currentMonthStart && transaction.date < currentMonthEnd
         }
         
-        // Filter transactions for previous month
-        let previousMonthTransactions = sampleTransactions.filter { transaction in
+        let previousMonthTransactions = transactions.filter { transaction in
             transaction.date >= previousMonthStart && transaction.date < previousMonthEnd
         }
         
         // Calculate current month totals
+        // Positive amounts are income, negative amounts are expenses
         let currentIncome = currentMonthTransactions
-            .filter { $0.type == .income }
+            .filter { $0.amount > 0 }
             .reduce(0) { $0 + $1.amount }
         
         let currentExpenses = currentMonthTransactions
-            .filter { $0.type == .expense }
-            .reduce(0) { $0 + $1.amount }
+            .filter { $0.amount < 0 }
+            .reduce(0) { $0 + abs($1.amount) }
         
         // Calculate previous month totals
         let previousIncome = previousMonthTransactions
-            .filter { $0.type == .income }
+            .filter { $0.amount > 0 }
             .reduce(0) { $0 + $1.amount }
         
         let previousExpenses = previousMonthTransactions
-            .filter { $0.type == .expense }
-            .reduce(0) { $0 + $1.amount }
+            .filter { $0.amount < 0 }
+            .reduce(0) { $0 + abs($1.amount) }
+        
+        
+        // If no transactions, show empty state
+        if currentIncome == 0 && currentExpenses == 0 && previousIncome == 0 && previousExpenses == 0 {
+            self.monthlyData = nil
+            return
+        }
         
         // Create month data objects
         let currentMonthData = MonthData(
@@ -97,7 +96,7 @@ class MonthlyOverviewViewModel: ObservableObject {
         
         // Calculate month-over-month change (percentage) based on income
         let monthOverMonthChange = previousIncome != 0 ? 
-            ((currentIncome - previousIncome) / abs(previousIncome)) * 100 : 0
+            ((currentIncome - previousIncome) / previousIncome) * 100 : 0
         
         // Create monthly overview data
         self.monthlyData = MonthlyOverviewData(
@@ -121,16 +120,3 @@ struct MonthData {
     let date: Date
 }
 
-struct TransactionData {
-    let id: UUID
-    let amount: Double
-    let category: String
-    let type: TransactionType
-    let date: Date
-    let description: String
-}
-
-enum TransactionType {
-    case income
-    case expense
-}

@@ -10,7 +10,9 @@ struct LoanEditView: View {
     @State private var interestRate: String
     @State private var monthlyPayment: String
     @State private var selectedDueDate: Date
-    @State private var showingLoanTypePicker = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
+    @State private var isSaving = false
     
     private let loanTypes = ["Personal", "Auto", "Home", "Student", "Credit Card", "Business", "Other"]
     
@@ -26,193 +28,363 @@ struct LoanEditView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: Constants.UI.Spacing.large) {
-                    // Form Fields
-                    VStack(spacing: Constants.UI.Spacing.medium) {
-                        // Loan Name Field
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Loan Name")
-                                .font(Constants.Typography.H3.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            TextField("Enter loan name", text: $name)
-                                .font(Constants.Typography.Body.font)
-                                .padding(Constants.UI.Spacing.medium)
-                                .background(Constants.Colors.backgroundSecondary)
-                                .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                        
-                        // Principal Amount Field
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Principal Amount")
-                                .font(Constants.Typography.H3.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            HStack {
-                                Text("$")
-                                    .font(Constants.Typography.Body.font)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(Constants.Colors.textSecondary)
-                                
-                                TextField("0.00", text: $principalAmount)
-                                    .keyboardType(.decimalPad)
-                                    .font(Constants.Typography.Body.font)
-                            }
-                            .padding(Constants.UI.Spacing.medium)
-                            .background(Constants.Colors.backgroundSecondary)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                        
-                        // Remaining Amount Field
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Remaining Amount")
-                                .font(Constants.Typography.H3.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            HStack {
-                                Text("$")
-                                    .font(Constants.Typography.Body.font)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(Constants.Colors.textSecondary)
-                                
-                                TextField("0.00", text: $remainingAmount)
-                                    .keyboardType(.decimalPad)
-                                    .font(Constants.Typography.Body.font)
-                            }
-                            .padding(Constants.UI.Spacing.medium)
-                            .background(Constants.Colors.backgroundSecondary)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                        
-                        // Interest Rate Field
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Interest Rate (APR)")
-                                .font(Constants.Typography.H3.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            HStack {
-                                TextField("0.0", text: $interestRate)
-                                    .keyboardType(.decimalPad)
-                                    .font(Constants.Typography.Body.font)
-                                
-                                Text("%")
-                                    .font(Constants.Typography.Body.font)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(Constants.Colors.textSecondary)
-                            }
-                            .padding(Constants.UI.Spacing.medium)
-                            .background(Constants.Colors.backgroundSecondary)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                        
-                        // Monthly Payment Field
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Monthly Payment")
-                                .font(Constants.Typography.H3.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            HStack {
-                                Text("$")
-                                    .font(Constants.Typography.Body.font)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(Constants.Colors.textSecondary)
-                                
-                                TextField("0.00", text: $monthlyPayment)
-                                    .keyboardType(.decimalPad)
-                                    .font(Constants.Typography.Body.font)
-                            }
-                            .padding(Constants.UI.Spacing.medium)
-                            .background(Constants.Colors.backgroundSecondary)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                        
-                        // Due Date Field
-                        VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
-                            Text("Next Payment Due")
-                                .font(Constants.Typography.H3.font)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Constants.Colors.textPrimary)
-                            
-                            HStack {
-                                DatePicker("", selection: $selectedDueDate, displayedComponents: [.date])
-                                    .datePickerStyle(CompactDatePickerStyle())
-                                    .labelsHidden()
-                                Spacer(minLength: 0)
-                            }
-                            .padding(Constants.UI.Spacing.medium)
-                            .background(Constants.Colors.backgroundSecondary)
-                            .cornerRadius(Constants.UI.cardCornerRadius)
-                        }
-                    }
-                    .padding(.horizontal, Constants.UI.Padding.screenMargin)
-                    .padding(.top, Constants.UI.Spacing.large)
+        VStack(spacing: 0) {
+            // Header Section - Compact layout
+            VStack(spacing: 16) {
+                // Top Row: Title + Close Button
+                HStack {
+                    Text("Edit Loan")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(Constants.Colors.textPrimary)
+                        .accessibilityLabel("Edit Loan")
+                        .accessibilityAddTraits(.isHeader)
                     
-                    Spacer(minLength: Constants.UI.Spacing.section)
+                    Spacer()
+                    
+                    // Close Button
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(Constants.Colors.textSecondary)
+                            .frame(width: 32, height: 32)
+                            .background(Constants.Colors.textTertiary.opacity(0.1))
+                            .clipShape(Circle())
+                    }
+                    .accessibilityLabel("Close edit view")
                 }
             }
-            .navigationTitle("Edit Loan")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
+            .padding(.horizontal, 24)
+            .padding(.top, 20)
+            .padding(.bottom, 16)
+            
+            // Form Section - Compact layout
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Loan Name Field
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("LOAN NAME")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
+                        
+                        TextField("Enter loan name", text: $name)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(Constants.Colors.textPrimary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(Constants.Colors.textPrimary.opacity(0.05))
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(!isValidName ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
+                            )
+                            .accessibilityLabel("Loan name")
+                            .accessibilityHint("Enter the name of this loan")
                     }
-                    .font(Constants.Typography.Body.font)
-                    .foregroundColor(Constants.Colors.textPrimary)
+                    
+                    // Principal Amount Field
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("PRINCIPAL AMOUNT")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
+                        
+                        HStack {
+                            Text("$")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textSecondary)
+                            
+                            TextField("0.00", text: $principalAmount)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textPrimary)
+                                .keyboardType(.decimalPad)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Constants.Colors.textPrimary.opacity(0.05))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(!isValidPrincipalAmount ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
+                        )
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Principal amount")
+                        .accessibilityHint("Enter the original loan amount")
+                    }
+                    
+                    // Remaining Amount Field
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("REMAINING AMOUNT")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
+                        
+                        HStack {
+                            Text("$")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textSecondary)
+                            
+                            TextField("0.00", text: $remainingAmount)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textPrimary)
+                                .keyboardType(.decimalPad)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Constants.Colors.textPrimary.opacity(0.05))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(!isValidRemainingAmount ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
+                        )
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Remaining amount")
+                        .accessibilityHint("Enter the remaining loan balance")
+                    }
+                    
+                    // Interest Rate Field
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("INTEREST RATE")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
+                        
+                        HStack {
+                            TextField("0.0", text: $interestRate)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textPrimary)
+                                .keyboardType(.decimalPad)
+                            
+                            Text("%")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textSecondary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Constants.Colors.textPrimary.opacity(0.05))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(!isValidInterestRate ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
+                        )
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Interest rate")
+                        .accessibilityHint("Enter the annual percentage rate")
+                    }
+                    
+                    // Monthly Payment Field
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("MONTHLY PAYMENT")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
+                        
+                        HStack {
+                            Text("$")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textSecondary)
+                            
+                            TextField("0.00", text: $monthlyPayment)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(Constants.Colors.textPrimary)
+                                .keyboardType(.decimalPad)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Constants.Colors.textPrimary.opacity(0.05))
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(!isValidMonthlyPayment ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
+                        )
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Monthly payment")
+                        .accessibilityHint("Enter the monthly payment amount")
+                    }
+                    
+                    // Due Date Field
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("DUE DATE")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Constants.Colors.textTertiary)
+                            .tracking(1.0)
+                        
+                        HStack {
+                            DatePicker("", selection: $selectedDueDate, displayedComponents: [.date])
+                                .datePickerStyle(CompactDatePickerStyle())
+                                .labelsHidden()
+                            Spacer()
+                        }
+                    }
                 }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 20)
+            }
+            
+            // Action Buttons - Horizontal layout for compact design
+            HStack(spacing: 12) {
+                // Save Button - Primary action
+                Button(action: {
+                    // Haptic feedback
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
+                    saveLoan()
+                }) {
+                    HStack(spacing: 8) {
+                        if isSaving {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        Text(isSaving ? "Saving..." : "Save")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(Constants.Colors.cleanBlack)
+                    .cornerRadius(12)
+                }
+                .disabled(isSaving || !canSave)
+                .accessibilityLabel(isSaving ? "Saving loan changes" : "Save loan changes")
+                .accessibilityHint("Double tap to save your changes to this loan")
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        saveLoan()
+                // Cancel Button - Secondary action
+                Button(action: {
+                    dismiss()
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("Cancel")
+                            .font(.system(size: 14, weight: .semibold))
                     }
-                    .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Constants.Colors.primaryBlue)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(Constants.Colors.textPrimary.opacity(0.05))
+                    .cornerRadius(12)
                 }
+                .accessibilityLabel("Cancel editing")
+                .accessibilityHint("Double tap to discard changes and return to loan details")
             }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 32)
         }
+        .alert("Validation Error", isPresented: $showingErrorAlert) {
+            Button("OK") { }
+        } message: {
+            Text(errorMessage)
+        }
+    }
+    
+    // MARK: - Computed Properties
+    private var isValidName: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
+    private var isValidPrincipalAmount: Bool {
+        guard let amount = Double(principalAmount) else { return false }
+        return amount > 0
+    }
+    
+    private var isValidRemainingAmount: Bool {
+        guard let amount = Double(remainingAmount) else { return false }
+        return amount >= 0
+    }
+    
+    private var isValidInterestRate: Bool {
+        guard let rate = Double(interestRate) else { return false }
+        return rate >= 0
+    }
+    
+    private var isValidMonthlyPayment: Bool {
+        guard let payment = Double(monthlyPayment) else { return false }
+        return payment > 0
+    }
+    
+    private var canSave: Bool {
+        isValidName && isValidPrincipalAmount && isValidRemainingAmount && isValidInterestRate && isValidMonthlyPayment
     }
     
     
     private func saveLoan() {
-        guard let principal = Double(principalAmount),
-              let remaining = Double(remainingAmount),
-              let interest = Double(interestRate),
-              let monthly = Double(monthlyPayment),
-              principal > 0,
-              remaining >= 0,
-              interest >= 0,
-              monthly > 0 else { return }
+        // Set loading state
+        isSaving = true
         
-        // Create updated loan with same ID
-        let updatedLoan = Loan(
-            id: loan.id, // Preserve the original ID
-            name: name,
-            principalAmount: principal,
-            remainingAmount: remaining,
-            interestRate: interest,
-            monthlyPayment: monthly,
-            dueDate: selectedDueDate,
-            paymentStatus: loan.paymentStatus, // Keep existing status
-            lastPaymentDate: loan.lastPaymentDate, // Keep existing last payment date
-            nextPaymentDueDate: selectedDueDate,
-            category: loan.category // Keep existing category
-        )
+        // Validate input
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = "Please enter a loan name."
+            showingErrorAlert = true
+            isSaving = false
+            return
+        }
         
-        // Update the loan in the view model
-        viewModel.updateLoan(updatedLoan)
+        guard let principal = Double(principalAmount), principal > 0 else {
+            errorMessage = "Please enter a valid principal amount greater than 0."
+            showingErrorAlert = true
+            isSaving = false
+            return
+        }
         
-        // Update the binding
-        loan = updatedLoan
+        guard let remaining = Double(remainingAmount), remaining >= 0 else {
+            errorMessage = "Please enter a valid remaining amount (0 or greater)."
+            showingErrorAlert = true
+            isSaving = false
+            return
+        }
         
-        dismiss()
+        guard let interest = Double(interestRate), interest >= 0 else {
+            errorMessage = "Please enter a valid interest rate (0 or greater)."
+            showingErrorAlert = true
+            isSaving = false
+            return
+        }
+        
+        guard let monthly = Double(monthlyPayment), monthly > 0 else {
+            errorMessage = "Please enter a valid monthly payment greater than 0."
+            showingErrorAlert = true
+            isSaving = false
+            return
+        }
+        
+        guard remaining <= principal else {
+            errorMessage = "Remaining amount cannot be greater than principal amount."
+            showingErrorAlert = true
+            isSaving = false
+            return
+        }
+        
+        // Simulate save delay for better UX
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // Create updated loan with same ID
+            let updatedLoan = Loan(
+                id: loan.id, // Preserve the original ID
+                name: name,
+                principalAmount: principal,
+                remainingAmount: remaining,
+                interestRate: interest,
+                monthlyPayment: monthly,
+                dueDate: selectedDueDate,
+                paymentStatus: loan.paymentStatus, // Keep existing status
+                lastPaymentDate: loan.lastPaymentDate, // Keep existing last payment date
+                nextPaymentDueDate: selectedDueDate,
+                category: loan.category // Keep existing category
+            )
+            
+            // Update the loan in the view model
+            viewModel.updateLoan(updatedLoan)
+            
+            // Update the binding
+            loan = updatedLoan
+            
+            isSaving = false
+            dismiss()
+        }
     }
     
 }

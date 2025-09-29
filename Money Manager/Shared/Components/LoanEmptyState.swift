@@ -1,16 +1,16 @@
 import SwiftUI
 
 /**
- * BudgetEmptyState
+ * LoanEmptyState
  * 
- * Custom empty state component for the Budget view featuring branded illustration,
+ * Custom empty state component for the Loan view featuring branded illustration,
  * encouraging messaging, and prominent call-to-action button. Provides clean
- * onboarding experience for new users without budgets.
+ * onboarding experience for new users without loans.
  * 
  * Features:
  * - Branded illustration with consistent sizing
  * - Brand yellow call-to-action button with proper accessibility
- * - Professional messaging encouraging budget creation
+ * - Professional messaging encouraging loan tracking
  * - Responsive layout with proper spacing
  * - Full accessibility compliance
  * 
@@ -18,12 +18,12 @@ import SwiftUI
  * Status: Production Ready
  */
 
-struct BudgetEmptyState: View {
+struct LoanEmptyState: View {
     let actionTitle: String
     let action: () -> Void
     
     init(
-        actionTitle: String = "Create A Budget",
+        actionTitle: String = "Add A Loan",
         action: @escaping () -> Void
     ) {
         self.actionTitle = actionTitle
@@ -39,20 +39,20 @@ struct BudgetEmptyState: View {
                 .accessibilityHidden(true)
             
             VStack(spacing: Constants.UI.Spacing.medium) {
-                Text("No Budgets Yet")
+                Text("No Loans Yet")
                     .font(Constants.Typography.H2.font)
                     .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                 
-                Text("Create your first budget to track spending and reach your financial goals.")
+                Text("Add your first loan to start tracking your debt.")
                     .font(Constants.Typography.Body.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                     .lineLimit(3)
-                    .accessibilityLabel("Create your first budget to track spending and reach your financial goals.")
+                    .accessibilityLabel("Add your first loan to start tracking your debt.")
             }
             
             Button(action: action) {
@@ -66,7 +66,7 @@ struct BudgetEmptyState: View {
                     .cornerRadius(Constants.UI.CornerRadius.primary)
             }
             .accessibilityLabel(actionTitle)
-            .accessibilityHint("Tap to create your first budget")
+            .accessibilityHint("Tap to add your first loan")
             .accessibilityAddTraits(.isButton)
         }
         .padding(Constants.UI.Spacing.large)
@@ -76,9 +76,9 @@ struct BudgetEmptyState: View {
 }
 
 #Preview {
-    BudgetEmptyState {
+    LoanEmptyState {
         #if DEBUG
-        print("Create Budget tapped")
+        print("Add Loan tapped")
         #endif
     }
 }

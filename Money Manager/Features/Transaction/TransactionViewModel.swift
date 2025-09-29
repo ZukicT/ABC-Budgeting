@@ -9,6 +9,9 @@ class TransactionViewModel: ObservableObject {
     
     var hasDataLoaded = false
     
+    // Budget integration service
+    private var budgetTransactionService: BudgetTransactionService?
+    
     // Counter for tab display
     var transactionCount: Int {
         transactions.count
@@ -16,6 +19,12 @@ class TransactionViewModel: ObservableObject {
     
     init() {
         // Initialize transaction data
+    }
+    
+    // MARK: - Budget Integration
+    
+    func setBudgetTransactionService(_ service: BudgetTransactionService) {
+        self.budgetTransactionService = service
     }
     
     func loadTransactions() {
@@ -31,6 +40,9 @@ class TransactionViewModel: ObservableObject {
             self.transactions = []
             self.isLoading = false
             self.hasDataLoaded = true
+            
+            // Update budgets after loading transactions
+            self.budgetTransactionService?.updateAllBudgetsFromTransactions()
         }
     }
     
@@ -41,7 +53,11 @@ class TransactionViewModel: ObservableObject {
     
     func updateTransaction(_ updatedTransaction: Transaction) {
         if let index = transactions.firstIndex(where: { $0.id == updatedTransaction.id }) {
+            let oldTransaction = transactions[index]
             transactions[index] = updatedTransaction
+            
+            // Update budgets based on transaction change
+            budgetTransactionService?.handleTransactionUpdated(oldTransaction, updatedTransaction)
         }
     }
     
@@ -49,10 +65,18 @@ class TransactionViewModel: ObservableObject {
         transactions.append(transaction)
         // Sort transactions by date (newest first)
         transactions.sort { $0.date > $1.date }
+        
+        // Update budgets based on new transaction
+        budgetTransactionService?.handleTransactionAdded(transaction)
     }
     
     func deleteTransaction(withId id: UUID) {
-        transactions.removeAll { $0.id == id }
+        if let transaction = transactions.first(where: { $0.id == id }) {
+            transactions.removeAll { $0.id == id }
+            
+            // Update budgets based on deleted transaction
+            budgetTransactionService?.handleTransactionDeleted(transaction)
+        }
     }
 }
 
