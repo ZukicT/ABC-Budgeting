@@ -47,17 +47,8 @@ class OnboardingViewModel: ObservableObject {
     
     
     func completeOnboarding() {
-        #if DEBUG
-        print("🎯 OnboardingViewModel.completeOnboarding() called")
-        #endif
         isCompleted = true
-        #if DEBUG
-        print("🎯 Calling onboardingManager?.completeOnboarding()")
-        #endif
         onboardingManager?.completeOnboarding()
-        #if DEBUG
-        print("🎯 Onboarding completion flow initiated")
-        #endif
     }
     
     func setOnboardingManager(_ manager: OnboardingManager) {

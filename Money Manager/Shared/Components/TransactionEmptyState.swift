@@ -79,8 +79,6 @@ struct TransactionEmptyState: View {
 
 #Preview {
     TransactionEmptyState {
-        #if DEBUG
-        print("Add Transaction tapped")
-        #endif
+        // Preview action
     }
 }

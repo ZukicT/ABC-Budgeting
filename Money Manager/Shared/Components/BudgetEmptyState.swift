@@ -77,8 +77,6 @@ struct BudgetEmptyState: View {
 
 #Preview {
     BudgetEmptyState {
-        #if DEBUG
-        print("Create Budget tapped")
-        #endif
+        // Preview action
     }
 }

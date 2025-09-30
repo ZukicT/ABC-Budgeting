@@ -128,7 +128,6 @@ class LoanViewModel: ObservableObject {
         loans.append(newLoan)
         
         // In a real app, this would save to persistent storage
-        print("Added new loan: \(name) - \(principalAmount.formatted(.currency(code: "USD")))")
     }
     
     func markLoanAsPaid(_ loan: Loan) {
@@ -138,8 +137,6 @@ class LoanViewModel: ObservableObject {
             loans[index].remainingAmount = 0.0
             loans[index].lastPaymentDate = Date()
             loans[index].nextPaymentDueDate = nil
-            
-            print("Marked loan as paid: \(loan.name)")
         }
     }
     
@@ -150,13 +147,11 @@ class LoanViewModel: ObservableObject {
     func updateLoan(_ updatedLoan: Loan) {
         if let index = loans.firstIndex(where: { $0.id == updatedLoan.id }) {
             loans[index] = updatedLoan
-            print("Updated loan: \(updatedLoan.name)")
         }
     }
     
     func deleteLoan(_ loan: Loan) {
         loans.removeAll { $0.id == loan.id }
-        print("Deleted loan: \(loan.name)")
     }
     
     func refreshLoans() {

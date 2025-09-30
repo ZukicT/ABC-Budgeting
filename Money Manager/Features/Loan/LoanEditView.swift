@@ -242,8 +242,7 @@ struct LoanEditView: View {
                 // Save Button - Primary action
                 Button(action: {
                     // Haptic feedback
-                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                    impactFeedback.impactOccurred()
+                    HapticFeedbackManager.medium()
                     
                     saveLoan()
                 }) {

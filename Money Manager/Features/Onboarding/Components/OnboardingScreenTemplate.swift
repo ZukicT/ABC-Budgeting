@@ -200,7 +200,7 @@ struct OnboardingScreenTemplate<Content: View>: View {
         currentPage: 0,
         totalPages: 3,
         buttonAction: {
-            print("Button tapped")
+            // Preview action
         }
     )
 }

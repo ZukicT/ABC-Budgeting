@@ -77,8 +77,6 @@ struct LoanEmptyState: View {
 
 #Preview {
     LoanEmptyState {
-        #if DEBUG
-        print("Add Loan tapped")
-        #endif
+        // Preview action
     }
 }

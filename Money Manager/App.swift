@@ -30,7 +30,7 @@ struct MoneyManagerApp: App {
                 }
             }
             .onAppear {
-                print("🚀 Money Manager app launched with iOS system fonts")
+                DebugLogger.info("Money Manager app launched with iOS system fonts", category: "AppLaunch")
             }
         }
     }

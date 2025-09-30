@@ -102,7 +102,6 @@ struct StartingBalanceScreen: View {
                     buttonAction: {
                         if let balance = Double(startingBalance), balance >= 0 {
                             CurrencyUtility.setStartingBalance(balance)
-                            print("✅ Starting balance saved: \(balance)")
                             viewModel.nextStep()
                         } else {
                             showInvalidBalanceAlert = true

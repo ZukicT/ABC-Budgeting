@@ -137,8 +137,7 @@ struct TransactionDetailView: View {
                     HStack(spacing: 12) {
                         // Edit Button
                         Button(action: {
-                            let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-                            impactFeedback.impactOccurred()
+                            HapticFeedbackManager.light()
                             showingEditSheet = true
                         }) {
                             HStack(spacing: 8) {
@@ -157,8 +156,7 @@ struct TransactionDetailView: View {
                         
                         // Delete Button
                         Button(action: {
-                            let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                            impactFeedback.impactOccurred()
+                            HapticFeedbackManager.medium()
                             showingDeleteAlert = true
                         }) {
                             HStack(spacing: 8) {
@@ -245,8 +243,7 @@ struct TransactionDetailView: View {
         guard let transaction = transaction else { return }
         
         // Provide haptic feedback
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
+        HapticFeedbackManager.medium()
         
         // Delete the transaction from the view model
         transactionViewModel.deleteTransaction(withId: transaction.id)

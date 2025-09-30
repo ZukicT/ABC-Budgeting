@@ -102,35 +102,41 @@ struct SimpleOnboardingTemplate: View {
                         .padding(.top, 40) // Move image up - reduced from 60 to 40
                         .accessibilityElement(children: .combine)
                     
-                    // Text Content Section - positioned at Y: 520 (original position)
-                    VStack(alignment: .leading, spacing: 20) {
-                        MultiColorText(
-                            text: headline,
-                            colors: headlineColors
-                        )
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel(headline)
-                        .accessibilityAddTraits(.isHeader)
+                    // Text Content Section - using proper VStack layout for text wrapping
+                    VStack(spacing: 0) {
+                        Spacer()
+                            .frame(height: geometry.size.height * 0.45 + 40) // Space for illustration
                         
-                        // Body text with Dynamic Type support
-                        Text(bodyText)
-                            .font(Constants.Typography.Body.font)
-                            .foregroundColor(Constants.Colors.textPrimary)
-                            .multilineTextAlignment(.leading)
-                            .lineLimit(nil)
+                        VStack(alignment: .leading, spacing: 20) {
+                            MultiColorText(
+                                text: headline,
+                                colors: headlineColors
+                            )
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .lineSpacing(6)
-                            .accessibilityLabel(bodyText)
-                            .accessibilityAddTraits(.isStaticText)
-                        
-                        if let customContent = customContent {
-                            customContent
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel(headline)
+                            .accessibilityAddTraits(.isHeader)
+                            
+                            // Body text with Dynamic Type support
+                            Text(bodyText)
+                                .font(Constants.Typography.Body.font)
+                                .foregroundColor(Constants.Colors.textPrimary)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(nil)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .lineSpacing(6)
+                                .accessibilityLabel(bodyText)
+                                .accessibilityAddTraits(.isStaticText)
+                            
+                            if let customContent = customContent {
+                                customContent
+                            }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 20)
+                        
+                        Spacer()
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                    .position(x: geometry.size.width / 2, y: 535)
                     
                     OnboardingFooter(
                         buttonTitle: buttonTitle,
@@ -161,6 +167,7 @@ struct MultiColorText: View {
             .multilineTextAlignment(.leading)
             .lineLimit(nil)
             .lineSpacing(4)
+            .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion for wrapping
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
             .accessibilityLabel(text)

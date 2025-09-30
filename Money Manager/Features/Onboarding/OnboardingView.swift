@@ -48,9 +48,7 @@ struct OnboardingView: View {
         }
         .onAppear {
             // Connect the view model to the onboarding manager
-            print("🎯 OnboardingView.onAppear - connecting viewModel to onboardingManager")
             viewModel.setOnboardingManager(onboardingManager)
-            print("🎯 OnboardingManager connection established")
         }
     }
 }

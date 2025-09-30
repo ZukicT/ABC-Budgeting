@@ -80,11 +80,7 @@ class SettingsViewModel: ObservableObject {
     private func requestNotificationPermissions() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             DispatchQueue.main.async {
-                if let error = error {
-                    print("❌ Notification permission error: \(error.localizedDescription)")
-                } else {
-                    print("✅ Notification permission granted: \(granted)")
-                }
+                // Handle notification permission result
             }
         }
     }
@@ -101,20 +97,17 @@ class SettingsViewModel: ObservableObject {
     /// Opens the app's privacy policy
     func openPrivacyPolicy() {
         // For now, show an alert. In production, this would open a web view or Safari
-        print("📄 Opening Privacy Policy")
         // TODO: Implement web view or Safari opening
     }
     
     /// Opens the app's terms of service
     func openTermsOfService() {
         // For now, show an alert. In production, this would open a web view or Safari
-        print("📋 Opening Terms of Service")
         // TODO: Implement web view or Safari opening
     }
     
     /// Shows version history information
     func showVersionHistory() {
-        print("📱 Showing Version History")
         // TODO: Implement version history modal
     }
     
@@ -125,21 +118,17 @@ class SettingsViewModel: ObservableObject {
         selectedCurrency = "USD"
         budgetPeriod = "Monthly"
         selectedLanguage = "en-US"
-        
-        print("🔄 Settings reset to defaults")
     }
     
     // MARK: - Data Management
     
     /// Exports user data (placeholder for future implementation)
     func exportData() {
-        print("📤 Exporting user data")
         // TODO: Implement CSV export functionality
     }
     
     /// Clears all user data (handled by DataClearingService)
     func clearAllData() {
-        print("🗑️ Clearing all user data")
         // This is handled by DataClearingService
     }
 }

@@ -152,8 +152,7 @@ struct TransactionEditView: View {
                         HStack(spacing: 8) {
                             Button(action: {
                                 // Haptic feedback
-                                let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-                                impactFeedback.impactOccurred()
+                                HapticFeedbackManager.light()
                                 
                                 // Set as income (positive) - update transaction amount
                                 if let currentAmount = Double(amount) {
@@ -183,8 +182,7 @@ struct TransactionEditView: View {
                             
                             Button(action: {
                                 // Haptic feedback
-                                let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-                                impactFeedback.impactOccurred()
+                                HapticFeedbackManager.light()
                                 
                                 // Set as expense (negative) - update transaction amount
                                 if let currentAmount = Double(amount) {
@@ -257,8 +255,7 @@ struct TransactionEditView: View {
                 // Save Button - Primary action
                 Button(action: {
                     // Haptic feedback
-                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                    impactFeedback.impactOccurred()
+                    HapticFeedbackManager.medium()
                     
                     saveTransaction()
                 }) {

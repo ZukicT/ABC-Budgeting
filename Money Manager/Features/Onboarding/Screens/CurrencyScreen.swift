@@ -115,7 +115,6 @@ struct CurrencyScreen: View {
                     totalPages: OnboardingStep.allCases.count,
                     buttonAction: {
                         CurrencyUtility.setCurrency(selectedCurrency)
-                        print("✅ Currency selected: \(selectedCurrency.name) (\(selectedCurrency.rawValue))")
                         viewModel.nextStep()
                     }
                 )

@@ -11,7 +11,6 @@ struct SettingsView: View {
     @State private var showVersionHistory = false
     @State private var showFontLicensing = false
     @State private var showExportData = false
-    @State private var hasTestData = false
     
     var body: some View {
         NavigationStack {
@@ -105,28 +104,7 @@ struct SettingsView: View {
                                 }
                             }
                             
-                            // Test Data Section (Development Only)
-                            SettingsSection(title: contentManager.localizedString("settings.test_data"), icon: "testtube.2") {
-                                VStack(spacing: Constants.UI.Spacing.medium) {
-                                    if hasTestData {
-                                        SettingsButton(
-                                            title: contentManager.localizedString("settings.remove_test_data"),
-                                            subtitle: contentManager.localizedString("settings.subtitle.remove_test_data"),
-                                            action: {
-                                                removeTestData()
-                                            }
-                                        )
-                                    } else {
-                                        SettingsButton(
-                                            title: contentManager.localizedString("settings.add_test_data"),
-                                            subtitle: contentManager.localizedString("settings.subtitle.add_test_data"),
-                                            action: {
-                                                addTestData()
-                                            }
-                                        )
-                                    }
-                                }
-                            }
+                            // Test Data Section removed for production
                             
                             // About Section
                             SettingsSection(title: contentManager.localizedString("settings.about"), icon: "info.circle.fill") {
@@ -224,37 +202,7 @@ struct SettingsView: View {
     
     // MARK: - Test Data Functions
     
-    private func addTestData() {
-        guard let transactionViewModel = dataClearingService.transactionViewModel,
-              let budgetViewModel = dataClearingService.budgetViewModel,
-              let loanViewModel = dataClearingService.loanViewModel else {
-            return
-        }
-        
-        TestDataService.addTestData(
-            transactionViewModel: transactionViewModel,
-            budgetViewModel: budgetViewModel,
-            loanViewModel: loanViewModel
-        )
-        
-        hasTestData = true
-    }
-    
-    private func removeTestData() {
-        guard let transactionViewModel = dataClearingService.transactionViewModel,
-              let budgetViewModel = dataClearingService.budgetViewModel,
-              let loanViewModel = dataClearingService.loanViewModel else {
-            return
-        }
-        
-        TestDataService.clearTestData(
-            transactionViewModel: transactionViewModel,
-            budgetViewModel: budgetViewModel,
-            loanViewModel: loanViewModel
-        )
-        
-        hasTestData = false
-    }
+    // Test data functionality removed for production
 }
 
 // MARK: - Settings Section

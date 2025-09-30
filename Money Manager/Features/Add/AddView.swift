@@ -420,8 +420,7 @@ private struct TransactionForm: View {
         
         isSubmitting = true
         
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
+        HapticFeedbackManager.medium()
         
         // Create the transaction
         let transactionAmount = isExpense ? -(Double(amount) ?? 0) : (Double(amount) ?? 0)
@@ -605,8 +604,7 @@ private struct BudgetForm: View {
         
         isSubmitting = true
         
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
+        HapticFeedbackManager.medium()
         
         // Add the budget to the view model
         let allocatedAmount = Double(amount) ?? 0.0
@@ -1052,8 +1050,7 @@ private struct LoanForm: View {
         
         isSubmitting = true
         
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
+        HapticFeedbackManager.medium()
         
         withAnimation(.easeInOut(duration: 0.3)) {
             showingSuccess = true

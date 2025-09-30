@@ -58,6 +58,7 @@ struct BalanceChartView: View {
     @State private var selectedDataPoint: BalanceDataPoint?
     @State private var isLoading = false
     @State private var showTooltip = false
+    @State private var hasLoggedNegativeBalance = false
     
     enum TimeRange: String, CaseIterable {
         case oneDay = "1D"
@@ -420,8 +421,7 @@ struct BalanceChartView: View {
                                                 selectedDataPoint = dataPoint
                                                 showTooltip = true
                                                 
-                                                let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-                                                impactFeedback.impactOccurred()
+                                                HapticFeedbackManager.light()
                                             }
                                         }
                                     }
@@ -519,6 +519,9 @@ struct BalanceChartView: View {
         let startDate = dateRange.start
         let endDate = dateRange.end
         
+        // Cache base balance to avoid repeated UserDefaults calls
+        let baseBalance = getBaseBalance()
+        
         if selectedTimeRange == .oneDay {
             // For 1D view, generate hourly data points
             let hours = calendar.dateComponents([.hour], from: startDate, to: endDate).hour ?? 24
@@ -526,9 +529,9 @@ struct BalanceChartView: View {
             
             for i in stride(from: 0, to: hours, by: stepSize) {
                 let date = calendar.date(byAdding: .hour, value: i, to: startDate) ?? startDate
-                let balance = calculateBalanceForDate(date)
+                let balance = calculateBalanceForDate(date, baseBalance: baseBalance)
                 
-                let previousBalance = data.last?.balance ?? getBaseBalance()
+                let previousBalance = data.last?.balance ?? baseBalance
                 let change = balance - previousBalance
                 let changePercentage = previousBalance != 0 ? (change / abs(previousBalance)) * 100 : 0
                 
@@ -546,9 +549,9 @@ struct BalanceChartView: View {
             
             for i in stride(from: 0, to: days, by: stepSize) {
                 let date = calendar.date(byAdding: .day, value: i, to: startDate) ?? startDate
-                let balance = calculateBalanceForDate(date)
+                let balance = calculateBalanceForDate(date, baseBalance: baseBalance)
                 
-                let previousBalance = data.last?.balance ?? getBaseBalance()
+                let previousBalance = data.last?.balance ?? baseBalance
                 let change = balance - previousBalance
                 let changePercentage = previousBalance != 0 ? (change / abs(previousBalance)) * 100 : 0
                 
@@ -562,8 +565,8 @@ struct BalanceChartView: View {
         }
         
         if !data.isEmpty && data.last?.date != endDate {
-            let balance = calculateBalanceForDate(endDate)
-            let previousBalance = data.last?.balance ?? getBaseBalance()
+            let balance = calculateBalanceForDate(endDate, baseBalance: baseBalance)
+            let previousBalance = data.last?.balance ?? baseBalance
             let change = balance - previousBalance
             let changePercentage = previousBalance != 0 ? (change / abs(previousBalance)) * 100 : 0
             
@@ -597,7 +600,7 @@ struct BalanceChartView: View {
         }
     }
     
-    private func calculateBalanceForDate(_ date: Date) -> Double {
+    private func calculateBalanceForDate(_ date: Date, baseBalance: Double? = nil) -> Double {
         let calendar = Calendar.current
         let endTime: Date
         
@@ -622,16 +625,14 @@ struct BalanceChartView: View {
             .filter { $0.amount < 0 }
             .reduce(0) { $0 + abs($1.amount) }
         
-        let baseBalance = getBaseBalance()
-        let calculatedBalance = baseBalance + totalIncome - totalExpenses
+        let baseBalanceValue = baseBalance ?? getBaseBalance()
+        let calculatedBalance = baseBalanceValue + totalIncome - totalExpenses
         
-        // Debug logging for negative balances
-        if calculatedBalance < 0 {
-            print("🔍 DEBUG: Negative balance calculated: \(calculatedBalance) at \(date)")
-            print("   - Base balance: \(baseBalance)")
-            print("   - Total income: \(totalIncome)")
-            print("   - Total expenses: \(totalExpenses)")
-            print("   - Transactions count: \(transactionsUpToDate.count)")
+        // Only log negative balances once per session to avoid spam
+        if calculatedBalance < 0 && !hasLoggedNegativeBalance {
+            DebugLogger.balanceCalculation("Negative balance detected: \(calculatedBalance) at \(date)")
+            DebugLogger.balanceCalculation("Base balance: \(baseBalanceValue), Income: \(totalIncome), Expenses: \(totalExpenses), Transactions: \(transactionsUpToDate.count)")
+            hasLoggedNegativeBalance = true
         }
         
         return calculatedBalance
@@ -644,8 +645,14 @@ struct BalanceChartView: View {
     private func refreshChartData() {
         isLoading = true
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.isLoading = false
+        // Use background queue for heavy calculations
+        DispatchQueue.global(qos: .userInitiated).async {
+            // Pre-calculate chart data on background thread
+            let _ = self.chartData
+            
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
         }
     }
     

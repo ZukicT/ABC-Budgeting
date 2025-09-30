@@ -58,7 +58,6 @@ struct NotificationsScreen: View {
             secondaryButtonTitle: "No thank you",
             secondaryButtonAction: {
                 UserDefaults.standard.set(false, forKey: notificationPermissionKey)
-                print("⚠️ User skipped notifications")
                 viewModel.nextStep()
             }
         )
@@ -80,12 +79,10 @@ struct NotificationsScreen: View {
                 let result: PermissionResult
                 if granted {
                     result = .granted
-                } else if let error = error {
+                } else if error != nil {
                     result = .error
-                    print("❌ Notification permission error: \(error.localizedDescription)")
                 } else {
                     result = .denied
-                    print("⚠️ Notification permission denied by user")
                 }
                 
                 handlePermissionResult(result)
@@ -96,7 +93,6 @@ struct NotificationsScreen: View {
     private func handlePermissionResult(_ result: PermissionResult) {
         switch result {
         case .granted:
-            print("✅ Notification permission granted")
             UserDefaults.standard.set(true, forKey: notificationPermissionKey)
             alertTitle = contentManager.localizedString("notification.success_title")
             alertMessage = contentManager.localizedString("notification.success_message")
