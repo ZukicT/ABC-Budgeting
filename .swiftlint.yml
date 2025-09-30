@@ -1,4 +1,4 @@
-# Minimal SwiftLint Configuration for Money Manager
+# Minimal SwiftLint Configuration for Nuvio
 # Only essential rules to prevent pipeline failures
 
 disabled_rules:
@@ -67,7 +67,7 @@ disabled_rules:
   - yoda_condition
 
 included:
-  - Money Manager
+  - Nuvio
 
 excluded:
   - Pods

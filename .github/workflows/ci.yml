@@ -35,21 +35,21 @@ jobs:
         
     - name: Install dependencies
       run: |
-        xcodebuild -resolvePackageDependencies -project "Money Manager.xcodeproj"
+        xcodebuild -resolvePackageDependencies -project "Nuvio.xcodeproj"
         
     - name: Build project
       run: |
         xcodebuild build \
-          -project "Money Manager.xcodeproj" \
-          -scheme "Money Manager" \
+          -project "Nuvio.xcodeproj" \
+          -scheme "Nuvio" \
           -destination "platform=iOS Simulator,name=iPhone 17,OS=26.0" \
           -configuration Debug
           
     - name: Run tests
       run: |
         xcodebuild test \
-          -project "Money Manager.xcodeproj" \
-          -scheme "Money Manager" \
+          -project "Nuvio.xcodeproj" \
+          -scheme "Nuvio" \
           -destination "platform=iOS Simulator,name=iPhone 17,OS=26.0" \
           -configuration Debug || echo "Tests completed"
           
