@@ -1,14 +1,24 @@
+//
+//  SettingsViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for managing all app settings and user preferences. Handles
+//  notification settings, currency selection, theme preferences, and data
+//  management with proper persistence and state management.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 import UserNotifications
 
-/// SettingsViewModel manages all app settings and user preferences
-/// Follows MVVM pattern with proper state management and persistence
 class SettingsViewModel: ObservableObject {
     
-    // MARK: - Published Properties
-    
-    // Notification Settings
     @Published var notificationsEnabled: Bool {
         didSet {
             UserDefaults.standard.set(notificationsEnabled, forKey: "notifications_enabled")
@@ -23,7 +33,6 @@ class SettingsViewModel: ObservableObject {
         }
     }
     
-    // Budget Settings
     @Published var selectedCurrency: String {
         didSet {
             UserDefaults.standard.set(selectedCurrency, forKey: "selected_currency")

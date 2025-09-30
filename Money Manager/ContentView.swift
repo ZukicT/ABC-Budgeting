@@ -1,3 +1,17 @@
+//
+//  ContentView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Root content view that determines whether to display onboarding flow
+//  or main application interface based on user's onboarding completion status.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct ContentView: View {

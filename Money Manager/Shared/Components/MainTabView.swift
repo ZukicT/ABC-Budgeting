@@ -1,15 +1,30 @@
+//
+//  MainTabView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Main tab bar interface that manages navigation between core app features.
+//  Handles shared ViewModels, data preloading, and accessibility support
+//  for Overview, Transactions, Budget, and Loans tabs.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab = 0
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     
-    // Shared ViewModels - created once and shared across all tabs
     @StateObject private var loanViewModel = LoanViewModel()
     @StateObject private var budgetViewModel = BudgetViewModel()
     @StateObject private var transactionViewModel = TransactionViewModel()
     @StateObject private var dataClearingService = DataClearingService()
     @StateObject private var budgetTransactionService = BudgetTransactionService()
+    
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -23,7 +38,7 @@ struct MainTabView: View {
                 dataClearingService: dataClearingService
             )
                 .tabItem {
-                    Image(systemName: "chart.pie.fill")
+                    Image(systemName: "house.fill")
                     Text(contentManager.localizedString("tab.overview"))
                 }
                 .tag(0)
@@ -37,7 +52,7 @@ struct MainTabView: View {
                 budgetViewModel: budgetViewModel
             )
                 .tabItem {
-                    Image(systemName: "list.bullet")
+                    Image(systemName: "doc.text.fill")
                     Text(contentManager.localizedString("tab.transactions"))
                 }
                 .tag(1)
@@ -51,7 +66,7 @@ struct MainTabView: View {
                 transactionViewModel: transactionViewModel
             )
                 .tabItem {
-                    Image(systemName: "dollarsign.circle.fill")
+                    Image(systemName: "chart.bar.fill")
                     Text(contentManager.localizedString("tab.budget"))
                 }
                 .tag(2)
@@ -65,42 +80,59 @@ struct MainTabView: View {
                 transactionViewModel: transactionViewModel
             )
                 .tabItem {
-                    Image(systemName: "creditcard.fill")
+                    Image(systemName: "building.columns.fill")
                     Text(contentManager.localizedString("tab.loans"))
                 }
                 .tag(3)
                 .accessibilityLabel("Loans tab")
                 .accessibilityHint("View and manage your loans")
         }
-        .accentColor(Constants.Colors.accentColor)
+        .accentColor(Constants.Colors.accentColor) // Selected tab color
         .preferredColorScheme(.none) // Respects system appearance
         .onAppear {
-            // Set up DataClearingService with ViewModels
+            // Configure tab bar appearance for unselected tab colors
+            DispatchQueue.main.async {
+                let appearance = UITabBarAppearance()
+                appearance.configureWithOpaqueBackground()
+                appearance.backgroundColor = UIColor.systemBackground
+                
+                // Set unselected tab item colors - use our custom dark gray (#3F3D56)
+                appearance.stackedLayoutAppearance.normal.iconColor = UIColor(red: 0.247, green: 0.239, blue: 0.337, alpha: 1.0)
+                appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+                    .foregroundColor: UIColor(red: 0.247, green: 0.239, blue: 0.337, alpha: 1.0)
+                ]
+                
+                // Set selected tab item colors - use our brand blue (#5774CD)
+                appearance.stackedLayoutAppearance.selected.iconColor = UIColor(red: 0.341, green: 0.455, blue: 0.804, alpha: 1.0)
+                appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+                    .foregroundColor: UIColor(red: 0.341, green: 0.455, blue: 0.804, alpha: 1.0)
+                ]
+                
+                // Apply to all appearance types
+                UITabBar.appearance().standardAppearance = appearance
+                UITabBar.appearance().scrollEdgeAppearance = appearance
+            }
+            
+            // Initialize ViewModels and data
             dataClearingService.setViewModels(
                 transactionViewModel: transactionViewModel,
                 budgetViewModel: budgetViewModel,
                 loanViewModel: loanViewModel
             )
             
-            // Set up BudgetTransactionService
             budgetTransactionService.setViewModels(
                 transactionViewModel: transactionViewModel,
                 budgetViewModel: budgetViewModel
             )
             
-            // Connect TransactionViewModel to BudgetTransactionService
             transactionViewModel.setBudgetTransactionService(budgetTransactionService)
-            
-            // Preload all data when the app starts for seamless tab switching
             preloadAllData()
         }
     }
     
     private func preloadAllData() {
-        // Preload all ViewModels in the background to ensure instant tab switching
         DispatchQueue.global(qos: .userInitiated).async {
             DispatchQueue.main.async {
-                // Load all data simultaneously for instant tab switching
                 if !transactionViewModel.hasDataLoaded {
                     transactionViewModel.loadTransactions()
                 }
@@ -113,6 +145,7 @@ struct MainTabView: View {
             }
         }
     }
+    
 }
 
 #Preview {

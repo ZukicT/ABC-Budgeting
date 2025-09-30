@@ -1,3 +1,18 @@
+//
+//  RecentTransactionsViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for recent transactions data management providing transaction
+//  preview, pagination, and summary statistics. Handles transaction data
+//  processing and state management for overview displays.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 import Foundation
 

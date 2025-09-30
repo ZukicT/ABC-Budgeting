@@ -1,3 +1,18 @@
+//
+//  ExportFunctionalityTests.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Unit tests for export functionality providing comprehensive testing
+//  of CSV export features, data validation, and error handling for
+//  transactions, budgets, and loans with proper test coverage.
+//
+//  Review Date: September 29, 2025
+//
+
 import XCTest
 @testable import Money_Manager
 

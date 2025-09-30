@@ -1,3 +1,17 @@
+//
+//  SceneDelegate.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Scene delegate handling window scene lifecycle and SwiftUI integration.
+//  Manages window creation and root view controller setup for the app.
+//
+//  Review Date: September 29, 2025
+//
+
 import UIKit
 import SwiftUI
 

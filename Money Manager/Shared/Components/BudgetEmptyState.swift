@@ -1,49 +1,48 @@
-import SwiftUI
+//
+//  BudgetEmptyState.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Custom empty state component for the Budget view featuring branded illustration,
+//  encouraging messaging, and prominent call-to-action button. Provides clean
+//  onboarding experience for new users without budgets.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * BudgetEmptyState
- * 
- * Custom empty state component for the Budget view featuring branded illustration,
- * encouraging messaging, and prominent call-to-action button. Provides clean
- * onboarding experience for new users without budgets.
- * 
- * Features:
- * - Branded illustration with consistent sizing
- * - Brand yellow call-to-action button with proper accessibility
- * - Professional messaging encouraging budget creation
- * - Responsive layout with proper spacing
- * - Full accessibility compliance
- * 
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct BudgetEmptyState: View {
     let actionTitle: String
     let action: () -> Void
+    let imageSize: CGFloat
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     init(
         actionTitle: String = "",
+        imageSize: CGFloat = 200,
         action: @escaping () -> Void
     ) {
         let contentManager = MultilingualContentManager.shared
         self.actionTitle = actionTitle.isEmpty ? contentManager.localizedString("cta.create_budget") : actionTitle
+        self.imageSize = imageSize
         self.action = action
     }
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
-            Image("Budget-Empty")
+            Image("Empty-State-Image")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 200, maxHeight: 200)
+                .frame(maxWidth: imageSize, maxHeight: imageSize)
                 .accessibilityHidden(true)
             
             VStack(spacing: Constants.UI.Spacing.medium) {
                 Text(contentManager.localizedString("budget.empty_title"))
                     .font(Constants.Typography.H2.font)
-                    .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
@@ -60,11 +59,10 @@ struct BudgetEmptyState: View {
             Button(action: action) {
                 Text(actionTitle)
                     .font(Constants.Typography.Button.font)
-                    .fontWeight(.bold)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(Color.black)
+                    .background(Constants.Colors.textPrimary)
                     .cornerRadius(Constants.UI.CornerRadius.primary)
             }
             .accessibilityLabel(actionTitle)

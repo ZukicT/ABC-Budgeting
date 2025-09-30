@@ -1,3 +1,18 @@
+//
+//  Constants.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Centralized constants and design system definitions including colors,
+//  spacing, typography, and UI configuration. Provides consistent design
+//  tokens and utility functions for the entire application.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
@@ -8,11 +23,11 @@ extension Color {
         Scanner(string: hex).scanHexInt64(&int)
         let a, r, g, b: UInt64
         switch hex.count {
-        case 3: // RGB (12-bit)
+        case 3:
             (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
+        case 6:
             (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
+        case 8:
             (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:
             (a, r, g, b) = (1, 1, 1, 0)
@@ -114,23 +129,23 @@ struct Constants {
          * Status: Production Ready
          */
         struct CornerRadius {
-            // Primary corner radius for all UI elements
+            // Primary corner radius - Buttons, CTAs, large cards
             static let primary: CGFloat = 24
             
-            // Secondary corner radius for smaller elements
-            static let secondary: CGFloat = 24
+            // Secondary corner radius - Cards, sections, input fields
+            static let secondary: CGFloat = 12
             
-            // Tertiary corner radius for micro elements
-            static let tertiary: CGFloat = 24
+            // Tertiary corner radius - Small elements, badges, chips
+            static let tertiary: CGFloat = 8
             
-            // Quaternary corner radius for minimal elements
-            static let quaternary: CGFloat = 24
+            // Quaternary corner radius - Micro elements, indicators
+            static let quaternary: CGFloat = 4
             
             // Legacy support - map old values to new system
             static let cardCornerRadius = secondary
             static let buttonCornerRadius = primary
             static let inputCornerRadius = secondary
-            static let indicatorCornerRadius = tertiary
+            static let indicatorCornerRadius = quaternary
         }
         
         // MARK: - Legacy Corner Radius (Deprecated - Use CornerRadius instead)
@@ -151,32 +166,32 @@ struct Constants {
         }
     }
     
-    // MARK: - Typography Hierarchy & Weights (Trap Font Family)
+    // MARK: - Typography Hierarchy & Weights (iOS System Fonts)
     struct Typography {
         // MARK: - H1 - Screen Titles
         struct H1 {
             static let size: CGFloat = 32        // 2rem
             static let weight: Font.Weight = .bold // 700
             static let lineHeight: CGFloat = 38
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .bold)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "Main screen headers, account balance"
         }
         
         // MARK: - H2 - Section Headers
         struct H2 {
             static let size: CGFloat = 24        // 1.5rem
-            static let weight: Font.Weight = .semibold // 600
+            static let weight: Font.Weight = .bold // 700
             static let lineHeight: CGFloat = 30
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .semiBold)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "Category titles, card headers"
         }
         
         // MARK: - H3 - Subsection Headers
         struct H3 {
             static let size: CGFloat = 18        // 1.125rem
-            static let weight: Font.Weight = .semibold // 600
+            static let weight: Font.Weight = .bold // 700
             static let lineHeight: CGFloat = 24
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .semiBold)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "Transaction categories, settings sections"
         }
         
@@ -185,7 +200,7 @@ struct Constants {
             static let size: CGFloat = 16        // 1rem
             static let weight: Font.Weight = .regular // 400
             static let lineHeight: CGFloat = 22
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .regular)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "Transaction descriptions, main content"
         }
         
@@ -194,7 +209,7 @@ struct Constants {
             static let size: CGFloat = 14        // 0.875rem
             static let weight: Font.Weight = .regular // 400
             static let lineHeight: CGFloat = 20
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .regular)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "Dates, helper text, descriptions"
         }
         
@@ -203,35 +218,83 @@ struct Constants {
             static let size: CGFloat = 12        // 0.75rem
             static let weight: Font.Weight = .regular // 400
             static let lineHeight: CGFloat = 16
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .regular)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "Timestamps, fine print, labels"
         }
         
         // MARK: - Button Text
         struct Button {
             static let size: CGFloat = 16        // 1rem
-            static let weight: Font.Weight = .semibold // 600
+            static let weight: Font.Weight = .bold // 700
             static let lineHeight: CGFloat = 20
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .semiBold)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "All button labels"
         }
         
         // MARK: - Display Text (Large Numbers)
         struct Display {
             static let size: CGFloat = 48        // 3rem
-            static let weight: Font.Weight = .black // 900
+            static let weight: Font.Weight = .bold // 700
             static let lineHeight: CGFloat = 56
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .black)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "Large numbers, hero text, account balances"
         }
         
         // MARK: - Display Small (Medium Numbers)
         struct DisplaySmall {
             static let size: CGFloat = 36        // 2.25rem
-            static let weight: Font.Weight = .heavy // 800
+            static let weight: Font.Weight = .bold // 700
             static let lineHeight: CGFloat = 42
-            static let font = TrapFontUtility.safeTrapFont(size: size, weight: .extraBold)
+            static let font = Font.system(size: size, weight: weight, design: .default)
             static let usage = "Medium numbers, important values"
+        }
+        
+        // MARK: - Mono Fonts for Subtext Components (using same font as regular text)
+        struct Mono {
+            // MARK: - Mono Caption - Small Labels & Values
+            struct Caption {
+                static let size: CGFloat = 12        // 0.75rem
+                static let weight: Font.Weight = .regular // 400
+                static let lineHeight: CGFloat = 16
+                static let font = Font.system(size: size, weight: weight, design: .default)
+                static let usage = "Amounts, percentages, timestamps, small values"
+            }
+            
+            // MARK: - Mono Body Small - Medium Labels & Values
+            struct BodySmall {
+                static let size: CGFloat = 14        // 0.875rem
+                static let weight: Font.Weight = .regular // 400
+                static let lineHeight: CGFloat = 20
+                static let font = Font.system(size: size, weight: weight, design: .default)
+                static let usage = "Currency amounts, financial values, data labels"
+            }
+            
+            // MARK: - Mono Body - Primary Values
+            struct Body {
+                static let size: CGFloat = 16        // 1rem
+                static let weight: Font.Weight = .medium // 500
+                static let lineHeight: CGFloat = 22
+                static let font = Font.system(size: size, weight: weight, design: .default)
+                static let usage = "Important financial values, large amounts"
+            }
+            
+            // MARK: - Mono H3 - Prominent Values
+            struct H3 {
+                static let size: CGFloat = 18        // 1.125rem
+                static let weight: Font.Weight = .semibold // 600
+                static let lineHeight: CGFloat = 24
+                static let font = Font.system(size: size, weight: weight, design: .default)
+                static let usage = "Large financial values, key metrics"
+            }
+            
+            // MARK: - Mono H1 - Large Display Values
+            struct H1 {
+                static let size: CGFloat = 32        // 2rem
+                static let weight: Font.Weight = .bold // 700
+                static let lineHeight: CGFloat = 38
+                static let font = Font.system(size: size, weight: weight, design: .default)
+                static let usage = "Very large financial values, main display numbers"
+            }
         }
         
         // MARK: - Legacy Support
@@ -258,7 +321,7 @@ struct Constants {
         // Primary Brand Colors (From your color palette)
         static let primaryBlue = Color(red: 0.341, green: 0.455, blue: 0.804) // #5774CD - Blue-Purple
         static let primaryOrange = Color(red: 0.996, green: 0.643, blue: 0.098) // #FEA419 - Orange
-        static let primaryPink = Color(red: 1.0, green: 0.714, blue: 0.784) // #FFB6C8 - Light Pink
+        static let primaryPink = Color(red: 1.0, green: 0.396, blue: 0.518) // #FF6584 - Light Pink
         static let primaryLightBlue = Color(red: 0.886, green: 0.914, blue: 1.0) // #E2E9FF - Very Light Blue-Purple
         static let primaryRed = Color(red: 0.996, green: 0.227, blue: 0.004) // #FE3A01 - Vibrant Red
         
@@ -269,15 +332,15 @@ struct Constants {
         static let backgroundTertiary = Color(red: 0.95, green: 0.95, blue: 0.95) // Light gray for subtle separation
         
         // Text Colors
-        static let textPrimary = Color(red: 0.0, green: 0.0, blue: 0.0) // #000000 - Black
+        static let textPrimary = Color(red: 0.247, green: 0.239, blue: 0.337) // #3F3D56 - Dark Gray
         static let textSecondary = Color(red: 0.341, green: 0.455, blue: 0.804) // #5774CD - Blue-Purple for secondary text
         static let textTertiary = Color(red: 0.5, green: 0.5, blue: 0.5) // Medium gray for subtle text
         static let textQuaternary = Color(red: 0.7, green: 0.7, blue: 0.7) // Light gray for disabled states
         
         // Semantic Colors (Using your palette)
         static let success = primaryBlue // #5774CD - Blue-Purple for success
-        static let warning = primaryOrange // #FEA419 - Orange for warnings
-        static let error = primaryOrange // #FEA419 - Orange for errors
+        static let warning = primaryPink // #FFB6C8 - Pink for warnings
+        static let error = primaryPink // #FFB6C8 - Pink for errors
         static let info = primaryBlue // #5774CD - Blue-Purple for info
         
         // Additional variants using your palette
@@ -294,14 +357,14 @@ struct Constants {
         // Legacy support (keeping for compatibility)
         static let accentColor = primaryBlue // Map old name to new primary color
         static let cleanBlack = textPrimary
-        static let softRed = primaryOrange
+        static let softRed = primaryPink
         static let primaryBlueDark = primaryBlue.opacity(0.8)
         static let trustBlue = primaryBlue
         static let successGreen = primaryBlue
-        static let alertRed = primaryOrange
+        static let alertRed = primaryPink
         static let electricPurple = primaryBlue
         static let vibrantTeal = primaryBlue
-        static let coralOrange = primaryOrange
+        static let coralOrange = primaryPink
     }
     
     // MARK: - Accessibility
@@ -349,7 +412,7 @@ struct Constants {
         // Color constants
         static let primaryBlueHex = Color(red: 0.341, green: 0.455, blue: 0.804)  // #5774CD
         static let lightPurpleHex = Color(red: 0.886, green: 0.914, blue: 1.0)    // #E2E9FF
-        static let pinkHex = Color(red: 1.0, green: 0.714, blue: 0.784)           // #FFB6C8
+        static let pinkHex = Color(red: 1.0, green: 0.396, blue: 0.518)           // #FF6584
         static let yellowHex = Color(red: 0.996, green: 0.643, blue: 0.098)       // #FEA419 (Brand Yellow)
         }
         
@@ -430,9 +493,9 @@ struct Constants {
         static let backgroundTertiary = Colors.backgroundTertiary
         static let borderPrimary = Colors.borderPrimary // Color.clear
         
-        // Tinted Colors for Emphasis (using your vibrant palette)
+        // Tinted Colors for Emphasis (using pink brand palette)
         static let tintedBlue = Colors.primaryBlue.opacity(0.15)
-        static let tintedOrange = Colors.primaryOrange.opacity(0.15)
+        static let tintedOrange = Colors.primaryPink.opacity(0.15)
         static let tintedPink = Colors.primaryPink.opacity(0.15)
         static let tintedLightBlue = Colors.primaryLightBlue.opacity(0.15)
         

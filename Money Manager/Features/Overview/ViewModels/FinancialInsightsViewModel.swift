@@ -1,3 +1,18 @@
+//
+//  FinancialInsightsViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for financial insights data management providing income vs expense
+//  analysis and category spending breakdowns. Handles data processing for
+//  financial charts and analytics with proper state management.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 import Charts
 
@@ -8,11 +23,8 @@ class FinancialInsightsViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     init() {
-        // Start with empty data - will be populated from real transaction data
         incomeExpenseData = []
         categorySpendingData = []
-        
-        // Automatically load data when ViewModel is created
         loadData()
     }
     

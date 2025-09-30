@@ -1,21 +1,22 @@
 # Font Files Directory
 
-This directory should contain the Trap font family files:
+This directory contains the Arvo font family files:
 
-- Trap-Black.otf
-- Trap-Bold.otf
-- Trap-ExtraBold.otf
-- Trap-Light.otf
-- Trap-Medium.otf
-- Trap-Regular.otf
-- Trap-SemiBold.otf
+- Arvo-Regular.ttf
+- Arvo-Bold.ttf
+- Arvo-Italic.ttf
+- Arvo-BoldItalic.ttf
 
-## How to Add Fonts:
+## Font Family Information:
 
-1. Copy all 7 Trap font files (.otf) into this directory
-2. Make sure they are added to the Xcode project target
-3. The Info.plist is already configured to load these fonts
-4. The app will automatically use Trap fonts with fallback to system fonts
+The Arvo font family is a slab serif typeface designed by Anton Koovit. It provides excellent readability for both body text and headings, making it perfect for financial applications.
+
+## How Fonts Are Loaded:
+
+1. All 4 Arvo font files (.ttf) are included in this directory
+2. They are added to the Xcode project target
+3. The Info.plist is configured to load these fonts
+4. The app will automatically use Arvo fonts with fallback to system fonts
 
 ## Testing Fonts:
 

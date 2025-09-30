@@ -20,7 +20,7 @@ Money Manager is a modern, intuitive iOS app designed to help users take control
 - Clean, modern SwiftUI interface with professional flat design
 - Apple Human Interface Guidelines compliance
 - Full accessibility support (VoiceOver, Dynamic Type)
-- Custom Trap Font integration with SF Pro fallback
+- Custom Arvo Font integration with SF Pro fallback
 - 8pt grid system for consistent spacing
 - Comprehensive error handling and user feedback
 - Real-time financial calculations (Planned)

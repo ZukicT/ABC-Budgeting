@@ -1,11 +1,24 @@
+//
+//  CurrencyUtility.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Utility for managing currency selection, formatting, and conversion.
+//  Provides comprehensive currency support, formatting functions, and
+//  currency symbol mapping for international financial management.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
 struct CurrencyUtility {
     
-    // MARK: - Currency Enum (moved from CurrencyScreen for reuse)
     enum Currency: String, CaseIterable {
-        // Major Currencies
         case usd = "USD"
         case eur = "EUR"
         case gbp = "GBP"
@@ -15,7 +28,6 @@ struct CurrencyUtility {
         case aud = "AUD"
         case nzd = "NZD"
         
-        // European Currencies
         case sek = "SEK"
         case nok = "NOK"
         case dkk = "DKK"
@@ -26,7 +38,6 @@ struct CurrencyUtility {
         case bgn = "BGN"
         case hrk = "HRK"
         
-        // Asian Currencies
         case cny = "CNY"
         case krw = "KRW"
         case sgd = "SGD"

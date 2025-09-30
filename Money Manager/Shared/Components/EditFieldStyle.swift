@@ -1,6 +1,20 @@
+//
+//  EditFieldStyle.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Centralized text field styles for edit forms providing consistent styling
+//  and behavior across the app. Includes standard and compact variants with
+//  proper typography, colors, and spacing.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-/// Centralized text field style for edit forms to eliminate code duplication
 struct EditFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
@@ -13,7 +27,6 @@ struct EditFieldStyle: TextFieldStyle {
     }
 }
 
-/// Alternative text field style for different contexts
 struct CompactEditFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration

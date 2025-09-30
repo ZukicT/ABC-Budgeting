@@ -1,21 +1,19 @@
-import SwiftUI
+//
+//  NotificationView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Production-ready notification management view with proper MVVM architecture,
+//  accessibility compliance, and consistent design patterns. Features full
+//  accessibility support, error handling, and loading states.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * NotificationView
- * 
- * Production-ready notification management view with proper MVVM architecture,
- * accessibility compliance, and consistent design patterns.
- * 
- * Features:
- * - MVVM architecture with NotificationViewModel
- * - Full accessibility compliance (VoiceOver, Dynamic Type)
- * - Consistent design with app standards
- * - Proper error handling and loading states
- * - Production-ready data management
- * 
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct NotificationView: View {
     @Environment(\.dismiss) var dismiss
@@ -31,7 +29,6 @@ struct NotificationView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(contentManager.localizedString("notifications.title"))
                                 .font(Constants.Typography.H2.font)
-                                .fontWeight(.bold)
                                 .foregroundColor(Constants.Colors.textPrimary)
                             
                             Text("\(viewModel.unreadCount) \(contentManager.localizedString("notifications.unread_count"))")
@@ -66,11 +63,10 @@ struct NotificationView: View {
                             // Total notifications
                             VStack(spacing: 4) {
                                 Text(contentManager.localizedString("notifications.total"))
-                                    .font(.caption)
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(.secondary)
                                 Text("\(viewModel.notifications.count)")
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
+                                    .font(Constants.Typography.Mono.H3.font)
                             }
                             .frame(maxWidth: .infinity)
                             
@@ -83,11 +79,10 @@ struct NotificationView: View {
                             // Unread notifications
                             VStack(spacing: 4) {
                                 Text(contentManager.localizedString("notifications.unread"))
-                                    .font(.caption)
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(.secondary)
                                 Text("\(viewModel.unreadCount)")
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
+                                    .font(Constants.Typography.Mono.H3.font)
                                     .foregroundColor(Constants.Colors.warning)
                             }
                             .frame(maxWidth: .infinity)
@@ -101,11 +96,10 @@ struct NotificationView: View {
                             // Today's notifications
                             VStack(spacing: 4) {
                                 Text(contentManager.localizedString("notifications.today"))
-                                    .font(.caption)
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(.secondary)
                                 Text("\(viewModel.todayCount)")
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
+                                    .font(Constants.Typography.Mono.H3.font)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -163,7 +157,6 @@ private struct NotificationStatCard: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(Constants.Typography.H3.font)
-                .fontWeight(.bold)
                 .foregroundColor(color)
             
             Text(title)
@@ -184,7 +177,7 @@ private struct NotificationRow: View {
             HStack(alignment: .top, spacing: Constants.UI.Spacing.medium) {
                 // Notification icon
                 Image(systemName: notification.type.icon)
-                    .font(.title3)
+                    .font(Constants.Typography.H3.font)
                     .foregroundColor(notification.type.color)
                     .frame(width: 24, height: 24)
                     .accessibilityHidden(true)
@@ -194,7 +187,6 @@ private struct NotificationRow: View {
                     HStack {
                         Text(notification.title)
                             .font(Constants.Typography.Body.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .multilineTextAlignment(.leading)
                         
@@ -249,7 +241,7 @@ private struct EmptyNotificationsView: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
-            Image("Budget-Empty")
+            Image("Empty-State-Image")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: 200, maxHeight: 200)
@@ -258,7 +250,6 @@ private struct EmptyNotificationsView: View {
             VStack(spacing: Constants.UI.Spacing.medium) {
                 Text(contentManager.localizedString("notifications.empty_title"))
                     .font(Constants.Typography.H2.font)
-                    .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)

@@ -1,29 +1,20 @@
+//
+//  BudgetTransactionService.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Service for automatically updating budget spending based on transaction categories.
+//  Handles transaction-budget synchronization, spent amount calculations,
+//  and maintains data consistency between transactions and budgets.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
-
-/**
- * BudgetTransactionService
- *
- * Service responsible for automatically updating budget spending based on transaction categories.
- * When a transaction is added, updated, or deleted, this service calculates the impact on
- * corresponding budgets and updates the budget's spent amount accordingly.
- *
- * Features:
- * - Automatic budget updates based on transaction categories
- * - Handles transaction additions, updates, and deletions
- * - Calculates spent amounts for each budget category
- * - Updates remaining amounts automatically
- * - Maintains data consistency between transactions and budgets
- *
- * Architecture:
- * - Pure service class with no UI dependencies
- * - Uses dependency injection for ViewModels
- * - Thread-safe operations
- * - Performance optimized with efficient calculations
- *
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
 
 @MainActor
 class BudgetTransactionService: ObservableObject {

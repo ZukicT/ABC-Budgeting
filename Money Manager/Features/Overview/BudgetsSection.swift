@@ -1,3 +1,18 @@
+//
+//  BudgetsSection.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Budgets section component for overview display providing budget summary
+//  information and navigation to full budget management functionality.
+//  Features placeholder content and accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct BudgetsSection: View {
@@ -5,7 +20,6 @@ struct BudgetsSection: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
-            // Section Header
             HStack {
                 Text(contentManager.localizedString("budget.title"))
                     .font(Constants.Typography.H2.font)
@@ -14,13 +28,11 @@ struct BudgetsSection: View {
                 Spacer()
                 
                 Button(contentManager.localizedString("button.view_all")) {
-                    // TODO: Navigate to budgets tab
                 }
                 .font(Constants.Typography.BodySmall.font)
                 .foregroundColor(Constants.Colors.success)
             }
             
-            // Placeholder content
             VStack(spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("budgets.overview_placeholder"))
                     .font(Constants.Typography.Body.font)

@@ -1,28 +1,20 @@
+//
+//  TransactionEditView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Comprehensive edit view for modifying individual transactions with form
+//  validation, real-time feedback, and performance optimizations. Features
+//  haptic feedback, loading states, and accessibility compliance.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-/**
- * TransactionEditView
- *
- * Comprehensive edit view for modifying individual transactions.
- * Features form validation, real-time feedback, and performance optimizations.
- *
- * Features:
- * - Complete transaction editing form
- * - Real-time validation with visual feedback
- * - Haptic feedback for better UX
- * - Loading states to prevent double-taps
- * - Accessibility compliance
- * - Performance optimized with memoized validation
- *
- * Performance Optimizations:
- * - Memoized validation properties (isValidTitle, isValidAmount, canSave)
- * - Efficient form state management
- * - Reduced validation calculations
- * - Optimized button state updates
- *
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
 struct TransactionEditView: View {
     @Binding var transaction: Transaction
     @Environment(\.dismiss) var dismiss
@@ -70,7 +62,7 @@ struct TransactionEditView: View {
                 // Top Row: Title + Close Button
                 HStack {
                     Text(contentManager.localizedString("transaction.edit_title"))
-                        .font(.system(size: 20, weight: .bold))
+                        .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .accessibilityLabel(contentManager.localizedString("transaction.edit_title"))
                         .accessibilityAddTraits(.isHeader)
@@ -80,7 +72,7 @@ struct TransactionEditView: View {
                     // Close Button
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .frame(width: 32, height: 32)
                             .background(Constants.Colors.textTertiary.opacity(0.1))
@@ -99,19 +91,19 @@ struct TransactionEditView: View {
                     // Title Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("form.title_label"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         TextField("Enter transaction title", text: $title)
-                            .font(.system(size: 16, weight: .medium))
+                            .font(Constants.Typography.Mono.Body.font)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
                             .background(Constants.Colors.textPrimary.opacity(0.05))
-                            .cornerRadius(12)
+                            .cornerRadius(Constants.UI.CornerRadius.secondary)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                                     .stroke(!isValidTitle ? 
                                            Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
                             )
@@ -122,26 +114,26 @@ struct TransactionEditView: View {
                     // Amount Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("form.amount_label"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         HStack {
                             Text("$")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                             
                             TextField("0.00", text: $amount)
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textPrimary)
                                 .keyboardType(.decimalPad)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
-                        .cornerRadius(12)
+                        .cornerRadius(Constants.UI.CornerRadius.secondary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                                 .stroke(!isValidAmount ? 
                                        Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
                         )
@@ -153,7 +145,7 @@ struct TransactionEditView: View {
                     // Transaction Type Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("form.type_label"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
@@ -177,12 +169,12 @@ struct TransactionEditView: View {
                                 }
                             }) {
                                 Text(contentManager.localizedString("form.income_type"))
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(isIncome ? .white : Constants.Colors.textPrimary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .background(isIncome ? Constants.Colors.success : Constants.Colors.textPrimary.opacity(0.05))
-                                    .cornerRadius(12)
+                                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                             }
                             .buttonStyle(PlainButtonStyle())
                             .accessibilityLabel("Income")
@@ -208,12 +200,12 @@ struct TransactionEditView: View {
                                 }
                             }) {
                                 Text(contentManager.localizedString("form.expense_type"))
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(!isIncome ? .white : Constants.Colors.textPrimary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .background(!isIncome ? Constants.Colors.error : Constants.Colors.textPrimary.opacity(0.05))
-                                    .cornerRadius(12)
+                                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                             }
                             .buttonStyle(PlainButtonStyle())
                             .accessibilityLabel("Expense")
@@ -225,7 +217,7 @@ struct TransactionEditView: View {
                     // Date Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("form.date_label"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
@@ -238,7 +230,7 @@ struct TransactionEditView: View {
                     // Category Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("form.category_label"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
@@ -247,7 +239,7 @@ struct TransactionEditView: View {
                                 HStack {
                                     CategoryIcon(category: category, size: 20)
                                     Text(category)
-                                        .font(.system(size: 16, weight: .medium))
+                                        .font(Constants.Typography.Mono.Body.font)
                                 }
                                 .tag(category)
                             }
@@ -277,16 +269,16 @@ struct TransactionEditView: View {
                                 .scaleEffect(0.8)
                         } else {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(Constants.Typography.Caption.font)
                         }
                         Text(isSaving ? "Saving..." : "Save")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                     }
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
                     .background(Constants.Colors.cleanBlack)
-                    .cornerRadius(12)
+                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                 }
                 .disabled(isSaving || !canSave)
                 .accessibilityLabel(isSaving ? "Saving transaction changes" : "Save transaction changes")
@@ -298,15 +290,15 @@ struct TransactionEditView: View {
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                         Text(contentManager.localizedString("button.cancel"))
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                     }
                     .foregroundColor(Constants.Colors.textPrimary)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
                     .background(Constants.Colors.textPrimary.opacity(0.05))
-                    .cornerRadius(12)
+                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                 }
                 .accessibilityLabel("Cancel editing")
                 .accessibilityHint("Double tap to discard changes and return to transaction details")

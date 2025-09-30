@@ -1,3 +1,18 @@
+//
+//  TransactionViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for managing transaction data, CRUD operations, and budget integration.
+//  Handles transaction loading, filtering, validation, and synchronization with
+//  budget tracking system.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
@@ -9,17 +24,13 @@ class TransactionViewModel: ObservableObject {
     
     var hasDataLoaded = false
     
-    // Budget integration service
     private var budgetTransactionService: BudgetTransactionService?
     
-    // Counter for tab display
     var transactionCount: Int {
         transactions.count
     }
     
-    init() {
-        // Initialize transaction data
-    }
+    init() {}
     
     // MARK: - Budget Integration
     
@@ -28,20 +39,15 @@ class TransactionViewModel: ObservableObject {
     }
     
     func loadTransactions() {
-        // Only load if data hasn't been loaded yet
         guard !hasDataLoaded else { return }
         
         isLoading = true
         errorMessage = nil
         
-        // Simulate loading delay for better UX
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Start with empty state - no sample data
             self.transactions = []
             self.isLoading = false
             self.hasDataLoaded = true
-            
-            // Update budgets after loading transactions
             self.budgetTransactionService?.updateAllBudgetsFromTransactions()
         }
     }

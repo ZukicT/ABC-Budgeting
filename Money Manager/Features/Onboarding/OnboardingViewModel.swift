@@ -1,3 +1,18 @@
+//
+//  OnboardingViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for managing onboarding flow state and step progression.
+//  Handles step navigation, completion tracking, and user data collection
+//  throughout the onboarding process with proper state management.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
@@ -13,28 +28,14 @@ class OnboardingViewModel: ObservableObject {
         self.onboardingManager = onboardingManager
     }
     
-    func checkFirstTimeUser() {
-        // This is now handled by OnboardingManager
-    }
+    func checkFirstTimeUser() {}
     
     func nextStep() {
-        #if DEBUG
-        print("DEBUG: nextStep() called. Current step: \(currentStep)")
-        #endif
         guard let nextStep = OnboardingStep(rawValue: currentStep.rawValue + 1) else {
-            #if DEBUG
-            print("DEBUG: No next step available, completing onboarding")
-            #endif
             completeOnboarding()
             return
         }
-        #if DEBUG
-        print("DEBUG: Moving to next step: \(nextStep)")
-        #endif
         currentStep = nextStep
-        #if DEBUG
-        print("DEBUG: Current step updated to: \(currentStep)")
-        #endif
     }
     
     func previousStep() {
@@ -72,15 +73,18 @@ class OnboardingViewModel: ObservableObject {
 
 enum OnboardingStep: Int, CaseIterable {
     case welcome = 0
-    case currency = 1
-    case startingBalance = 2
-    case notifications = 3
-    case completion = 4
+    case language = 1
+    case currency = 2
+    case startingBalance = 3
+    case notifications = 4
+    case completion = 5
     
     var title: String {
         switch self {
         case .welcome:
             return "Welcome"
+        case .language:
+            return "Language"
         case .currency:
             return "Currency"
         case .startingBalance:

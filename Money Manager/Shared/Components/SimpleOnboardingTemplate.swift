@@ -1,22 +1,19 @@
-import SwiftUI
+//
+//  SimpleOnboardingTemplate.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Reusable SwiftUI template for onboarding screens with illustration, multi-colored
+//  headline, body text, custom content, and navigation controls. Supports back button
+//  functionality and accessibility features with responsive layout.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * SimpleOnboardingTemplate
- * 
- * A reusable SwiftUI template for onboarding screens with illustration, multi-colored headline,
- * body text, custom content, and navigation controls. Supports back button functionality and
- * accessibility features.
- * 
- * Features:
- * - Responsive layout using GeometryReader
- * - Multi-colored headline support
- * - Custom illustration and content areas
- * - Accessibility compliance (VoiceOver, Dynamic Type)
- * - Optional back button functionality
- * 
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct SimpleOnboardingTemplate: View {
     let illustration: AnyView
@@ -80,16 +77,16 @@ struct SimpleOnboardingTemplate: View {
                             Button(action: backAction) {
                                 HStack(spacing: 8) {
                                     Image(systemName: "chevron.left")
-                                        .font(.system(size: 16, weight: .bold))
+                                        .font(Constants.Typography.Caption.font)
                                         .foregroundColor(.white)
                                     
                                     Text(contentManager.localizedString("onboarding.back"))
-                                        .font(TrapFontUtility.trapFont(size: 16, weight: .bold))
+                                        .font(Constants.Typography.Caption.font)
                                         .foregroundColor(.white)
                                 }
                                 .frame(height: 40)
                                 .padding(.horizontal, 16)
-                                .background(Color.black)
+                                .background(Constants.Colors.textPrimary)
                                 .cornerRadius(Constants.UI.CornerRadius.primary)
                             }
                             .padding(.top, 20)
@@ -102,7 +99,7 @@ struct SimpleOnboardingTemplate: View {
                     illustration
                         .frame(height: geometry.size.height * Constants.Onboarding.illustrationHeightRatio)
                         .clipped()
-                        .padding(.top, 60) // Move image down to avoid back button overlap
+                        .padding(.top, 40) // Move image up - reduced from 60 to 40
                         .accessibilityElement(children: .combine)
                     
                     // Text Content Section - positioned at Y: 520 (original position)
@@ -111,18 +108,18 @@ struct SimpleOnboardingTemplate: View {
                             text: headline,
                             colors: headlineColors
                         )
-                        .frame(maxWidth: min(350, geometry.size.width - 0))
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel(headline)
                         .accessibilityAddTraits(.isHeader)
                         
                         // Body text with Dynamic Type support
                         Text(bodyText)
-                            .font(TrapFontUtility.trapFont(size: 14, weight: .regular))
-                            .foregroundColor(Color.black)
+                            .font(Constants.Typography.Body.font)
+                            .foregroundColor(Constants.Colors.textPrimary)
                             .multilineTextAlignment(.leading)
                             .lineLimit(nil)
-                            .frame(maxWidth: geometry.size.width - 0)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .lineSpacing(6)
                             .accessibilityLabel(bodyText)
                             .accessibilityAddTraits(.isStaticText)
@@ -160,7 +157,7 @@ struct MultiColorText: View {
         let attributedText = createAttributedText(from: text)
         
         Text(attributedText)
-            .font(TrapFontUtility.trapFont(size: 38, weight: .black))
+            .font(Constants.Typography.H1.font)
             .multilineTextAlignment(.leading)
             .lineLimit(nil)
             .lineSpacing(4)
@@ -271,7 +268,7 @@ struct FlowResult {
         headline: "Start moving to improve your mental game",
         headlineColors: [
             Color(red: 0.341, green: 0.455, blue: 0.804), // Blue
-            .black,                                        // Black
+            Constants.Colors.textPrimary,                  // Dark Gray
             Color(red: 0.996, green: 0.643, blue: 0.098)  // Orange
         ],
         bodyText: "Level up your fitness, mental game and social game by getting active with others in your community and organising trial walks.",

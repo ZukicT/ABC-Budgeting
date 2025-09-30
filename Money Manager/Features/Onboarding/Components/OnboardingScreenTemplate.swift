@@ -1,3 +1,18 @@
+//
+//  OnboardingScreenTemplate.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Generic template for onboarding screens providing consistent layout and
+//  styling. Features illustration support, customizable headlines, body text,
+//  and action buttons with progress indicators.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct OnboardingScreenTemplate<Content: View>: View {
@@ -15,7 +30,7 @@ struct OnboardingScreenTemplate<Content: View>: View {
     init(
         illustration: AnyView? = nil,
         headline: String,
-        headlineColors: [Color] = [.black],
+        headlineColors: [Color] = [Constants.Colors.textPrimary],
         bodyText: String,
         buttonTitle: String,
         buttonIcon: String? = nil,
@@ -71,7 +86,7 @@ struct OnboardingScreenTemplate<Content: View>: View {
                         // Multi-colored headline
                         if headlineColors.count == 1 {
                             Text(headline)
-                                .font(TrapFontUtility.trapFont(size: 32, weight: .black))
+                                .font(Constants.Typography.H1.font)
                                 .foregroundColor(headlineColors[0])
                                 .opacity(showContent ? 1 : 0)
                                 .offset(y: showContent ? 0 : 20)
@@ -82,7 +97,7 @@ struct OnboardingScreenTemplate<Content: View>: View {
                                 text: headline,
                                 colors: headlineColors
                             )
-                            .font(TrapFontUtility.trapFont(size: 36, weight: .black))
+                            .font(Constants.Typography.H1.font)
                             .multilineTextAlignment(.leading)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
@@ -95,8 +110,8 @@ struct OnboardingScreenTemplate<Content: View>: View {
                         
                         // Body text with proper typography and line spacing
                         Text(bodyText)
-                            .font(TrapFontUtility.trapFont(size: 16, weight: .regular))
-                            .foregroundColor(Color.black)
+                            .font(Constants.Typography.Body.font)
+                            .foregroundColor(Constants.Colors.textPrimary)
                             .multilineTextAlignment(.leading)
                             .lineLimit(nil)
                             .lineSpacing(8) // Proper line spacing for readability
@@ -124,21 +139,13 @@ struct OnboardingScreenTemplate<Content: View>: View {
                                 buttonAction()
                             }
                         }) {
-                            HStack(spacing: 8) {
-                                if let icon = buttonIcon {
-                                    Image(systemName: icon)
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundColor(.white)
-                                }
-                                
-                                Text(buttonTitle)
-                                    .font(TrapFontUtility.trapFont(size: 16, weight: .bold))
-                                    .foregroundColor(.white)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 56)
-                            .background(Color.black)
-                            .cornerRadius(Constants.UI.CornerRadius.primary)
+                            Text(buttonTitle)
+                                .font(Constants.Typography.Button.font)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 56)
+                                .background(Constants.Colors.textPrimary)
+                                .cornerRadius(Constants.UI.CornerRadius.primary)
                         }
                         .opacity(showContent ? 1 : 0)
                         .offset(y: showContent ? 0 : 20)
@@ -155,12 +162,12 @@ struct OnboardingScreenTemplate<Content: View>: View {
                                 if index == currentPage {
                                     // Active indicator (rectangle) - BLACK
                                     RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                        .fill(Color.black)
+                                        .fill(Constants.Colors.textPrimary)
                                         .frame(width: 40, height: 8)
                                 } else {
                                     // Inactive indicator (rounded square) - PINK
                                     RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                        .fill(Color(hex: "#FFB6C8"))
+                                        .fill(Color(hex: "#FF6584"))
                                         .frame(width: 8, height: 8)
                                 }
                             }
@@ -186,7 +193,7 @@ struct OnboardingScreenTemplate<Content: View>: View {
     SimpleOnboardingTemplate(
         illustration: AnyView(OnboardingIllustration()),
         headline: "Start moving to improve your mental game",
-        headlineColors: [Constants.Colors.primaryBlue, .black, Constants.Colors.primaryOrange],
+        headlineColors: [Constants.Colors.primaryBlue, Constants.Colors.textPrimary, Constants.Colors.primaryOrange],
         bodyText: "Level up your fitness, mental game and social game by getting active with others in your community and organising trial walks.",
         buttonTitle: "Comprende",
         buttonIcon: "hand.wave",

@@ -1,10 +1,23 @@
+//
+//  OnboardingTests.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Unit tests for onboarding functionality providing comprehensive testing
+//  of onboarding flow, illustration components, and user interaction
+//  with proper test coverage and validation.
+//
+//  Review Date: September 29, 2025
+//
+
 import XCTest
 import SwiftUI
 @testable import Money_Manager
 
 class OnboardingTests: XCTestCase {
-    
-    // MARK: - OnboardingIllustration Tests
     
     func testOnboardingIllustrationInitialState() {
         let illustration = OnboardingIllustration()
@@ -16,8 +29,6 @@ class OnboardingTests: XCTestCase {
         illustration.triggerAnimation()
         XCTAssertTrue(illustration.isAnimating, "Animation should be triggered")
     }
-    
-    // MARK: - MultiColorText Tests
     
     func testMultiColorTextWithSingleColor() {
         let text = "Hello World"

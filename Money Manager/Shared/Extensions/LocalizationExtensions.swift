@@ -1,14 +1,26 @@
+//
+//  LocalizationExtensions.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Extensions and utilities for localization providing convenient access to
+//  localized strings and localized UI components. Includes String extensions
+//  and custom localized view components.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-// MARK: - Localization Extension
 extension String {
-    /// Returns the localized string for the current language
     var localized: String {
         return MultilingualContentManager.shared.localizedString(self)
     }
 }
 
-// MARK: - Localized Text View
 struct LocalizedText: View {
     let key: String
     
@@ -21,7 +33,6 @@ struct LocalizedText: View {
     }
 }
 
-// MARK: - Localized Button
 struct LocalizedButton: View {
     let key: String
     let action: () -> Void

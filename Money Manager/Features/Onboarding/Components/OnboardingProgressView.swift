@@ -1,3 +1,18 @@
+//
+//  OnboardingProgressView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Progress indicator component for onboarding flow displaying current step
+//  progress with animated progress bar and step counter. Provides visual
+//  feedback for user progress through onboarding steps.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct OnboardingProgressView: View {
@@ -10,7 +25,6 @@ struct OnboardingProgressView: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.small) {
-            // Progress Bar
             HStack(spacing: Constants.UI.Spacing.micro) {
                 ForEach(0..<OnboardingStep.allCases.count, id: \.self) { index in
                     RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.quaternary)
@@ -24,7 +38,6 @@ struct OnboardingProgressView: View {
             }
             .padding(.horizontal, Constants.UI.Padding.screenMargin)
             
-            // Step Counter
             Text("\(contentManager.localizedString("onboarding.step_counter")) \(currentStep.rawValue + 1) \(contentManager.localizedString("onboarding.of")) \(OnboardingStep.allCases.count)")
                 .font(Constants.Typography.Caption.font)
                 .foregroundColor(Constants.Colors.textTertiary)

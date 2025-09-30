@@ -2,9 +2,15 @@
 //  BalanceChartView.swift
 //  Money Manager
 //
-//  Interactive balance chart with touch interaction, tooltips, and real-time data updates.
-//  Uses trend-based coloring: blue for positive trends, brand yellow for negative trends.
-//  Clean line design without point marks for professional appearance.
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Interactive balance chart with touch interaction, tooltips, and real-time
+//  data updates. Uses trend-based coloring and clean line design for
+//  professional appearance with comprehensive accessibility support.
+//
+//  Review Date: September 29, 2025
 //
 
 import SwiftUI
@@ -263,7 +269,7 @@ struct BalanceChartView: View {
                 .foregroundColor(Constants.Colors.textSecondary)
             
             Text(totalBalance.formatted(.currency(code: "USD")))
-                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .font(Constants.Typography.Mono.H1.font)
                 .foregroundColor(Constants.Colors.textPrimary)
             
             // Income/Expense metrics moved here
@@ -271,7 +277,7 @@ struct BalanceChartView: View {
                 // Income
                 HStack(alignment: .center, spacing: 2) {
                     Text(contentManager.localizedString("chart.up_arrow"))
-                        .font(.caption)
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.success)
                     
                     Text(currentPeriodIncome.formatted(.currency(code: "USD")))
@@ -299,7 +305,7 @@ struct BalanceChartView: View {
                 // Expenses
                 HStack(alignment: .center, spacing: 2) {
                     Text(contentManager.localizedString("chart.down_arrow"))
-                        .font(.caption)
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.error)
                     
                     Text(currentPeriodExpenses.formatted(.currency(code: "USD")))
@@ -442,7 +448,7 @@ struct BalanceChartView: View {
                         if let change = dataPoint.change, let percentage = dataPoint.changePercentage {
                             HStack(spacing: 4) {
                                 Image(systemName: change >= 0 ? "arrow.up" : "arrow.down")
-                                    .font(.caption)
+                                    .font(Constants.Typography.Caption.font)
                                 Text("\(change >= 0 ? "+" : "")\(formatCurrency(change)) (\(String(format: "%.1f", percentage))%)")
                                     .font(Constants.Typography.Caption.font)
                             }
@@ -455,7 +461,7 @@ struct BalanceChartView: View {
                     }
                     .padding(8)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                             .fill(Constants.Colors.cardBackground)
                             .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                     )

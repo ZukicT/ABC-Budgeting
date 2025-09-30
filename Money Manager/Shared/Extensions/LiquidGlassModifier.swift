@@ -1,6 +1,20 @@
+//
+//  LiquidGlassModifier.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Custom view modifier providing liquid glass visual effects for UI components.
+//  Features accessibility compliance with fallback to solid colors when
+//  transparency is reduced and proper motion reduction support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-// MARK: - Liquid Glass View Modifier
 struct LiquidGlassModifier: ViewModifier {
     let style: LiquidGlassStyle
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -8,7 +22,6 @@ struct LiquidGlassModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         if reduceTransparency {
-            // Fallback to solid colors when transparency is reduced
             content
                 .background(style.solidBackground)
                 .overlay(
@@ -16,15 +29,12 @@ struct LiquidGlassModifier: ViewModifier {
                         .stroke(style.borderColor, lineWidth: style.borderWidth)
                 )
         } else {
-            // Liquid Glass effect
             content
                 .background(
                     ZStack {
-                        // Base background
                         RoundedRectangle(cornerRadius: style.cornerRadius)
                             .fill(style.background)
                         
-                        // Blur effect
                         RoundedRectangle(cornerRadius: style.cornerRadius)
                             .fill(.ultraThinMaterial)
                             .opacity(style.materialOpacity)

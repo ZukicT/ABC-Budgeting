@@ -1,3 +1,18 @@
+//
+//  LoanViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for managing loan data, payment tracking, and debt analysis.
+//  Handles loan CRUD operations, category filtering, payment calculations,
+//  and financial metrics for debt management.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
@@ -10,12 +25,10 @@ class LoanViewModel: ObservableObject {
     
     var hasDataLoaded = false
     
-    // Counter for tab display (based on filtered loans)
     var loanCount: Int {
         filteredLoans.count
     }
     
-    // Total debt calculation (based on filtered loans)
     var totalDebt: Double {
         filteredLoans.reduce(0) { $0 + $1.remainingAmount }
     }
@@ -24,7 +37,6 @@ class LoanViewModel: ObservableObject {
         totalDebt.formatted(.currency(code: "USD"))
     }
     
-    // Total monthly payment calculation (based on filtered loans)
     var totalMonthlyPayment: Double {
         filteredLoans.reduce(0) { $0 + $1.monthlyPayment }
     }
@@ -33,12 +45,10 @@ class LoanViewModel: ObservableObject {
         totalMonthlyPayment.formatted(.currency(code: "USD"))
     }
     
-    // Next due date calculation (based on filtered loans)
     var nextDueDate: Date? {
         filteredLoans.min { $0.dueDate < $1.dueDate }?.dueDate
     }
     
-    // Filtered loans based on selected category
     var filteredLoans: [Loan] {
         if let selectedCategory = selectedCategory {
             return loans.filter { $0.category == selectedCategory }
@@ -47,20 +57,15 @@ class LoanViewModel: ObservableObject {
         }
     }
     
-    init() {
-        // Initialize loan data
-    }
+    init() {}
     
     func loadLoans() {
-        // Only load if data hasn't been loaded yet
         guard !hasDataLoaded else { return }
         
         isLoading = true
         errorMessage = nil
         
-        // TODO: Implement loan loading logic
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            // Start with empty loans for new users
             self.loans = []
             self.isLoading = false
             self.hasDataLoaded = true

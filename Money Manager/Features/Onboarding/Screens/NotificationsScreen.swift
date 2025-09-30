@@ -1,23 +1,20 @@
+//
+//  NotificationsScreen.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Notification permission request screen for onboarding with proper
+//  permission handling, state management, and user feedback. Features
+//  back navigation, permission status persistence, and brand-consistent design.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 import UserNotifications
-
-/**
- * NotificationsScreen
- *
- * Notification permission request screen for onboarding with proper
- * permission handling, state management, and user feedback. Features
- * back navigation and brand-consistent design.
- *
- * Features:
- * - Notification permission request with proper error handling
- * - Back navigation support
- * - Permission status persistence using UserDefaults
- * - Brand-consistent design with pink accent color
- * - Async-safe UI updates with DispatchQueue.main.async
- *
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
 
 struct NotificationsScreen: View {
     @ObservedObject var viewModel: OnboardingViewModel
@@ -37,19 +34,19 @@ struct NotificationsScreen: View {
     var body: some View {
         SimpleOnboardingTemplate(
             illustration: AnyView(
-                Image("Hero-Illustration_Notifications")
+                Image("Notifications-Hero-Image")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: 290)
             ),
             headline: contentManager.localizedString("onboarding.notifications.headline"),
             headlineColors: [
-                Constants.Onboarding.pinkHex  // "Stay on track" - entire hero text in brand pink
+                Constants.Onboarding.primaryBlueHex  // "Stay on track" - entire hero text in brand blue
             ],
             bodyText: contentManager.localizedString("onboarding.notifications.body"),
-            buttonTitle: contentManager.localizedString("onboarding.notifications.enable_button"),
+            buttonTitle: "Continue",
             buttonIcon: "bell.fill",
-            currentPage: 3,
+            currentPage: 4,
             totalPages: OnboardingStep.allCases.count,
             buttonAction: {
                 requestNotificationPermission()
@@ -58,7 +55,7 @@ struct NotificationsScreen: View {
             backButtonAction: {
                 viewModel.previousStep()
             },
-            secondaryButtonTitle: contentManager.localizedString("onboarding.notifications.skip_button"),
+            secondaryButtonTitle: "No thank you",
             secondaryButtonAction: {
                 UserDefaults.standard.set(false, forKey: notificationPermissionKey)
                 print("⚠️ User skipped notifications")
@@ -71,6 +68,7 @@ struct NotificationsScreen: View {
             }
         } message: {
             Text(alertMessage)
+                .font(Constants.Typography.Body.font)
         }
     }
     

@@ -1,34 +1,19 @@
-import SwiftUI
+//
+//  CategoryIcon.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Reusable component for displaying category-based icons with consistent colors
+//  and styling. Provides visual recognition for transaction categories with
+//  SF Symbols icons, color coding, and accessibility compliance.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * CategoryIcon
- *
- * Reusable component for displaying category-based icons with consistent colors
- * and styling. Provides visual recognition for transaction categories following
- * market research best practices.
- *
- * Features:
- * - Category-specific SF Symbols icons
- * - Consistent color coding system
- * - Scalable sizing for different contexts
- * - Accessibility compliance
- * - Professional flat design aesthetic
- *
- * Usage:
- * - Transaction detail views
- * - Transaction lists
- * - Category filters
- * - Budget displays
- *
- * Architecture:
- * - Pure SwiftUI component
- * - No external dependencies
- * - Stateless design
- * - Performance optimized
- *
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct CategoryIcon: View {
     let category: String
@@ -79,7 +64,7 @@ struct CategoryIcon: View {
             
             // Category icon
             Image(systemName: iconInfo.name)
-                .font(.system(size: size * 0.45, weight: .semibold))
+                .font(Constants.Typography.Caption.font)
                 .foregroundColor(iconInfo.color)
         }
         .accessibilityLabel("Category: \(category)")

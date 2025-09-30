@@ -1,13 +1,26 @@
+//
+//  DataClearingService.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Service for clearing all financial data and managing data reset operations.
+//  Handles complete data clearing, ViewModel reset, and user confirmation
+//  for data management and privacy compliance.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
-/// Service responsible for clearing all financial data and managing data reset operations
 @MainActor
 class DataClearingService: ObservableObject {
     @Published var isClearingData = false
     @Published var showStartingBalancePrompt = false
     
-    // ViewModels that need to be cleared
     var transactionViewModel: TransactionViewModel?
     var budgetViewModel: BudgetViewModel?
     var loanViewModel: LoanViewModel?
@@ -22,20 +35,18 @@ class DataClearingService: ObservableObject {
         self.loanViewModel = loanViewModel
     }
     
-    /// Clears all financial data and shows starting balance prompt
     func clearAllData() {
         isClearingData = true
         
-        // Clear all ViewModel data
         clearTransactionData()
         clearBudgetData()
         clearLoanData()
         clearUserDefaults()
         
-        // Reset data loaded flags
+        // Reset data loaded flags - safely handle nil ViewModels
         transactionViewModel?.hasDataLoaded = false
         budgetViewModel?.hasDataLoaded = false
- loanViewModel?.hasDataLoaded = false
+        loanViewModel?.hasDataLoaded = false
         
         isClearingData = false
         
@@ -125,7 +136,8 @@ struct StartingBalancePromptView: View {
                 // Header
                 VStack(spacing: Constants.UI.Spacing.medium) {
                     Image(systemName: "arrow.clockwise.circle.fill")
-                        .font(.system(size: 64, weight: .light))
+                        .font(Constants.Typography.H1.font)
+                        .fontWeight(.light)
                         .foregroundColor(Constants.Colors.primaryOrange)
                     
                     Text(contentManager.localizedString("data_cleared.title"))
@@ -180,7 +192,6 @@ struct StartingBalancePromptView: View {
                     }) {
                         Text(contentManager.localizedString("button.set_starting_balance"))
                             .font(Constants.Typography.Body.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)

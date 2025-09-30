@@ -1,3 +1,18 @@
+//
+//  BudgetsOverviewSection.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Overview section displaying budget summary with progress tracking and
+//  quick navigation. Features budget statistics, progress indicators,
+//  and navigation to full budget management with accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct BudgetsOverviewSection: View {
@@ -13,7 +28,6 @@ struct BudgetsOverviewSection: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
-            // Section Header
             HStack {
                 Text(contentManager.localizedString("budgets_overview.title"))
                     .font(Constants.Typography.H2.font)
@@ -21,9 +35,8 @@ struct BudgetsOverviewSection: View {
                 
                 Spacer()
                 
-                // See All Button
                 Button(action: {
-                    onTabSwitch(2) // Switch to Budget tab
+                    onTabSwitch(2)
                 }) {
                     Text(contentManager.localizedString("button.view_all"))
                         .font(Constants.Typography.BodySmall.font)
@@ -41,6 +54,7 @@ struct BudgetsOverviewSection: View {
             } else if budgetViewModel.budgets.isEmpty {
                 BudgetEmptyState(
                     actionTitle: contentManager.localizedString("cta.create_budget"),
+                    imageSize: 80,
                     action: {
                         // TODO: Navigate to create budget
                     }
@@ -128,7 +142,6 @@ private struct BudgetSummaryCard: View {
                 
                 Text("\(Int(overallProgress * 100))%")
                     .font(Constants.Typography.H3.font)
-                    .fontWeight(.bold)
                     .foregroundColor(progressColor)
             }
             
@@ -139,13 +152,13 @@ private struct BudgetSummaryCard: View {
                     Rectangle()
                         .fill(Constants.Colors.backgroundSecondary)
                         .frame(height: 12)
-                        .cornerRadius(8)
+                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
                     
                     // Progress Fill
                     Rectangle()
                         .fill(progressColor)
                         .frame(width: geometry.size.width * min(overallProgress, 1.0), height: 12)
-                        .cornerRadius(8)
+                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
                 }
             }
             .frame(height: 12)
@@ -157,10 +170,9 @@ private struct BudgetSummaryCard: View {
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
-                    Text(totalBudgeted, format: .currency(code: "USD"))
-                        .font(Constants.Typography.H3.font)
-                        .fontWeight(.bold)
-                        .foregroundColor(Constants.Colors.textPrimary)
+            Text(totalBudgeted, format: .currency(code: "USD"))
+                .font(Constants.Typography.Mono.H3.font)
+                .foregroundColor(Constants.Colors.textPrimary)
                 }
                 
                 Spacer()
@@ -170,10 +182,9 @@ private struct BudgetSummaryCard: View {
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
-                    Text(totalSpent, format: .currency(code: "USD"))
-                        .font(Constants.Typography.H3.font)
-                        .fontWeight(.bold)
-                        .foregroundColor(progressColor)
+            Text(totalSpent, format: .currency(code: "USD"))
+                .font(Constants.Typography.Mono.H3.font)
+                .foregroundColor(progressColor)
                 }
             }
         }

@@ -15,152 +15,168 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: Constants.UI.Spacing.large) {
-                    // Settings Sections
+            VStack(spacing: 0) {
+                // Custom Header Section
+                VStack(spacing: Constants.UI.Spacing.medium) {
+                    HStack(alignment: .center) {
+                        Text(contentManager.localizedString("nav.settings"))
+                            .font(Constants.Typography.H1.font)
+                            .foregroundColor(Constants.Colors.textPrimary)
+                        
+                        Spacer()
+                    }
+                    .padding(.top, -Constants.UI.Spacing.medium)
+                }
+                .padding(Constants.UI.Padding.screenMargin)
+                .background(Constants.Colors.backgroundPrimary)
+                
+                ScrollView {
                     VStack(spacing: Constants.UI.Spacing.large) {
-                        // Notifications Section
-                        SettingsSection(title: contentManager.localizedString("settings.notifications"), icon: "bell.fill") {
-                            VStack(spacing: Constants.UI.Spacing.medium) {
-                                SettingsToggle(
-                                    title: contentManager.localizedString("settings.push_notifications"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.push_notifications"),
-                                    isOn: $settingsViewModel.notificationsEnabled
-                                )
-                                
-                                SettingsToggle(
-                                    title: contentManager.localizedString("settings.budget_alerts"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.budget_alerts"),
-                                    isOn: $settingsViewModel.budgetAlertsEnabled
-                                )
+                        // Settings Sections
+                        VStack(spacing: Constants.UI.Spacing.large) {
+                            // Notifications Section
+                            SettingsSection(title: contentManager.localizedString("settings.notifications"), icon: "bell.fill") {
+                                VStack(spacing: Constants.UI.Spacing.medium) {
+                                    SettingsToggle(
+                                        title: contentManager.localizedString("settings.push_notifications"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.push_notifications"),
+                                        isOn: $settingsViewModel.notificationsEnabled
+                                    )
+                                    
+                                    SettingsToggle(
+                                        title: contentManager.localizedString("settings.budget_alerts"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.budget_alerts"),
+                                        isOn: $settingsViewModel.budgetAlertsEnabled
+                                    )
+                                }
                             }
-                        }
-                        
-                        // Budget Settings Section
-                        SettingsSection(title: contentManager.localizedString("settings.budget_settings"), icon: "chart.bar.fill") {
-                            VStack(spacing: Constants.UI.Spacing.medium) {
-                                SettingsCurrencyPicker(
-                                    title: contentManager.localizedString("settings.default_currency"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.default_currency"),
-                                    selection: $settingsViewModel.selectedCurrency,
-                                    currencies: SettingsViewModel.availableCurrencies,
-                                    currencyNames: SettingsViewModel.currencyDisplayNames
-                                )
-                                
-                                SettingsPicker(
-                                    title: contentManager.localizedString("settings.budget_period"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.budget_period"),
-                                    selection: $settingsViewModel.budgetPeriod,
-                                    options: SettingsViewModel.availableBudgetPeriods
-                                )
+                            
+                            // Budget Settings Section
+                            SettingsSection(title: contentManager.localizedString("settings.budget_settings"), icon: "chart.bar.fill") {
+                                VStack(spacing: Constants.UI.Spacing.medium) {
+                                    SettingsCurrencyPicker(
+                                        title: contentManager.localizedString("settings.default_currency"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.default_currency"),
+                                        selection: $settingsViewModel.selectedCurrency,
+                                        currencies: SettingsViewModel.availableCurrencies,
+                                        currencyNames: SettingsViewModel.currencyDisplayNames
+                                    )
+                                    
+                                    SettingsPicker(
+                                        title: contentManager.localizedString("settings.budget_period"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.budget_period"),
+                                        selection: $settingsViewModel.budgetPeriod,
+                                        options: SettingsViewModel.availableBudgetPeriods
+                                    )
+                                }
                             }
-                        }
-                        
-                        // Language Settings Section
-                        SettingsSection(title: contentManager.localizedString("settings.language"), icon: "globe") {
-                            VStack(spacing: Constants.UI.Spacing.medium) {
-                                SettingsLanguagePicker(
-                                    title: contentManager.localizedString("settings.text_to_speech_language"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.text_to_speech_language"),
-                                    selection: $settingsViewModel.selectedLanguage,
-                                    languages: SettingsViewModel.availableLanguages,
-                                    languageNames: SettingsViewModel.languageDisplayNames
-                                )
+                            
+                            // Language Settings Section
+                            SettingsSection(title: contentManager.localizedString("settings.language"), icon: "globe") {
+                                VStack(spacing: Constants.UI.Spacing.medium) {
+                                    SettingsLanguagePicker(
+                                        title: contentManager.localizedString("settings.text_to_speech_language"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.text_to_speech_language"),
+                                        selection: $settingsViewModel.selectedLanguage,
+                                        languages: SettingsViewModel.availableLanguages,
+                                        languageNames: SettingsViewModel.languageDisplayNames
+                                    )
+                                }
                             }
-                        }
-                        
-                        // Data & Privacy Section
-                        SettingsSection(title: contentManager.localizedString("settings.data_privacy"), icon: "shield.fill") {
-                            VStack(spacing: Constants.UI.Spacing.medium) {
-                                SettingsButton(
-                                    title: contentManager.localizedString("settings.export_data"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.export_data"),
-                                    action: {
-                                        showExportData = true
-                                    }
-                                )
-                                
-                                SettingsDestructiveButton(
-                                    title: contentManager.localizedString("settings.clear_all_data"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.clear_all_data"),
-                                    action: {
-                                        showClearDataConfirmation = true
-                                    }
-                                )
-                            }
-                        }
-                        
-                        // Test Data Section (Development Only)
-                        SettingsSection(title: contentManager.localizedString("settings.test_data"), icon: "testtube.2") {
-                            VStack(spacing: Constants.UI.Spacing.medium) {
-                                if hasTestData {
+                            
+                            // Data & Privacy Section
+                            SettingsSection(title: contentManager.localizedString("settings.data_privacy"), icon: "shield.fill") {
+                                VStack(spacing: Constants.UI.Spacing.medium) {
                                     SettingsButton(
-                                        title: contentManager.localizedString("settings.remove_test_data"),
-                                        subtitle: contentManager.localizedString("settings.subtitle.remove_test_data"),
+                                        title: contentManager.localizedString("settings.export_data"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.export_data"),
                                         action: {
-                                            removeTestData()
+                                            showExportData = true
                                         }
                                     )
-                                } else {
-                                    SettingsButton(
-                                        title: contentManager.localizedString("settings.add_test_data"),
-                                        subtitle: contentManager.localizedString("settings.subtitle.add_test_data"),
+                                    
+                                    SettingsDestructiveButton(
+                                        title: contentManager.localizedString("settings.clear_all_data"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.clear_all_data"),
                                         action: {
-                                            addTestData()
+                                            showClearDataConfirmation = true
+                                        }
+                                    )
+                                }
+                            }
+                            
+                            // Test Data Section (Development Only)
+                            SettingsSection(title: contentManager.localizedString("settings.test_data"), icon: "testtube.2") {
+                                VStack(spacing: Constants.UI.Spacing.medium) {
+                                    if hasTestData {
+                                        SettingsButton(
+                                            title: contentManager.localizedString("settings.remove_test_data"),
+                                            subtitle: contentManager.localizedString("settings.subtitle.remove_test_data"),
+                                            action: {
+                                                removeTestData()
+                                            }
+                                        )
+                                    } else {
+                                        SettingsButton(
+                                            title: contentManager.localizedString("settings.add_test_data"),
+                                            subtitle: contentManager.localizedString("settings.subtitle.add_test_data"),
+                                            action: {
+                                                addTestData()
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                            
+                            // About Section
+                            SettingsSection(title: contentManager.localizedString("settings.about"), icon: "info.circle.fill") {
+                                VStack(spacing: Constants.UI.Spacing.medium) {
+                                    SettingsAboutItem(
+                                        title: contentManager.localizedString("settings.version"),
+                                        value: settingsViewModel.appVersion
+                                    )
+                                    
+                                    SettingsButton(
+                                        title: contentManager.localizedString("settings.version_history"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.version_history"),
+                                        action: {
+                                            showVersionHistory = true
+                                        }
+                                    )
+                                    
+                                    SettingsButton(
+                                        title: contentManager.localizedString("settings.privacy_policy"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.privacy_policy"),
+                                        action: {
+                                            showPrivacyPolicy = true
+                                        }
+                                    )
+                                    
+                                    SettingsButton(
+                                        title: contentManager.localizedString("settings.terms_of_service"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.terms_of_service"),
+                                        action: {
+                                            showTermsOfService = true
+                                        }
+                                    )
+                                    
+                                    SettingsButton(
+                                        title: contentManager.localizedString("settings.font_licensing"),
+                                        subtitle: contentManager.localizedString("settings.subtitle.font_licensing"),
+                                        action: {
+                                            showFontLicensing = true
                                         }
                                     )
                                 }
                             }
                         }
-                        
-                        // About Section
-                        SettingsSection(title: contentManager.localizedString("settings.about"), icon: "info.circle.fill") {
-                            VStack(spacing: Constants.UI.Spacing.medium) {
-                                SettingsAboutItem(
-                                    title: contentManager.localizedString("settings.version"),
-                                    value: settingsViewModel.appVersion
-                                )
-                                
-                                SettingsButton(
-                                    title: contentManager.localizedString("settings.version_history"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.version_history"),
-                                    action: {
-                                        showVersionHistory = true
-                                    }
-                                )
-                                
-                                SettingsButton(
-                                    title: contentManager.localizedString("settings.privacy_policy"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.privacy_policy"),
-                                    action: {
-                                        showPrivacyPolicy = true
-                                    }
-                                )
-                                
-                                SettingsButton(
-                                    title: contentManager.localizedString("settings.terms_of_service"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.terms_of_service"),
-                                    action: {
-                                        showTermsOfService = true
-                                    }
-                                )
-                                
-                                SettingsButton(
-                                    title: contentManager.localizedString("settings.font_licensing"),
-                                    subtitle: contentManager.localizedString("settings.subtitle.font_licensing"),
-                                    action: {
-                                        showFontLicensing = true
-                                    }
-                                )
-                            }
-                        }
+                        .padding(.horizontal, Constants.UI.Padding.screenMargin)
+                        .padding(.top, Constants.UI.Spacing.medium)
                     }
-                    .padding(.horizontal, Constants.UI.Padding.screenMargin)
-                    .padding(.top, Constants.UI.Spacing.medium)
                 }
             }
-            .navigationTitle(contentManager.localizedString("nav.settings"))
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(contentManager.localizedString("button.done")) {
@@ -300,6 +316,7 @@ private struct SettingsToggle: View {
             
             Toggle("", isOn: $isOn)
                 .labelsHidden()
+                .tint(Constants.Colors.accentColor)
         }
         .padding(Constants.UI.Padding.cardInternal)
     }
@@ -405,6 +422,7 @@ private struct SettingsCurrencyPicker: View {
             }
             .pickerStyle(MenuPickerStyle())
             .labelsHidden()
+            .tint(Constants.Colors.accentColor)
         }
         .padding(Constants.UI.Padding.cardInternal)
     }
@@ -441,6 +459,7 @@ private struct SettingsLanguagePicker: View {
             }
             .pickerStyle(MenuPickerStyle())
             .labelsHidden()
+            .tint(Constants.Colors.accentColor)
         }
         .padding(Constants.UI.Padding.cardInternal)
     }
@@ -497,6 +516,7 @@ private struct SettingsPicker: View {
             }
             .pickerStyle(MenuPickerStyle())
             .labelsHidden()
+            .tint(Constants.Colors.accentColor)
         }
         .padding(Constants.UI.Padding.cardInternal)
     }

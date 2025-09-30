@@ -1,3 +1,18 @@
+//
+//  BalanceIllustration.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Animated balance illustration component for onboarding featuring floating
+//  money bills, central balance display, and decorative elements. Provides
+//  engaging visual representation of financial balance concepts.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct BalanceIllustration: View {
@@ -5,26 +20,21 @@ struct BalanceIllustration: View {
     
     var body: some View {
         ZStack {
-            // Light blue background with diagonal cut
             LightBlueBackground()
                 .frame(height: 300)
             
-            // Main illustration content
             ZStack {
-                // Money bills floating around
                 FloatingMoneyBill(amount: "$100", offset: CGPoint(x: -70, y: -20), delay: 0.1)
                 FloatingMoneyBill(amount: "$50", offset: CGPoint(x: 80, y: -30), delay: 0.2)
                 FloatingMoneyBill(amount: "$20", offset: CGPoint(x: -60, y: 20), delay: 0.3)
                 FloatingMoneyBill(amount: "$10", offset: CGPoint(x: 70, y: 10), delay: 0.4)
                 
-                // Central balance display
                 CentralBalanceDisplay()
                     .offset(y: -10)
                     .scaleEffect(animateElements ? 1.0 : 0.8)
                     .opacity(animateElements ? 1.0 : 0.0)
                     .animation(.easeInOut(duration: 0.8).delay(0.5), value: animateElements)
                 
-                // Decorative elements
                 DecorativeElements()
                     .opacity(animateElements ? 1.0 : 0.0)
                     .animation(.easeInOut(duration: 0.6).delay(0.6), value: animateElements)
@@ -52,9 +62,9 @@ struct FloatingMoneyBill: View {
                 .frame(width: 40, height: 24)
             
             // Amount text
-            Text(amount)
-                .font(.system(size: 8, weight: .bold))
-                .foregroundColor(.white)
+                Text(amount)
+                    .font(Constants.Typography.Mono.Caption.font)
+                    .foregroundColor(.white)
         }
         .offset(x: offset.x, y: offset.y)
         .scaleEffect(animate ? 1.0 : 0.5)
@@ -73,18 +83,18 @@ struct CentralBalanceDisplay: View {
         ZStack {
             // Main circle
             Circle()
-                .stroke(Color.black, lineWidth: 2)
+                .stroke(Constants.Colors.textPrimary, lineWidth: 2)
                 .frame(width: 50, height: 50)
             
             // Dollar sign
-            Text("$")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(Color.black)
+                Text("$")
+                    .font(Constants.Typography.Mono.H3.font)
+                    .foregroundColor(Constants.Colors.textPrimary)
             
             // Plus sign
-            Text("+")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(Constants.Colors.primaryOrange)
+                Text("+")
+                    .font(Constants.Typography.Mono.Body.font)
+                    .foregroundColor(Constants.Colors.primaryOrange)
                 .offset(x: 20, y: -20)
             
             // Radiating lines

@@ -1,6 +1,20 @@
+//
+//  StatusTag.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Reusable status tag component for displaying loan payment status and other
+//  status indicators. Features consistent styling, accessibility support,
+//  and interactive selection states with proper color coding.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-/// Standardized status tag component that matches budget tab styling
 struct StatusTag: View {
     let status: LoanPaymentStatus
     let isSelected: Bool
@@ -15,12 +29,13 @@ struct StatusTag: View {
     var body: some View {
         Button(action: action ?? {}) {
             Text(status.displayName)
-                .font(.system(size: 10, weight: isSelected ? .semibold : .medium))
+                .font(Constants.Typography.Caption.font)
+                .fontWeight(isSelected ? .semibold : .medium)
                 .foregroundColor(isSelected ? Constants.Colors.backgroundPrimary : status.color)
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                         .fill(isSelected ? status.color : status.color.opacity(0.1))
                 )
         }

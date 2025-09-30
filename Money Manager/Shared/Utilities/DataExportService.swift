@@ -1,13 +1,26 @@
+//
+//  DataExportService.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Service for exporting financial data to CSV format. Handles data export
+//  for transactions, budgets, and loans with proper CSV formatting and
+//  file management for user data portability.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
-/// Service responsible for exporting financial data to CSV format
 @MainActor
 class DataExportService: ObservableObject {
     @Published var isExporting = false
     @Published var exportError: String?
     
-    // ViewModels for data access
     private var transactionViewModel: TransactionViewModel?
     private var budgetViewModel: BudgetViewModel?
     private var loanViewModel: LoanViewModel?
@@ -22,7 +35,6 @@ class DataExportService: ObservableObject {
         self.loanViewModel = loanViewModel
     }
     
-    /// Export data based on selected type
     func exportData(type: ExportDataType) async -> URL? {
         isExporting = true
         exportError = nil
@@ -41,7 +53,6 @@ class DataExportService: ObservableObject {
         }
     }
     
-    /// Create a shareable file URL for the specified data type
     func createShareableFile(type: ExportDataType) async -> URL? {
         isExporting = true
         exportError = nil

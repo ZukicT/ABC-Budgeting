@@ -1,28 +1,19 @@
-import SwiftUI
+//
+//  AddView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Comprehensive form view for adding new transactions, budgets, and loans.
+//  Features tabbed interface with type-specific forms, validation, success
+//  feedback, and real-time error prevention with accessibility compliance.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * AddView
- *
- * Comprehensive form view for adding new transactions, budgets, and loans to the Money Manager app.
- * Features a tabbed interface with type-specific forms, validation, and success feedback.
- *
- * Features:
- * - Multi-type form support (Transaction, Budget, Loan)
- * - Real-time validation and error prevention
- * - Success animations and haptic feedback
- * - Comprehensive form fields with proper validation
- * - Accessibility compliance
- * - Professional UI with consistent design system
- *
- * Architecture:
- * - MVVM pattern with proper view model integration
- * - Modular form components for maintainability
- * - State management with @State and @ObservedObject
- * - Proper dependency injection for all view models
- *
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct AddView: View {
     @Environment(\.dismiss) var dismiss
@@ -71,7 +62,6 @@ struct AddView: View {
                     VStack(spacing: Constants.UI.Spacing.medium) {
                         Text(contentManager.localizedString("add.title"))
                             .font(Constants.Typography.H3.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
@@ -79,13 +69,12 @@ struct AddView: View {
                             ForEach(AddType.allCases, id: \.self) { type in
                                 Text(type.localizedDisplayName(contentManager))
                                     .font(Constants.Typography.Body.font)
-                                    .fontWeight(.medium)
                                     .tag(type)
                             }
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                                 .fill(Constants.Colors.textPrimary.opacity(0.05))
                         )
                     }
@@ -213,7 +202,7 @@ private struct TransactionForm: View {
             }
             .pickerStyle(SegmentedPickerStyle())
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                     .fill(Constants.Colors.textPrimary.opacity(0.05))
             )
             
@@ -223,27 +212,24 @@ private struct TransactionForm: View {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     Text(contentManager.localizedString("form.title"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     TextField(contentManager.localizedString("add.placeholder.transaction_title"), text: $title)
                         .font(Constants.Typography.Body.font)
                         .padding(Constants.UI.Spacing.medium)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
-                        .cornerRadius(8)
+                        .cornerRadius(Constants.UI.CornerRadius.tertiary)
                 }
                 
                 // Amount
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     Text(contentManager.localizedString("form.amount"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     HStack {
                         Text("$")
                             .font(Constants.Typography.Body.font)
-                            .fontWeight(.medium)
                             .foregroundColor(Constants.Colors.textSecondary)
                         
                         TextField("0.00", text: $amount)
@@ -252,14 +238,13 @@ private struct TransactionForm: View {
                     }
                     .padding(Constants.UI.Spacing.medium)
                     .background(Constants.Colors.textPrimary.opacity(0.05))
-                    .cornerRadius(8)
+                    .cornerRadius(Constants.UI.CornerRadius.tertiary)
                 }
                 
                 // Category
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     Text(contentManager.localizedString("form.category"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -288,12 +273,11 @@ private struct TransactionForm: View {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     Text(contentManager.localizedString("form.date"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     DatePicker("", selection: $date, in: ...Date(), displayedComponents: .date)
                         .datePickerStyle(.compact)
-                        .accentColor(Constants.Colors.cleanBlack)
+                        .accentColor(Constants.Colors.primaryBlue)
                         .labelsHidden()
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -303,7 +287,6 @@ private struct TransactionForm: View {
                     HStack {
                         Text(contentManager.localizedString("transaction.recurring"))
                             .font(Constants.Typography.H3.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
@@ -311,7 +294,7 @@ private struct TransactionForm: View {
                         Spacer()
                         
                         Toggle("", isOn: $isRecurring)
-                            .toggleStyle(SwitchToggleStyle(tint: Constants.Colors.cleanBlack))
+                            .toggleStyle(SwitchToggleStyle(tint: Constants.Colors.primaryBlue))
                     }
                     
                     if isRecurring {
@@ -320,7 +303,6 @@ private struct TransactionForm: View {
                             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                                 Text(contentManager.localizedString("transaction.frequency"))
                                     .font(Constants.Typography.Body.font)
-                                    .fontWeight(.medium)
                                     .foregroundColor(Constants.Colors.textSecondary)
                                 
                                 Picker("Frequency", selection: $recurringFrequency) {
@@ -330,7 +312,7 @@ private struct TransactionForm: View {
                                     Text(contentManager.localizedString("frequency.yearly")).tag("Yearly")
                                 }
                                 .pickerStyle(.segmented)
-                                .accentColor(Constants.Colors.cleanBlack)
+                                .accentColor(Constants.Colors.primaryBlue)
                             }
                             
                             // Detailed Options based on Frequency
@@ -338,7 +320,6 @@ private struct TransactionForm: View {
                                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                                     Text(contentManager.localizedString("frequency.day_of_week"))
                                         .font(Constants.Typography.Body.font)
-                                        .fontWeight(.medium)
                                         .foregroundColor(Constants.Colors.textSecondary)
                                     
                                     Picker(contentManager.localizedString("frequency.day_of_week"), selection: $weeklyDay) {
@@ -347,13 +328,12 @@ private struct TransactionForm: View {
                                         }
                                     }
                                     .pickerStyle(.menu)
-                                    .accentColor(Constants.Colors.cleanBlack)
+                                    .accentColor(Constants.Colors.primaryBlue)
                                 }
                             } else if recurringFrequency == "Monthly" {
                                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                                     Text(contentManager.localizedString("frequency.day_of_month"))
                                         .font(Constants.Typography.Body.font)
-                                        .fontWeight(.medium)
                                         .foregroundColor(Constants.Colors.textSecondary)
                                     
                                     Picker("Day of Month", selection: $monthlyDay) {
@@ -362,13 +342,12 @@ private struct TransactionForm: View {
                                         }
                                     }
                                     .pickerStyle(.menu)
-                                    .accentColor(Constants.Colors.cleanBlack)
+                                    .accentColor(Constants.Colors.primaryBlue)
                                 }
                             } else if recurringFrequency == "Yearly" {
                                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                                     Text(contentManager.localizedString("frequency.month"))
                                         .font(Constants.Typography.Body.font)
-                                        .fontWeight(.medium)
                                         .foregroundColor(Constants.Colors.textSecondary)
                                     
                                     Picker("Month", selection: $yearlyMonth) {
@@ -377,11 +356,10 @@ private struct TransactionForm: View {
                                         }
                                     }
                                     .pickerStyle(.menu)
-                                    .accentColor(Constants.Colors.cleanBlack)
+                                    .accentColor(Constants.Colors.primaryBlue)
                                     
                                     Text(contentManager.localizedString("frequency.day"))
                                         .font(Constants.Typography.Body.font)
-                                        .fontWeight(.medium)
                                         .foregroundColor(Constants.Colors.textSecondary)
                                         .padding(.top, Constants.UI.Spacing.small)
                                     
@@ -391,7 +369,7 @@ private struct TransactionForm: View {
                                         }
                                     }
                                     .pickerStyle(.menu)
-                                    .accentColor(Constants.Colors.cleanBlack)
+                                    .accentColor(Constants.Colors.primaryBlue)
                                     .onChange(of: yearlyMonth) {
                                         // Reset day if it becomes invalid for the selected month
                                         if yearlyDay > maxDayForSelectedMonth {
@@ -417,7 +395,6 @@ private struct TransactionForm: View {
                     
                     Text(showingSuccess ? contentManager.localizedString("add.success.transaction_added") : contentManager.localizedString("add.cta.add_transaction"))
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(.white)
                 }
                 .frame(maxWidth: .infinity)
@@ -532,7 +509,6 @@ private struct BudgetForm: View {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     Text(contentManager.localizedString("form.category"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -561,13 +537,11 @@ private struct BudgetForm: View {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     Text(contentManager.localizedString("form.budget_amount"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     HStack {
                         Text("$")
                             .font(Constants.Typography.Body.font)
-                            .fontWeight(.medium)
                             .foregroundColor(Constants.Colors.textSecondary)
                         
                         TextField("0.00", text: $amount)
@@ -576,14 +550,13 @@ private struct BudgetForm: View {
                     }
                     .padding(Constants.UI.Spacing.medium)
                     .background(Constants.Colors.textPrimary.opacity(0.05))
-                    .cornerRadius(8)
+                    .cornerRadius(Constants.UI.CornerRadius.tertiary)
                 }
                 
                 // Period
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     Text(contentManager.localizedString("form.period"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     Picker("Period", selection: $period) {
@@ -592,7 +565,7 @@ private struct BudgetForm: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    .accentColor(Constants.Colors.cleanBlack)
+                    .accentColor(Constants.Colors.primaryBlue)
                 }
             }
             
@@ -607,7 +580,6 @@ private struct BudgetForm: View {
                     
                     Text(showingSuccess ? contentManager.localizedString("add.success.budget_created") : contentManager.localizedString("add.cta.create_budget"))
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(.white)
                 }
                 .frame(maxWidth: .infinity)
@@ -765,13 +737,12 @@ private struct LoanForm: View {
                 ForEach(LoanAction.allCases, id: \.self) { action in
                     Text(action.localizedDisplayName(contentManager))
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.medium)
                         .tag(action)
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                     .fill(Constants.Colors.textPrimary.opacity(0.05))
             )
             .onChange(of: loanAction) {
@@ -823,21 +794,19 @@ private struct LoanForm: View {
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("form.loan_name"))
                     .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 TextField(contentManager.localizedString("add.placeholder.loan_name"), text: $name)
                     .font(Constants.Typography.Body.font)
                     .padding(Constants.UI.Spacing.medium)
                     .background(Constants.Colors.textPrimary.opacity(0.05))
-                    .cornerRadius(8)
+                    .cornerRadius(Constants.UI.CornerRadius.tertiary)
             }
             
             // Category
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("form.category"))
                     .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -866,13 +835,11 @@ private struct LoanForm: View {
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("form.principal_amount"))
                     .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 HStack {
                     Text("$")
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     TextField("0.00", text: $principal)
@@ -884,14 +851,13 @@ private struct LoanForm: View {
                 }
                 .padding(Constants.UI.Spacing.medium)
                 .background(Constants.Colors.textPrimary.opacity(0.05))
-                .cornerRadius(8)
+                .cornerRadius(Constants.UI.CornerRadius.tertiary)
             }
             
             // Interest Rate
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("form.interest_rate"))
                     .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 HStack {
@@ -904,19 +870,17 @@ private struct LoanForm: View {
                     
                     Text("%")
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
                 .padding(Constants.UI.Spacing.medium)
                 .background(Constants.Colors.textPrimary.opacity(0.05))
-                .cornerRadius(8)
+                .cornerRadius(Constants.UI.CornerRadius.tertiary)
             }
             
             // Loan Term (Years)
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("form.loan_term"))
                     .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 HStack {
@@ -929,25 +893,22 @@ private struct LoanForm: View {
                     
                     Text(contentManager.localizedString("frequency.years"))
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
                 .padding(Constants.UI.Spacing.medium)
                 .background(Constants.Colors.textPrimary.opacity(0.05))
-                .cornerRadius(8)
+                .cornerRadius(Constants.UI.CornerRadius.tertiary)
             }
             
             // Calculated Monthly Payment (Read-only)
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("form.monthly_payment"))
                     .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 HStack {
                     Text("$")
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text(calculatedMonthlyPayment)
@@ -957,9 +918,9 @@ private struct LoanForm: View {
                 }
                 .padding(Constants.UI.Spacing.medium)
                 .background(Constants.Colors.textPrimary.opacity(0.05))
-                .cornerRadius(8)
+                .cornerRadius(Constants.UI.CornerRadius.tertiary)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                         .stroke(Constants.Colors.primaryOrange, lineWidth: 1)
                 )
             }
@@ -968,7 +929,6 @@ private struct LoanForm: View {
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("form.payment_due_day"))
                     .font(Constants.Typography.H3.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 Text(contentManager.localizedString("loan.payment_due_description"))
@@ -996,7 +956,6 @@ private struct LoanForm: View {
                     
                     Text(showingSuccess ? (loanAction == .addNew ? contentManager.localizedString("add.success.loan_added") : contentManager.localizedString("add.success.payment_marked")) : (loanAction == .addNew ? contentManager.localizedString("add.cta.add_loan") : contentManager.localizedString("add.cta.mark_as_paid")))
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(.white)
                 }
                 .frame(maxWidth: .infinity)
@@ -1023,7 +982,7 @@ private struct LoanForm: View {
             if availableLoans.isEmpty {
                 VStack(spacing: Constants.UI.Spacing.medium) {
                     Image(systemName: "checkmark.circle")
-                        .font(.system(size: 48))
+                        .font(Constants.Typography.H1.font)
                         .foregroundColor(Constants.Colors.success)
                     
                     Text(contentManager.localizedString("loan.all_paid"))
@@ -1040,7 +999,6 @@ private struct LoanForm: View {
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
                     Text(contentManager.localizedString("loan.select_to_pay"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     Text(contentManager.localizedString("loan.choose_to_pay"))
@@ -1062,13 +1020,12 @@ private struct LoanForm: View {
                         
                         Text(showingSuccess ? contentManager.localizedString("add.success.payment_marked") : contentManager.localizedString("add.cta.mark_as_paid"))
                             .font(Constants.Typography.Body.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(.white)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, Constants.UI.Spacing.medium)
                     .background((isValid && !isSubmitting) ? Constants.Colors.cleanBlack : Constants.Colors.textTertiary)
-                    .cornerRadius(8)
+                    .cornerRadius(Constants.UI.CornerRadius.tertiary)
                 }
                 .disabled(!isValid || isSubmitting)
                 .animation(.easeInOut(duration: 0.2), value: isValid)

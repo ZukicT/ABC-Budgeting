@@ -1,3 +1,18 @@
+//
+//  WelcomeScreen.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Welcome screen for onboarding flow featuring branded illustration,
+//  multi-colored headline, and navigation to next onboarding step.
+//  Provides initial user introduction with accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct WelcomeScreen: View {
@@ -9,18 +24,15 @@ struct WelcomeScreen: View {
             illustration: AnyView(OnboardingIllustration()),
             headline: contentManager.localizedString("onboarding.welcome_headline"),
             headlineColors: [
-                Constants.Onboarding.primaryBlueHex  // "Get your money right and your life tight" - entire hero text in primary blue
+                Constants.Onboarding.primaryBlueHex
             ],
             bodyText: contentManager.localizedString("onboarding.welcome_body"),
-            buttonTitle: contentManager.localizedString("onboarding.get_started"),
+            buttonTitle: "Continue",
             buttonIcon: "hand.wave",
             currentPage: 0,
             totalPages: OnboardingStep.allCases.count,
             buttonAction: {
-                print("DEBUG: Get Started button tapped!")
-                print("DEBUG: Current step before nextStep: \(viewModel.currentStep)")
                 viewModel.nextStep()
-                print("DEBUG: Current step after nextStep: \(viewModel.currentStep)")
             }
         )
     }

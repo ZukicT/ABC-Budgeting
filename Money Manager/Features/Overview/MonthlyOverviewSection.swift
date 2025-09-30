@@ -1,13 +1,25 @@
+//
+//  MonthlyOverviewSection.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Monthly overview section displaying key financial metrics for the current
+//  month. Shows income, expenses, and trend indicators with month-over-month
+//  comparison and comprehensive financial analysis.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-/// Monthly Overview Section displaying key financial metrics for the current month
-/// Shows income, expenses, and trend indicators with month-over-month comparison
 struct MonthlyOverviewSection: View {
     @ObservedObject var transactionViewModel: TransactionViewModel
     @StateObject private var viewModel = MonthlyOverviewViewModel()
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     
-    /// Date formatter for displaying month abbreviation (e.g., "Sep 2024")
     private let monthAbbreviationFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM yyyy"
@@ -16,7 +28,6 @@ struct MonthlyOverviewSection: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
-            // MARK: - Section Header
             HStack {
                 Text(contentManager.localizedString("chart.monthly_overview"))
                     .font(Constants.Typography.H2.font)
@@ -25,8 +36,6 @@ struct MonthlyOverviewSection: View {
                 Spacer()
             }
             
-            // MARK: - Content Area
-            // Display loading, data, empty state, or error state based on view model state
             if viewModel.isLoading {
                 MonthlyOverviewLoadingView()
             } else if let data = viewModel.monthlyData {
@@ -95,7 +104,8 @@ private struct MonthlyOverviewEmptyView: View {
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
             Image(systemName: "chart.line.uptrend.xyaxis")
-                .font(.system(size: 48, weight: .light))
+                .font(Constants.Typography.H3.font)
+                .fontWeight(.light)
                 .foregroundColor(Constants.Colors.textTertiary)
             
             Text(contentManager.localizedString("chart.no_monthly_data"))
@@ -221,7 +231,7 @@ private struct TrendIndicator: View {
             HStack(spacing: Constants.UI.Spacing.micro) {
                 // Trend triangle icon
                 Image(systemName: trendDirection.symbol)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(Constants.Typography.Caption.font)
                     .foregroundColor(color)
                     .rotationEffect(trendDirection.rotation)
                 
@@ -238,7 +248,7 @@ private struct TrendIndicator: View {
                 .padding(.horizontal, 4)
                 .padding(.vertical, 2)
                 .background(color.opacity(0.1))
-                .cornerRadius(4)
+                .cornerRadius(Constants.UI.CornerRadius.quaternary)
         }
     }
     
@@ -300,7 +310,7 @@ private struct MonthlyOverviewErrorView: View {
             HStack {
                 // Error icon
                 Image(systemName: "exclamationmark.triangle")
-                    .font(.system(size: 16, weight: .medium))
+                    .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.error)
                 
                 Text(contentManager.localizedString("chart.failed_load"))

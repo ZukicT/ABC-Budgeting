@@ -1,3 +1,18 @@
+//
+//  BudgetEditView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Edit view for budget management providing comprehensive budget editing
+//  functionality. Features form validation, category selection, and
+//  real-time updates with proper error handling and accessibility.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct BudgetEditView: View {
@@ -37,7 +52,7 @@ struct BudgetEditView: View {
                 // Top Row: Title + Close Button
                 HStack {
                     Text(contentManager.localizedString("budget.edit_budget"))
-                        .font(.system(size: 20, weight: .bold))
+                        .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .accessibilityLabel("Edit Budget")
                         .accessibilityAddTraits(.isHeader)
@@ -47,7 +62,7 @@ struct BudgetEditView: View {
                     // Close Button
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .frame(width: 32, height: 32)
                             .background(Constants.Colors.textTertiary.opacity(0.1))
@@ -66,7 +81,7 @@ struct BudgetEditView: View {
                     // Category Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("budget.category_caps"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
@@ -75,7 +90,7 @@ struct BudgetEditView: View {
                                 HStack {
                                     CategoryIcon(category: categoryOption, size: 20)
                                     Text(categoryOption.localizedCategoryName)
-                                        .font(.system(size: 16, weight: .medium))
+                                        .font(Constants.Typography.Mono.Body.font)
                                 }
                                 .tag(categoryOption)
                             }
@@ -87,26 +102,26 @@ struct BudgetEditView: View {
                     // Allocated Amount Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("budget.allocated_amount_caps"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         HStack {
                             Text("$")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                             
                             TextField("0.00", text: $allocatedAmount)
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textPrimary)
                                 .keyboardType(.decimalPad)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
-                        .cornerRadius(12)
+                        .cornerRadius(Constants.UI.CornerRadius.secondary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                                 .stroke(!isValidAmount ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
                         )
                         .accessibilityElement(children: .combine)
@@ -117,35 +132,35 @@ struct BudgetEditView: View {
                     // Current Spending Info (Read-only)
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("budget.current_spending_caps"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         VStack(spacing: 12) {
                             HStack {
                                 Text(contentManager.localizedString("budget.spent"))
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(Constants.Colors.textSecondary)
                                 Spacer()
                                 Text(budget.spentAmount.formatted(.currency(code: "USD")))
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(Constants.Typography.Mono.Body.font)
                                     .foregroundColor(Constants.Colors.error)
                             }
                             
                             HStack {
                                 Text(contentManager.localizedString("budget.remaining"))
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(Constants.Colors.textSecondary)
                                 Spacer()
                                 Text(budget.remainingAmount.formatted(.currency(code: "USD")))
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(Constants.Typography.Mono.Body.font)
                                     .foregroundColor(Constants.Colors.success)
                             }
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
-                        .cornerRadius(12)
+                        .cornerRadius(Constants.UI.CornerRadius.secondary)
                     }
                 }
                 .padding(.horizontal, 24)
@@ -164,15 +179,15 @@ struct BudgetEditView: View {
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                         Text(contentManager.localizedString("budget.save"))
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                     }
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
                     .background(Constants.Colors.cleanBlack)
-                    .cornerRadius(12)
+                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                 }
                 .disabled(!canSave)
                 .accessibilityLabel("Save budget changes")
@@ -184,15 +199,15 @@ struct BudgetEditView: View {
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                         Text("button.cancel".localized)
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                     }
                     .foregroundColor(Constants.Colors.textPrimary)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
                     .background(Constants.Colors.textPrimary.opacity(0.05))
-                    .cornerRadius(12)
+                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                 }
                 .accessibilityLabel("Cancel editing")
                 .accessibilityHint("Double tap to discard changes and return to budget details")

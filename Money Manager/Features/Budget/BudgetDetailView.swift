@@ -1,3 +1,18 @@
+//
+//  BudgetDetailView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Comprehensive detail view for displaying and managing individual budgets.
+//  Features detailed budget information, progress tracking, edit/delete actions,
+//  and proper error handling with accessibility compliance.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct BudgetDetailView: View {
@@ -55,15 +70,15 @@ struct BudgetDetailView: View {
                             
                             VStack(alignment: .leading, spacing: 4) {
                                 // Allocated Amount - Primary focus (smaller font)
-                                Text(budget.allocatedAmount.formatted(.currency(code: "USD")))
-                                    .font(.system(size: 32, weight: .bold))
-                                    .foregroundColor(Constants.Colors.textPrimary)
+                    Text(budget.allocatedAmount.formatted(.currency(code: "USD")))
+                        .font(Constants.Typography.Mono.H1.font)
+                        .foregroundColor(Constants.Colors.textPrimary)
                                     .accessibilityLabel("Allocated amount: \(budget.allocatedAmount.formatted(.currency(code: "USD")))")
                                     .accessibilityAddTraits(.isStaticText)
                                 
                                 // Category Name - Secondary
                                 Text(budget.category)
-                                    .font(.system(size: 18, weight: .semibold))
+                                    .font(Constants.Typography.H3.font)
                                     .foregroundColor(Constants.Colors.textPrimary)
                                     .accessibilityLabel("Budget category: \(budget.category)")
                                     .accessibilityAddTraits(.isStaticText)
@@ -74,7 +89,7 @@ struct BudgetDetailView: View {
                         
                         // Progress Percentage - Tertiary
                         Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("budget.used_percentage"))")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(Constants.Typography.Mono.Body.font)
                             .foregroundColor(progressColor)
                             .accessibilityLabel("Progress: \(Int(progressPercentage * 100)) percent used")
                             .accessibilityAddTraits(.isStaticText)
@@ -92,13 +107,13 @@ struct BudgetDetailView: View {
                                 Rectangle()
                                     .fill(Constants.Colors.textTertiary.opacity(0.2))
                                     .frame(height: 8)
-                                    .cornerRadius(4)
+                                    .cornerRadius(Constants.UI.CornerRadius.quaternary)
                                 
                                 // Progress Fill
                                 Rectangle()
                                     .fill(progressColor)
                                     .frame(width: geometry.size.width * progressPercentage, height: 8)
-                                    .cornerRadius(4)
+                                    .cornerRadius(Constants.UI.CornerRadius.quaternary)
                             }
                         }
                         .frame(height: 8)
@@ -110,13 +125,13 @@ struct BudgetDetailView: View {
                     VStack(spacing: 16) {
                         // Spent Amount
                         HStack {
-                            Text(contentManager.localizedString("budget.spent_caps"))
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(Constants.Colors.textTertiary)
+                    Text(contentManager.localizedString("budget.spent_caps"))
+                        .font(Constants.Typography.Caption.font)
+                        .foregroundColor(Constants.Colors.textTertiary)
                                 .tracking(1.0)
                             Spacer()
                             Text(budget.spentAmount.formatted(.currency(code: "USD")))
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.error)
                         }
                         .padding(.horizontal, 24)
@@ -130,12 +145,12 @@ struct BudgetDetailView: View {
                         // Remaining Amount
                         HStack {
                             Text(contentManager.localizedString("budget.remaining_caps"))
-                                .font(.system(size: 11, weight: .bold))
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.textTertiary)
                                 .tracking(1.0)
                             Spacer()
                             Text(budget.remainingAmount.formatted(.currency(code: "USD")))
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(isOverBudget ? Constants.Colors.error : Constants.Colors.success)
                         }
                         .padding(.horizontal, 24)
@@ -150,12 +165,12 @@ struct BudgetDetailView: View {
                             
                             HStack {
                                 Text(contentManager.localizedString("budget.over_by_caps"))
-                                    .font(.system(size: 11, weight: .bold))
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(Constants.Colors.textTertiary)
                                     .tracking(1.0)
                                 Spacer()
                                 Text((budget.spentAmount - budget.allocatedAmount).formatted(.currency(code: "USD")))
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(Constants.Typography.Mono.Body.font)
                                     .foregroundColor(Constants.Colors.error)
                             }
                             .padding(.horizontal, 24)
@@ -173,15 +188,15 @@ struct BudgetDetailView: View {
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "pencil")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                                 Text("budget.edit".localized)
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 44)
                             .background(Constants.Colors.cleanBlack)
-                            .cornerRadius(12)
+                            .cornerRadius(Constants.UI.CornerRadius.secondary)
                         }
                         .accessibilityLabel(contentManager.localizedString("accessibility.edit_budget"))
                         .accessibilityHint("Double tap to edit this budget")
@@ -192,15 +207,15 @@ struct BudgetDetailView: View {
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "trash")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                                 Text("budget.delete".localized)
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 44)
                             .background(Constants.Colors.error)
-                            .cornerRadius(12)
+                            .cornerRadius(Constants.UI.CornerRadius.secondary)
                         }
                         .accessibilityLabel(contentManager.localizedString("accessibility.delete_budget"))
                         .accessibilityHint("Double tap to delete this budget")
@@ -227,7 +242,7 @@ struct BudgetDetailView: View {
                 // Budget not found
                 VStack(spacing: Constants.UI.Spacing.large) {
                     Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 50))
+                        .font(Constants.Typography.H1.font)
                         .foregroundColor(Constants.Colors.warning)
                     
                     Text("budget.not_found".localized)
@@ -243,7 +258,6 @@ struct BudgetDetailView: View {
                         dismiss()
                     }
                     .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .padding(.horizontal, Constants.UI.Spacing.large)
                     .padding(.vertical, Constants.UI.Spacing.medium)

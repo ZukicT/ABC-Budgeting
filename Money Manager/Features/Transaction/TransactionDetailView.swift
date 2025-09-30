@@ -1,36 +1,19 @@
-import SwiftUI
+//
+//  TransactionDetailView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Comprehensive detail view for displaying and managing individual transactions.
+//  Features detailed transaction information, edit/delete actions, category-based
+//  icons, and proper error handling with accessibility compliance.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * TransactionDetailView
- *
- * Comprehensive detail view for displaying and managing individual transactions.
- * Features detailed transaction information, edit/delete actions, and proper error handling.
- *
- * Features:
- * - Complete transaction information display
- * - Category-based icons and colors
- * - Edit and delete functionality with confirmation
- * - Proper error handling for missing transactions
- * - Accessibility compliance
- * - Professional UI with consistent design system
- * - Performance optimized with memoized computed properties
- *
- * Architecture:
- * - MVVM pattern with TransactionViewModel integration
- * - Proper state management with @State and @ObservedObject
- * - Clean separation of concerns with helper methods
- * - Robust error handling and user feedback
- * - Performance optimizations to reduce unnecessary re-renders
- *
- * Performance Optimizations:
- * - Memoized computed properties (isIncome, formattedAmount, formattedDate)
- * - Efficient transaction lookup
- * - Reduced string formatting operations
- * - Optimized accessibility label generation
- *
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct TransactionDetailView: View {
     let transactionId: UUID
@@ -91,14 +74,14 @@ struct TransactionDetailView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 // Amount - Primary focus
                                 Text(formattedAmount)
-                                    .font(.system(size: 32, weight: .bold))
+                                    .font(Constants.Typography.Mono.H1.font)
                                     .foregroundColor(isIncome ? Constants.Colors.success : Constants.Colors.error)
                                     .accessibilityLabel("Amount: \(formattedAmount)")
                                     .accessibilityAddTraits(.isStaticText)
                                 
                                 // Merchant Name - Secondary
                                 Text(transaction.title)
-                                    .font(.system(size: 16, weight: .medium))
+                                    .font(Constants.Typography.Mono.Body.font)
                                     .foregroundColor(Constants.Colors.textPrimary)
                                     .lineLimit(1)
                                     .accessibilityLabel("Merchant: \(transaction.title)")
@@ -110,7 +93,7 @@ struct TransactionDetailView: View {
                             // Close Button
                             Button(action: { dismiss() }) {
                                 Image(systemName: "xmark")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(Constants.Colors.textSecondary)
                                     .frame(width: 32, height: 32)
                                     .background(Constants.Colors.textTertiary.opacity(0.1))
@@ -124,10 +107,11 @@ struct TransactionDetailView: View {
                             // Date
                             HStack(spacing: 6) {
                                 Image(systemName: "calendar")
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(Constants.Colors.textSecondary)
                                 Text(formattedDate)
-                                    .font(.system(size: 14, weight: .regular))
+                                    .font(Constants.Typography.Mono.Caption.font)
+                                    .fontWeight(.regular)
                                     .foregroundColor(Constants.Colors.textSecondary)
                             }
                             .accessibilityLabel("Date: \(formattedDate)")
@@ -136,13 +120,13 @@ struct TransactionDetailView: View {
                             
                             // Category Badge
                             Text(transaction.category.uppercased())
-                                .font(.system(size: 11, weight: .bold))
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                                 .tracking(0.5)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(Constants.Colors.textTertiary.opacity(0.1))
-                                .cornerRadius(6)
+                                .cornerRadius(Constants.UI.CornerRadius.tertiary)
                                 .accessibilityLabel("Category: \(transaction.category)")
                         }
                     }
@@ -159,15 +143,15 @@ struct TransactionDetailView: View {
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "pencil")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                                 Text(contentManager.localizedString("transaction.edit"))
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 44)
                             .background(Constants.Colors.cleanBlack)
-                            .cornerRadius(12)
+                            .cornerRadius(Constants.UI.CornerRadius.secondary)
                         }
                         .accessibilityLabel("Edit transaction")
                         
@@ -179,15 +163,15 @@ struct TransactionDetailView: View {
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "trash")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                                 Text(contentManager.localizedString("transaction.delete"))
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(Constants.Typography.Caption.font)
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 44)
                             .background(Constants.Colors.error)
-                            .cornerRadius(12)
+                            .cornerRadius(Constants.UI.CornerRadius.secondary)
                         }
                         .accessibilityLabel("Delete transaction")
                     }
@@ -216,22 +200,22 @@ struct TransactionDetailView: View {
                         Rectangle()
                             .fill(Constants.Colors.error)
                             .frame(width: 60, height: 60)
-                            .cornerRadius(12)
+                            .cornerRadius(Constants.UI.CornerRadius.secondary)
                         
                         Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 28, weight: .bold))
+                            .font(Constants.Typography.H3.font)
                             .foregroundColor(.white)
                     }
                     
                     // Error content - Clean typography
                     VStack(spacing: 16) {
                         Text(contentManager.localizedString("transaction.not_found"))
-                            .font(.system(size: 18, weight: .black))
+                            .font(Constants.Typography.H3.font)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .tracking(1.0)
                         
                         Text(contentManager.localizedString("transaction.may_have_been_deleted"))
-                            .font(.system(size: 16, weight: .medium))
+                            .font(Constants.Typography.Mono.Body.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .multilineTextAlignment(.center)
                             .lineLimit(3)
@@ -243,7 +227,6 @@ struct TransactionDetailView: View {
                     }) {
                         Text(contentManager.localizedString("button.done"))
                             .font(Constants.Typography.Button.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .frame(width: 120, height: 56)
                             .background(Constants.Colors.cleanBlack)
@@ -304,7 +287,7 @@ private struct DetailRow: View {
                     .frame(width: 44, height: 44)
                 
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(Constants.Typography.H3.font)
                     .foregroundColor(iconColor)
             }
             .accessibilityHidden(true)
@@ -313,12 +296,10 @@ private struct DetailRow: View {
             VStack(alignment: .leading, spacing: Constants.UI.Spacing.micro) {
                 Text(title)
                     .font(Constants.Typography.Caption.font)
-                    .fontWeight(.medium)
                     .foregroundColor(Constants.Colors.textSecondary)
                 
                 Text(value)
                     .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
             }
             

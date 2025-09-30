@@ -1,3 +1,18 @@
+//
+//  LoanView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Main loan management view displaying loan list with filtering, tracking,
+//  and CRUD operations. Handles loan display, category filtering, payment
+//  tracking, and navigation to loan detail and edit views.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct LoanView: View {
@@ -174,14 +189,12 @@ private struct LoanSummarySection: View {
             VStack(spacing: 8) {
                 Text(contentManager.localizedString("loan.total_debt"))
                     .font(Constants.Typography.Caption.font)
-                    .fontWeight(.medium)
                     .foregroundColor(Constants.Colors.textSecondary)
                     .textCase(.uppercase)
                     .tracking(0.5)
                 
                 Text(viewModel.formattedTotalDebt)
                     .font(Constants.Typography.H1.font)
-                    .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
             }
@@ -192,14 +205,12 @@ private struct LoanSummarySection: View {
                 VStack(spacing: 6) {
                     Text(contentManager.localizedString("loan.monthly_payment"))
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                         .textCase(.uppercase)
                         .tracking(0.5)
                     
                     Text(viewModel.formattedTotalMonthlyPayment)
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.error)
                         .multilineTextAlignment(.center)
                 }
@@ -214,7 +225,6 @@ private struct LoanSummarySection: View {
                 VStack(spacing: 6) {
                     Text(contentManager.localizedString("loan.next_due"))
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                         .textCase(.uppercase)
                         .tracking(0.5)
@@ -222,13 +232,11 @@ private struct LoanSummarySection: View {
                     if let nextDue = viewModel.nextDueDate {
                         Text(nextDue, format: .dateTime.month(.abbreviated).day().year(.twoDigits))
                             .font(Constants.Typography.Body.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .multilineTextAlignment(.center)
                     } else {
                         Text(contentManager.localizedString("loan.na"))
                             .font(Constants.Typography.Body.font)
-                            .fontWeight(.medium)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .multilineTextAlignment(.center)
                     }
@@ -287,13 +295,12 @@ private struct LoanCard: View {
             HStack(spacing: Constants.UI.Spacing.medium) {
                 // Loan Type Icon
                 ZStack {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                         .fill(Constants.Colors.cleanBlack)
                         .frame(width: 40, height: 40)
                     
                     Image(systemName: loanTypeIcon)
-                        .font(.title3)
-                        .fontWeight(.semibold)
+                        .font(Constants.Typography.H3.font)
                         .foregroundColor(.white)
                 }
                 .accessibilityHidden(true)
@@ -302,7 +309,6 @@ private struct LoanCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(loan.name)
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -314,8 +320,7 @@ private struct LoanCard: View {
                 
                 // Remaining Amount - Most Prominent
                 Text(loan.remainingAmount, format: .currency(code: "USD"))
-                    .font(Constants.Typography.H3.font)
-                    .fontWeight(.bold)
+                    .font(Constants.Typography.Mono.H3.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
@@ -327,7 +332,6 @@ private struct LoanCard: View {
                 HStack(spacing: 6) {
                     Text("\\(loan.interestRate, specifier: \"%.1f\")% \\(contentManager.localizedString(\"loan.apr\"))")
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text("•")
@@ -343,8 +347,7 @@ private struct LoanCard: View {
                 
                 // Monthly Payment
                 Text("\\(loan.monthlyPayment, format: .currency(code: \"USD\"))\\(contentManager.localizedString(\"loan.per_month\"))")
-                    .font(Constants.Typography.Caption.font)
-                    .fontWeight(.semibold)
+                    .font(Constants.Typography.Mono.Caption.font)
                     .foregroundColor(Constants.Colors.error)
             }
         }
@@ -364,14 +367,12 @@ private struct LoanTableHeader: View {
         HStack {
             Text(contentManager.localizedString("loan.loans"))
                 .font(Constants.Typography.Caption.font)
-                .fontWeight(.bold)
                 .foregroundColor(Constants.Colors.textSecondary)
             
             Spacer()
             
             Text("\(loanCount) \(contentManager.localizedString("budget.total"))")
                 .font(Constants.Typography.Caption.font)
-                .fontWeight(.medium)
                 .foregroundColor(Constants.Colors.textSecondary)
         }
         .padding(.horizontal, 16)
@@ -415,12 +416,12 @@ private struct MobileLoanRow: View {
             HStack(spacing: 12) {
                 // Loan Type Icon
                 ZStack {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                         .fill(Constants.Colors.cleanBlack)
                         .frame(width: 40, height: 40)
                     
                     Image(systemName: loanTypeIcon)
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(Constants.Typography.H3.font)
                         .foregroundColor(.white)
                 }
                 
@@ -428,7 +429,6 @@ private struct MobileLoanRow: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(loan.name)
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -442,12 +442,10 @@ private struct MobileLoanRow: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("budget.remaining".localized)
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text(loan.remainingAmount, format: .currency(code: "USD"))
-                        .font(Constants.Typography.H3.font)
-                        .fontWeight(.bold)
+                        .font(Constants.Typography.Mono.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
@@ -460,12 +458,10 @@ private struct MobileLoanRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("loan.monthly_payment".localized)
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text(loan.monthlyPayment, format: .currency(code: "USD"))
-                        .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
+                        .font(Constants.Typography.Mono.Body.font)
                         .foregroundColor(Constants.Colors.error)
                 }
                 
@@ -475,12 +471,10 @@ private struct MobileLoanRow: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("loan.due_date".localized)
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text(loan.dueDate, format: .dateTime.month(.abbreviated).day().year(.twoDigits))
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textPrimary)
                 }
             }

@@ -1,6 +1,20 @@
+//
+//  ExportDataView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Data export view providing comprehensive CSV export functionality for
+//  transactions, budgets, and loans. Features type selection, progress
+//  indicators, and share sheet integration with accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-// MARK: - Export Data View
 struct ExportDataView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var exportService = DataExportService()
@@ -9,7 +23,6 @@ struct ExportDataView: View {
     @State private var showingShareSheet = false
     @State private var exportFileURL: URL?
     
-    // ViewModels for data access
     let transactionViewModel: TransactionViewModel
     let budgetViewModel: BudgetViewModel
     let loanViewModel: LoanViewModel
@@ -17,7 +30,6 @@ struct ExportDataView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: Constants.UI.Spacing.large) {
-                // Header
                 VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
                     Text(contentManager.localizedString("nav.export_data"))
                         .font(Constants.Typography.H1.font)
@@ -70,7 +82,6 @@ struct ExportDataView: View {
                                 Text("\(contentManager.localizedString("export.export_type")) \(selectedExportType.displayName)")
                             }
                             .font(Constants.Typography.Body.font)
-                            .fontWeight(.medium)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(Constants.UI.Padding.cardInternal)
@@ -134,7 +145,6 @@ private struct ExportTypeCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(exportType.displayName)
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityHeading(.h3)
@@ -149,7 +159,7 @@ private struct ExportTypeCard: View {
                 Spacer()
                 
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.title2)
+                    .font(Constants.Typography.H3.font)
                     .foregroundColor(isSelected ? Constants.Colors.primaryBlue : Constants.Colors.textSecondary)
                     .accessibilityLabel(isSelected ? "Selected" : "Not selected")
             }

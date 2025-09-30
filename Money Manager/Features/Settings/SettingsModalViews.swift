@@ -1,7 +1,21 @@
+//
+//  SettingsModalViews.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Settings modal views providing comprehensive app configuration including
+//  text-to-speech management, accessibility settings, and user preferences.
+//  Features multilingual support and accessibility compliance.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 import AVFoundation
 
-// MARK: - Text-to-Speech Manager
 @MainActor
 class TextToSpeechManager: NSObject, ObservableObject {
     @Published var isPlaying = false
@@ -16,8 +30,6 @@ class TextToSpeechManager: NSObject, ObservableObject {
     override init() {
         super.init()
         synthesizer.delegate = self
-        
-        // Load language from UserDefaults
         selectedLanguage = UserDefaults.standard.string(forKey: "selected_language") ?? "en-US"
         contentManager.updateLanguage(selectedLanguage)
     }
@@ -173,49 +185,46 @@ struct PrivacyPolicyView: View {
     
     private var fullText: String {
         """
-        Privacy Policy
+        PRIVACY POLICY
         
-        Last updated: January 26, 2025
+        Last Updated: January 26, 2025
         
-        1. Your Data Stays on Your Device
+        SECTION 1: ABSOLUTE DATA PRIVACY GUARANTEE
         
-        IMPORTANT: All your financial information stays on your phone/device. We don't collect anything. We don't store anything on our servers. We don't send your data anywhere. Your transactions, budgets, loans, and all financial details remain private and secure on your device only.
+        Money Manager operates under a ZERO DATA COLLECTION POLICY. We do not collect, store, transmit, process, analyze, monitor, track, or have access to ANY personal information, financial data, usage patterns, or device information whatsoever. All data remains exclusively on your device.
         
-        2. No Data Collection
+        SECTION 2: COMPREHENSIVE PRIVACY PROTECTION
         
-        We do not collect, store, or transmit any personal information. We do not track your usage. We do not gather analytics. We do not know what you do with the app. Your privacy is completely protected.
+        • NO DATA TRANSMISSION: Zero data is sent over any network connection
+        • NO SERVER STORAGE: No data is stored on any external servers
+        • NO ANALYTICS: No usage tracking, metrics, or behavioral analysis
+        • NO THIRD-PARTY INTEGRATION: No external services or APIs
+        • NO CLOUD BACKUP: No automatic cloud synchronization
+        • NO COOKIES OR TRACKING: No tracking technologies whatsoever
         
-        3. No Internet Connection Required
+        SECTION 3: LOCAL STORAGE EXCLUSIVELY
         
-        This app works entirely offline. It does not require an internet connection to function. All your data remains on your device and is never sent over the internet.
+        All financial data including transactions, budgets, loans, settings, and preferences are stored locally on your device using Core Data. This data is never accessible to us or any third parties under any circumstances.
         
-        4. No Third-Party Services
+        SECTION 4: USER DATA CONTROL
         
-        We do not use any third-party services, analytics, or tracking tools. We do not integrate with external APIs. We do not share data with anyone.
+        You maintain complete and absolute control over your data. You may export, modify, delete, or manage your data at any time through the app's built-in tools. We have no ability to access, modify, or delete your data.
         
-        5. Local Storage Only
+        SECTION 5: CHILDREN'S PRIVACY COMPLIANCE
         
-        All your financial data is stored locally on your device using Core Data. This includes transactions, budgets, loans, and settings. Nothing is backed up to the cloud unless you explicitly choose to do so through your device's backup settings.
+        This app complies with all children's privacy regulations. Since we collect no data from anyone, including children under 13, no parental consent is required and no privacy concerns exist.
         
-        6. Your Control
+        SECTION 6: POLICY MODIFICATIONS
         
-        You have complete control over your data. You can export it, delete it, or modify it at any time. The app provides tools to manage your data as you see fit.
+        Any updates to this privacy policy will be reflected in the app. Since no data collection occurs, policy changes do not affect existing data or user privacy.
         
-        7. No Cookies or Tracking
+        SECTION 7: LEGAL COMPLIANCE
         
-        This app does not use cookies, tracking pixels, or any other tracking technologies. We do not monitor your behavior or collect usage statistics.
+        This privacy policy complies with GDPR, CCPA, COPPA, and all applicable privacy regulations. Our zero-data-collection model exceeds all privacy requirements.
         
-        8. Children's Privacy
+        SECTION 8: FINAL PRIVACY STATEMENT
         
-        This app does not collect any information from anyone, including children. If you are under 13, you can use this app without any privacy concerns.
-        
-        9. Changes to This Policy
-        
-        If we update this privacy policy, we will notify you through the app. Since we don't collect any data, changes to this policy won't affect your existing data.
-        
-        10. Contact Us
-        
-        If you have questions about this privacy policy, you can contact us through the app settings. Remember, we don't collect any data, so we can't track or identify you.
+        Your privacy is absolutely protected. We cannot and do not access any of your information under any circumstances. Your financial data remains completely private and secure on your device only.
         """
     }
     
@@ -255,7 +264,7 @@ struct PrivacyPolicyView: View {
                             speechManager.togglePlayPause(contentManager.getVersionHistoryContent())
                         }) {
                             Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
-                                .font(.title2)
+                                .font(Constants.Typography.H3.font)
                                 .foregroundColor(Constants.Colors.primaryBlue)
                         }
                         .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? contentManager.localizedString("accessibility.resume_reading") : contentManager.localizedString("accessibility.pause_reading")) : contentManager.localizedString("accessibility.start_reading"))
@@ -276,13 +285,12 @@ struct PrivacyPolicyView: View {
                             }
                         } label: {
                             Text(speechManager.selectedSpeed.displayName)
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(Constants.Colors.textPrimary.opacity(0.1))
-                                .cornerRadius(6)
+                                .cornerRadius(Constants.UI.CornerRadius.tertiary)
                         }
                         .accessibilityLabel("Speech speed: \(speechManager.selectedSpeed.displayName)")
                     }
@@ -309,69 +317,92 @@ struct TermsOfServiceView: View {
     
     private var fullText: String {
         """
-        Terms of Service
+        TERMS OF SERVICE
         
-        Last updated: January 26, 2025
+        Last Updated: January 26, 2025
         
-        1. Acceptance of Terms
+        SECTION 1: BINDING AGREEMENT
         
-        By downloading, installing, accessing, or using Money Manager ('the App'), you acknowledge that you have read, understood, and agree to be bound by these Terms of Service ('Terms'). If you do not agree to these Terms, you may not use the App.
+        By accessing, downloading, installing, or using Money Manager ('the App'), you irrevocably agree to be bound by these Terms of Service ('Terms'). This constitutes a legally binding agreement. Continued use constitutes acceptance of all terms herein.
         
-        2. Description of Service
+        SECTION 2: SERVICE DESCRIPTION
         
-        Money Manager is a personal finance management application that helps you track transactions, manage budgets, and monitor loans. The App operates entirely on your device and does not require an internet connection.
+        Money Manager is a personal finance management tool that operates exclusively on your device. The App provides local data storage and management capabilities without requiring internet connectivity or external services.
         
-        3. User Responsibilities
+        SECTION 3: COMPLETE USER RESPONSIBILITY
         
-        You are responsible for maintaining the accuracy of your financial data. You must ensure that all information entered into the App is correct and up-to-date. You are solely responsible for your financial decisions and the consequences thereof.
+        You assume FULL RESPONSIBILITY for:
+        • Accuracy of all data entered into the App
+        • All financial decisions made using the App
+        • Consequences of any financial actions taken
+        • Data backup and security measures
+        • Compliance with applicable laws and regulations
         
-        4. Data Storage and Privacy
+        SECTION 4: ABSOLUTE LIABILITY DISCLAIMER
         
-        All your financial data is stored locally on your device. We do not collect, store, or have access to any of your personal or financial information. Your data remains private and secure on your device only.
+        TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE HEREBY DISCLAIM ALL LIABILITY FOR:
+        • ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES
+        • LOSS OF PROFITS, DATA, REVENUE, OR BUSINESS OPPORTUNITIES
+        • FINANCIAL LOSSES OR INVESTMENT DECISIONS
+        • DATA CORRUPTION, LOSS, OR DELETION
+        • APP MALFUNCTION OR TECHNICAL ISSUES
+        • THIRD-PARTY ACTIONS OR OMISSIONS
         
-        5. IMPORTANT LEGAL DISCLAIMER
+        SECTION 5: NO WARRANTIES WHATSOEVER
         
-        THE APP IS PROVIDED 'AS IS' WITHOUT WARRANTY OF ANY KIND. WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+        THE APP IS PROVIDED 'AS IS' WITHOUT ANY WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
+        • WARRANTIES OF MERCHANTABILITY
+        • WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE
+        • WARRANTIES OF NON-INFRINGEMENT
+        • WARRANTIES OF ACCURACY OR RELIABILITY
+        • WARRANTIES OF CONTINUOUS OPERATION
         
-        6. Complete Legal Protection
+        SECTION 6: PROFESSIONAL ADVICE DISCLAIMER
         
-        TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, OR USE, ARISING OUT OF OR RELATING TO YOUR USE OF THE APP.
+        THIS APP IS NOT PROFESSIONAL FINANCIAL ADVICE. WE ARE NOT:
+        • Licensed financial advisors
+        • Certified public accountants
+        • Tax professionals
+        • Investment advisors
+        • Legal counsel
         
-        7. CRITICAL DISCLAIMER
+        CONSULT QUALIFIED PROFESSIONALS FOR ALL FINANCIAL DECISIONS.
         
-        THIS APP IS NOT A SUBSTITUTE FOR PROFESSIONAL FINANCIAL ADVICE. WE ARE NOT FINANCIAL ADVISORS, ACCOUNTANTS, OR TAX PROFESSIONALS. YOU SHOULD CONSULT WITH QUALIFIED PROFESSIONALS FOR FINANCIAL ADVICE.
+        SECTION 7: USE AT YOUR OWN RISK
         
-        8. Use at Your Own Risk
+        You acknowledge and agree that:
+        • Use of the App is entirely at your own risk
+        • We make no guarantees about App performance or accuracy
+        • You are solely responsible for all outcomes
+        • No liability attaches to us for any reason
         
-        You acknowledge and agree that your use of the App is at your own risk. We make no representations or warranties about the accuracy, reliability, or completeness of the App's functionality.
+        SECTION 8: DATA AND PRIVACY
         
-        9. Data Loss Disclaimer
+        All data remains on your device. We do not collect, store, or access any information. You are solely responsible for data security, backup, and management.
         
-        We are not responsible for any data loss, corruption, or deletion that may occur. You are responsible for backing up your data and ensuring its security.
+        SECTION 9: MODIFICATION RIGHTS
         
-        10. Modifications to Terms
+        We reserve the absolute right to modify these Terms at any time without notice. Continued use constitutes acceptance of modified Terms.
         
-        We reserve the right to modify these Terms at any time. Continued use of the App after such modifications constitutes acceptance of the updated Terms.
+        SECTION 10: TERMINATION
         
-        11. Termination
+        Either party may terminate this agreement at any time. We may discontinue the App or its features without notice or liability.
         
-        You may stop using the App at any time. We may discontinue the App or its features at any time without notice.
+        SECTION 11: GOVERNING LAW AND JURISDICTION
         
-        12. Governing Law
+        These Terms are governed by applicable law. Any disputes shall be resolved in accordance with local jurisdiction requirements.
         
-        These Terms are governed by the laws of the jurisdiction in which you reside, without regard to conflict of law principles.
+        SECTION 12: SEVERABILITY
         
-        13. Severability
+        If any provision of these Terms is deemed invalid, the remaining provisions shall remain in full force and effect.
         
-        If any provision of these Terms is found to be unenforceable, the remaining provisions will remain in full force and effect.
+        SECTION 13: ENTIRE AGREEMENT
         
-        14. Entire Agreement
+        These Terms constitute the entire agreement between you and us regarding the App and supersede all prior agreements.
         
-        These Terms constitute the entire agreement between you and us regarding the use of the App.
+        SECTION 14: ACKNOWLEDGMENT
         
-        15. Contact Information
-        
-        For questions about these Terms, please contact us through the app settings.
+        By using this App, you acknowledge that you have read, understood, and agree to be bound by these Terms in their entirety.
         """
     }
     
@@ -411,7 +442,7 @@ struct TermsOfServiceView: View {
                             speechManager.togglePlayPause(contentManager.getVersionHistoryContent())
                         }) {
                             Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
-                                .font(.title2)
+                                .font(Constants.Typography.H3.font)
                                 .foregroundColor(Constants.Colors.primaryBlue)
                         }
                         .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? contentManager.localizedString("accessibility.resume_reading") : contentManager.localizedString("accessibility.pause_reading")) : contentManager.localizedString("accessibility.start_reading"))
@@ -432,13 +463,12 @@ struct TermsOfServiceView: View {
                             }
                         } label: {
                             Text(speechManager.selectedSpeed.displayName)
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(Constants.Colors.textPrimary.opacity(0.1))
-                                .cornerRadius(6)
+                                .cornerRadius(Constants.UI.CornerRadius.tertiary)
                         }
                         .accessibilityLabel("Speech speed: \(speechManager.selectedSpeed.displayName)")
                     }
@@ -467,39 +497,39 @@ struct FontLicensingView: View {
         """
         Font Licensing
         
-        Trap Font Family Licensing Information
+        Arvo Font Family Licensing Information
         
         Font Family Used
         
-        Money Manager uses the Trap font family, designed by Tobias Frere-Jones and published by Font Bureau. The Trap font family provides excellent readability and professional appearance for financial applications.
+        Money Manager uses the Arvo font family, designed by Anton Koovit. The Arvo font family is an open-source slab serif typeface that provides excellent readability and professional appearance for financial applications.
         
         Designer Credit
         
-        The Trap font family was designed by Tobias Frere-Jones, a renowned type designer known for creating high-quality, professional typefaces. His work has been used in numerous commercial applications and publications.
+        The Arvo font family was designed by Anton Koovit, a talented type designer who created this versatile slab serif typeface. Arvo is known for its excellent readability and modern design, making it perfect for both digital and print applications.
         
         Usage Rights
         
-        The Trap font family is used in Money Manager under appropriate licensing terms. The font is used solely for display purposes within the application and is not redistributed or made available for download by users.
+        The Arvo font family is used in Money Manager under the SIL Open Font License (OFL). This open-source license allows for free use, modification, and distribution of the font family.
         
-        Font Bureau License
+        Open Font License
         
-        This font family is licensed from Font Bureau, a respected type foundry that specializes in professional typeface design and licensing. Font Bureau maintains high standards for typography and provides quality fonts for commercial use.
+        Arvo is licensed under the SIL Open Font License, which is a free, libre and open source license specifically designed for fonts and related software. This license ensures that the font remains freely available for use in commercial and non-commercial projects.
         
         Restrictions
         
-        Users of Money Manager may not extract, copy, or redistribute the Trap font family. The font is embedded within the application and is not available for separate use outside of the app.
+        Users of Money Manager may not extract, copy, or redistribute the Arvo font family for separate use outside of the app, as it is embedded within the application. However, the original Arvo font files are freely available for download from the official repository.
         
         Commercial Use
         
-        The Trap font family is used in Money Manager for commercial purposes under a valid commercial license from Font Bureau. This ensures compliance with all applicable licensing terms and copyright laws.
+        The Arvo font family is used in Money Manager for commercial purposes under the SIL Open Font License. This license allows for commercial use without additional fees or restrictions.
         
         Copyright Notice
         
-        The Trap font family is copyright Font Bureau and Tobias Frere-Jones. All rights reserved. The font family is used in Money Manager with proper authorization and licensing.
+        The Arvo font family is copyright Anton Koovit. The font is released under the SIL Open Font License, which allows for free use, modification, and distribution.
         
         License Compliance
         
-        Money Manager complies with all applicable font licensing terms and copyright laws. The use of the Trap font family is properly authorized and does not infringe on any intellectual property rights.
+        Money Manager complies with all applicable font licensing terms and copyright laws. The use of the Arvo font family is properly authorized under the SIL Open Font License and does not infringe on any intellectual property rights.
         
         Contact Information
         
@@ -522,7 +552,7 @@ struct FontLicensingView: View {
                             .font(Constants.Typography.Body.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .textSelection(.enabled)
-                            .accessibilityLabel("Trap Font Family Licensing Information")
+                            .accessibilityLabel("Arvo Font Family Licensing Information")
                     }
                     
                     VStack(alignment: .leading, spacing: Constants.UI.Spacing.large) {
@@ -543,7 +573,7 @@ struct FontLicensingView: View {
                             speechManager.togglePlayPause(contentManager.getVersionHistoryContent())
                         }) {
                             Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
-                                .font(.title2)
+                                .font(Constants.Typography.H3.font)
                                 .foregroundColor(Constants.Colors.primaryBlue)
                         }
                         .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? contentManager.localizedString("accessibility.resume_reading") : contentManager.localizedString("accessibility.pause_reading")) : contentManager.localizedString("accessibility.start_reading"))
@@ -564,13 +594,12 @@ struct FontLicensingView: View {
                             }
                         } label: {
                             Text(speechManager.selectedSpeed.displayName)
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(Constants.Colors.textPrimary.opacity(0.1))
-                                .cornerRadius(6)
+                                .cornerRadius(Constants.UI.CornerRadius.tertiary)
                         }
                         .accessibilityLabel("Speech speed: \(speechManager.selectedSpeed.displayName)")
                     }
@@ -718,7 +747,7 @@ struct VersionHistoryView: View {
                             speechManager.togglePlayPause(contentManager.getVersionHistoryContent())
                         }) {
                             Image(systemName: speechManager.isPlaying ? (speechManager.isPaused ? "play.circle.fill" : "pause.circle.fill") : "play.circle.fill")
-                                .font(.title2)
+                                .font(Constants.Typography.H3.font)
                                 .foregroundColor(Constants.Colors.primaryBlue)
                         }
                         .accessibilityLabel(speechManager.isPlaying ? (speechManager.isPaused ? contentManager.localizedString("accessibility.resume_reading") : contentManager.localizedString("accessibility.pause_reading")) : contentManager.localizedString("accessibility.start_reading"))
@@ -739,13 +768,12 @@ struct VersionHistoryView: View {
                             }
                         } label: {
                             Text(speechManager.selectedSpeed.displayName)
-                                .font(.caption)
-                                .fontWeight(.medium)
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(Constants.Colors.textPrimary.opacity(0.1))
-                                .cornerRadius(6)
+                                .cornerRadius(Constants.UI.CornerRadius.tertiary)
                         }
                         .accessibilityLabel("Speech speed: \(speechManager.selectedSpeed.displayName)")
                     }
@@ -774,7 +802,6 @@ private struct PolicySection: View {
         VStack(alignment: .leading, spacing: Constants.UI.Spacing.small) {
             Text(title)
                 .font(Constants.Typography.H3.font)
-                .fontWeight(.semibold)
                 .foregroundColor(Constants.Colors.textPrimary)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h3)
@@ -833,7 +860,6 @@ private struct GitStyleVersionCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("\(contentManager.localizedString("version.version")) \(version.version)")
                             .font(Constants.Typography.H3.font)
-                            .fontWeight(.semibold)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .textSelection(.enabled)
                             .accessibilityAddTraits(.isHeader)
@@ -850,12 +876,12 @@ private struct GitStyleVersionCard: View {
                     
                     if isFirst {
                         Image(systemName: "star.fill")
-                            .font(.title3)
+                            .font(Constants.Typography.H3.font)
                             .foregroundColor(Constants.Colors.warning)
                             .accessibilityLabel(contentManager.localizedString("accessibility.latest_version"))
                     } else {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.title3)
+                            .font(Constants.Typography.H3.font)
                             .foregroundColor(Constants.Colors.success)
                             .accessibilityLabel(contentManager.localizedString("accessibility.completed_version"))
                     }
@@ -865,7 +891,7 @@ private struct GitStyleVersionCard: View {
                     ForEach(version.features, id: \.self) { feature in
                         HStack(alignment: .top, spacing: Constants.UI.Spacing.small) {
                             Image(systemName: "checkmark")
-                                .font(.caption)
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(Constants.Colors.success)
                                 .padding(.top, 2)
                                 .accessibilityHidden(true)
@@ -909,4 +935,73 @@ private struct VersionEntry {
 
 #Preview("Version History") {
     VersionHistoryView()
+}
+
+// MARK: - Reusable Components
+
+private struct PrivacySection: View {
+    let title: String
+    let icon: String
+    let content: String
+    var isImportant: Bool = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
+            HStack(spacing: Constants.UI.Spacing.small) {
+                Image(systemName: icon)
+                    .font(Constants.Typography.H3.font)
+                    .foregroundColor(isImportant ? Constants.Colors.error : Constants.Colors.primaryBlue)
+                    .frame(width: 24, height: 24)
+                
+                Text(title)
+                    .font(Constants.Typography.H3.font)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                    .fontWeight(.semibold)
+            }
+            
+            Text(content)
+                .font(Constants.Typography.Body.font)
+                .foregroundColor(Constants.Colors.textSecondary)
+                .lineSpacing(4)
+                .textSelection(.enabled)
+        }
+        .padding(Constants.UI.Padding.cardInternal)
+        .background(Constants.Colors.textPrimary.opacity(0.03))
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
+    }
+}
+
+private struct TermsSection: View {
+    let number: String
+    let title: String
+    let content: String
+    var isImportant: Bool = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
+            HStack(spacing: Constants.UI.Spacing.small) {
+                Text(number)
+                    .font(Constants.Typography.H3.font)
+                    .foregroundColor(Constants.Colors.primaryBlue)
+                    .fontWeight(.bold)
+                    .frame(width: 24, height: 24)
+                    .background(Constants.Colors.primaryBlue.opacity(0.1))
+                    .cornerRadius(Constants.UI.CornerRadius.quaternary)
+                
+                Text(title)
+                    .font(Constants.Typography.H3.font)
+                    .foregroundColor(Constants.Colors.textPrimary)
+                    .fontWeight(.semibold)
+            }
+            
+            Text(content)
+                .font(Constants.Typography.Body.font)
+                .foregroundColor(Constants.Colors.textSecondary)
+                .lineSpacing(4)
+                .textSelection(.enabled)
+        }
+        .padding(Constants.UI.Padding.cardInternal)
+        .background(Constants.Colors.textPrimary.opacity(0.03))
+        .cornerRadius(Constants.UI.CornerRadius.secondary)
+    }
 }

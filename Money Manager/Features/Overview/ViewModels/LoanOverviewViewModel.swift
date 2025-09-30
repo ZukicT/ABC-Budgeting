@@ -1,3 +1,18 @@
+//
+//  LoanOverviewViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for loan overview data management providing loan statistics,
+//  payment tracking, and debt analysis. Handles loan data processing
+//  and state management for overview displays.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 import Foundation
 
@@ -11,7 +26,6 @@ class LoanOverviewViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     init() {
-        // Start with empty data - no sample data
         loanOverviewItems = []
         totalRemainingBalance = 0.0
         totalMonthlyPayments = 0.0

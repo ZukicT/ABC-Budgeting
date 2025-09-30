@@ -1,7 +1,21 @@
+//
+//  NotificationViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for managing in-app notifications and alerts. Handles notification
+//  display, state management, and user interaction with various notification
+//  types including info, warning, success, and error messages.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 import Foundation
 
-// MARK: - Notification Item Model
 struct NotificationItem: Identifiable {
     let id: String
     let title: String

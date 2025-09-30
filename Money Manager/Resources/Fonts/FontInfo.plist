@@ -4,13 +4,10 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Trap-Black.otf</string>
-		<string>Trap-Bold.otf</string>
-		<string>Trap-ExtraBold.otf</string>
-		<string>Trap-Light.otf</string>
-		<string>Trap-Medium.otf</string>
-		<string>Trap-Regular.otf</string>
-		<string>Trap-SemiBold.otf</string>
+		<string>Arvo-Regular.ttf</string>
+		<string>Arvo-Bold.ttf</string>
+		<string>Arvo-Italic.ttf</string>
+		<string>Arvo-BoldItalic.ttf</string>
 	</array>
 </dict>
 </plist>

@@ -1,22 +1,19 @@
-import SwiftUI
+//
+//  CurrencyScreen.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Comprehensive currency selection screen for onboarding with organized
+//  currency groups, visual selection indicators, and accessibility support.
+//  Features back navigation and proper state management for currency selection.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * CurrencyScreen
- * 
- * A comprehensive currency selection screen for onboarding with organized currency groups,
- * visual selection indicators, and accessibility support. Features back navigation and
- * proper state management for currency selection.
- * 
- * Features:
- * - Organized currency sections by region (Major, European, Asian, etc.)
- * - Visual selection indicators with checkmarks
- * - Accessibility compliance (VoiceOver, Dynamic Type)
- * - Back button navigation
- * - Proper state management and validation
- * 
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct CurrencyScreen: View {
     @ObservedObject var viewModel: OnboardingViewModel
@@ -58,16 +55,16 @@ struct CurrencyScreen: View {
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .bold))
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(.white)
                             
                             Text(contentManager.localizedString("onboarding.back"))
-                                .font(TrapFontUtility.trapFont(size: 16, weight: .bold))
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(.white)
                         }
                         .frame(height: Constants.Currency.backButtonHeight)
                         .padding(.horizontal, Constants.Currency.backButtonHorizontalPadding)
-                        .background(Color.black)
+                        .background(Constants.Colors.textPrimary)
                         .cornerRadius(Constants.Currency.backButtonCornerRadius)
                     }
                     
@@ -79,8 +76,8 @@ struct CurrencyScreen: View {
                 // Header section
                 VStack(spacing: Constants.Currency.headerSpacing) {
                     Text(contentManager.localizedString("onboarding.choose_currency"))
-                        .font(TrapFontUtility.trapFont(size: 32, weight: .black))
-                        .foregroundColor(Constants.Onboarding.yellowHex)
+                        .font(Constants.Typography.H1.font)
+                        .foregroundColor(Constants.Onboarding.primaryBlueHex)
                         .multilineTextAlignment(.leading)
                         .lineLimit(nil)
                         .lineSpacing(4)
@@ -88,7 +85,7 @@ struct CurrencyScreen: View {
                         .fixedSize(horizontal: false, vertical: true)
                     
                     Text(contentManager.localizedString("onboarding.currency_description"))
-                        .font(TrapFontUtility.trapFont(size: 14, weight: .regular))
+                        .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .multilineTextAlignment(.leading)
                         .lineLimit(nil)
@@ -114,7 +111,7 @@ struct CurrencyScreen: View {
                 OnboardingFooter(
                     buttonTitle: "Continue",
                     buttonIcon: "arrow.right",
-                    currentPage: 1,
+                    currentPage: 2,
                     totalPages: OnboardingStep.allCases.count,
                     buttonAction: {
                         CurrencyUtility.setCurrency(selectedCurrency)
@@ -158,7 +155,7 @@ struct CurrencyScreen: View {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(section.region)
-                    .font(TrapFontUtility.trapFont(size: Constants.Currency.sectionHeaderFontSize, weight: .bold))
+                    .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .padding(.horizontal, Constants.Currency.sectionHeaderHorizontalPadding)
                     .padding(.vertical, Constants.Currency.sectionHeaderPadding)
@@ -191,7 +188,7 @@ struct CurrencyScreen: View {
         var body: some View {
             HStack(spacing: Constants.Currency.currencyItemSpacing) {
                 Text(currency.symbol)
-                    .font(.system(size: Constants.Currency.currencySymbolSize, weight: .bold))
+                    .font(Constants.Typography.Mono.H3.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .frame(width: Constants.Currency.currencySymbolFrameSize, height: Constants.Currency.currencySymbolFrameSize)
                     .background(Constants.Colors.textPrimary.opacity(0.05))
@@ -199,11 +196,11 @@ struct CurrencyScreen: View {
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(currency.name)
-                        .font(TrapFontUtility.trapFont(size: Constants.Currency.currencyNameFontSize, weight: .bold))
+                        .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     Text(currency.rawValue)
-                        .font(TrapFontUtility.trapFont(size: Constants.Currency.currencyCodeFontSize, weight: .regular))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
                 
@@ -211,11 +208,11 @@ struct CurrencyScreen: View {
                 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: Constants.Currency.checkmarkSize))
+                        .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                 } else {
                     Image(systemName: "circle")
-                        .font(.system(size: Constants.Currency.checkmarkSize))
+                        .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
             }

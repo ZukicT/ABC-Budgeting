@@ -1,3 +1,18 @@
+//
+//  LoanEditView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Edit view for loan management providing comprehensive loan editing
+//  functionality. Features form validation, input formatting, and
+//  real-time updates with proper error handling and accessibility.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct LoanEditView: View {
@@ -35,7 +50,7 @@ struct LoanEditView: View {
                 // Top Row: Title + Close Button
                 HStack {
                     Text("loan.edit_loan".localized)
-                        .font(.system(size: 20, weight: .bold))
+                        .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .accessibilityLabel("Edit Loan")
                         .accessibilityAddTraits(.isHeader)
@@ -45,7 +60,7 @@ struct LoanEditView: View {
                     // Close Button
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .frame(width: 32, height: 32)
                             .background(Constants.Colors.textTertiary.opacity(0.1))
@@ -64,19 +79,19 @@ struct LoanEditView: View {
                     // Loan Name Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text("loan.loan_name_caps".localized)
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         TextField(contentManager.localizedString("loan.enter_name"), text: $name)
-                            .font(.system(size: 16, weight: .medium))
+                            .font(Constants.Typography.Mono.Body.font)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
                             .background(Constants.Colors.textPrimary.opacity(0.05))
-                            .cornerRadius(12)
+                            .cornerRadius(Constants.UI.CornerRadius.secondary)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                                     .stroke(!isValidName ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
                             )
                             .accessibilityLabel("Loan name")
@@ -86,26 +101,26 @@ struct LoanEditView: View {
                     // Principal Amount Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text("loan.principal_amount_caps".localized)
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         HStack {
                             Text("$")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                             
                             TextField("0.00", text: $principalAmount)
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textPrimary)
                                 .keyboardType(.decimalPad)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
-                        .cornerRadius(12)
+                        .cornerRadius(Constants.UI.CornerRadius.secondary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                                 .stroke(!isValidPrincipalAmount ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
                         )
                         .accessibilityElement(children: .combine)
@@ -116,26 +131,26 @@ struct LoanEditView: View {
                     // Remaining Amount Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text("loan.remaining_amount_caps".localized)
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         HStack {
                             Text("$")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                             
                             TextField("0.00", text: $remainingAmount)
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textPrimary)
                                 .keyboardType(.decimalPad)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
-                        .cornerRadius(12)
+                        .cornerRadius(Constants.UI.CornerRadius.secondary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                                 .stroke(!isValidRemainingAmount ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
                         )
                         .accessibilityElement(children: .combine)
@@ -146,26 +161,26 @@ struct LoanEditView: View {
                     // Interest Rate Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text("loan.interest_rate_caps".localized)
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         HStack {
                             TextField("0.0", text: $interestRate)
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textPrimary)
                                 .keyboardType(.decimalPad)
                             
                             Text("%")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
-                        .cornerRadius(12)
+                        .cornerRadius(Constants.UI.CornerRadius.secondary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                                 .stroke(!isValidInterestRate ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
                         )
                         .accessibilityElement(children: .combine)
@@ -176,26 +191,26 @@ struct LoanEditView: View {
                     // Monthly Payment Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text("loan.monthly_payment_caps".localized)
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
                         HStack {
                             Text("$")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textSecondary)
                             
                             TextField("0.00", text: $monthlyPayment)
-                                .font(.system(size: 16, weight: .medium))
+                                .font(Constants.Typography.Mono.Body.font)
                                 .foregroundColor(Constants.Colors.textPrimary)
                                 .keyboardType(.decimalPad)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(Constants.Colors.textPrimary.opacity(0.05))
-                        .cornerRadius(12)
+                        .cornerRadius(Constants.UI.CornerRadius.secondary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.secondary)
                                 .stroke(!isValidMonthlyPayment ? Constants.Colors.error.opacity(0.3) : Color.clear, lineWidth: 1)
                         )
                         .accessibilityElement(children: .combine)
@@ -206,7 +221,7 @@ struct LoanEditView: View {
                     // Due Date Field
                     VStack(alignment: .leading, spacing: 6) {
                         Text(contentManager.localizedString("loan.due_date_caps"))
-                            .font(.system(size: 11, weight: .bold))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textTertiary)
                             .tracking(1.0)
                         
@@ -239,16 +254,16 @@ struct LoanEditView: View {
                                 .scaleEffect(0.8)
                         } else {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(Constants.Typography.Caption.font)
                         }
                         Text(isSaving ? contentManager.localizedString("loan.saving") : contentManager.localizedString("loan.save"))
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                     }
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
                     .background(Constants.Colors.cleanBlack)
-                    .cornerRadius(12)
+                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                 }
                 .disabled(isSaving || !canSave)
                 .accessibilityLabel(isSaving ? "Saving loan changes" : "Save loan changes")
@@ -260,15 +275,15 @@ struct LoanEditView: View {
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                         Text("button.cancel".localized)
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                     }
                     .foregroundColor(Constants.Colors.textPrimary)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
                     .background(Constants.Colors.textPrimary.opacity(0.05))
-                    .cornerRadius(12)
+                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                 }
                 .accessibilityLabel("Cancel editing")
                 .accessibilityHint("Double tap to discard changes and return to loan details")

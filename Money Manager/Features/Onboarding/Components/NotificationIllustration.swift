@@ -1,3 +1,18 @@
+//
+//  NotificationIllustration.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Animated notification illustration component for onboarding featuring
+//  floating notification bells, central notification icon, and decorative
+//  elements. Provides engaging visual representation of notification concepts.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct NotificationIllustration: View {
@@ -5,19 +20,16 @@ struct NotificationIllustration: View {
     
     var body: some View {
         ZStack {
-            // Light blue background with diagonal cut
             LightBlueBackground()
                 .frame(height: 300)
             
-            // Main illustration content
             ZStack {
-                // Notification bells floating around
                 FloatingNotificationBell(offset: CGPoint(x: -80, y: -20), delay: 0.1)
                 FloatingNotificationBell(offset: CGPoint(x: 80, y: -30), delay: 0.2)
                 FloatingNotificationBell(offset: CGPoint(x: -60, y: 20), delay: 0.3)
                 FloatingNotificationBell(offset: CGPoint(x: 70, y: 10), delay: 0.4)
                 
-                // Central notification icon
+                CentralNotificationIcon()
                 CentralNotificationIcon()
                     .offset(y: -10)
                     .scaleEffect(animateElements ? 1.0 : 0.8)
@@ -52,7 +64,7 @@ struct FloatingNotificationBell: View {
             
             // Bell clapper
             Circle()
-                .fill(Color.black)
+                .fill(Constants.Colors.textPrimary)
                 .frame(width: 6, height: 6)
                 .offset(y: 2)
         }
@@ -73,13 +85,13 @@ struct CentralNotificationIcon: View {
         ZStack {
             // Main bell circle
             Circle()
-                .stroke(Color.black, lineWidth: 2)
+                .stroke(Constants.Colors.textPrimary, lineWidth: 2)
                 .frame(width: 40, height: 40)
             
             // Bell icon
-            Image(systemName: "bell.fill")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color.black)
+                Image(systemName: "bell.fill")
+                    .font(Constants.Typography.H3.font)
+                    .foregroundColor(Constants.Colors.textPrimary)
             
             // Notification badge
             Circle()

@@ -1,3 +1,18 @@
+//
+//  TransactionView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Main transaction management view displaying transaction list with filtering,
+//  search, and CRUD operations. Handles transaction display, category filtering,
+//  and navigation to transaction detail and edit views.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct TransactionView: View {
@@ -24,7 +39,6 @@ struct TransactionView: View {
         ]
     }
     
-    // MARK: - Computed Properties
     private var groupedTransactions: [(month: String, transactions: [Transaction])] {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
@@ -256,7 +270,7 @@ private struct CategoryTag: View {
                 // Add icon for "All" category
                 if title == "All" {
                     Image(systemName: "square.grid.2x2")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(isSelected ? Constants.Colors.backgroundPrimary : Constants.Colors.textPrimary)
                 }
                 
@@ -287,7 +301,6 @@ private struct MonthHeader: View {
         HStack {
             Text(month)
                 .font(Constants.Typography.H3.font)
-                .fontWeight(.semibold)
                 .foregroundColor(Constants.Colors.textPrimary)
             
             Spacer()

@@ -1,6 +1,20 @@
+//
+//  CardView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Reusable card component providing consistent styling and layout for content
+//  containers. Features customizable padding, corner radius, colors, and borders
+//  with accessibility support and design system compliance.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-// MARK: - Card View
 struct CardView<Content: View>: View {
     let content: Content
     let padding: CGFloat
@@ -58,7 +72,7 @@ struct InfoCard: View {
         CardView {
             HStack(spacing: Constants.UI.Spacing.medium) {
                 Image(systemName: icon)
-                    .font(.title2)
+                    .font(Constants.Typography.H3.font)
                     .foregroundColor(color)
                     .frame(width: 32, height: 32)
                     .accessibilityHidden(true)
@@ -69,7 +83,7 @@ struct InfoCard: View {
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text(value)
-                        .font(Constants.Typography.H2.font)
+                        .font(Constants.Typography.Mono.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                 }
                 
@@ -77,7 +91,7 @@ struct InfoCard: View {
                 
                 if action != nil {
                     Image(systemName: "chevron.right")
-                        .font(.caption)
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                         .accessibilityHidden(true)
                 }
@@ -147,9 +161,9 @@ struct StatCard: View {
                     if let trend = trend {
                         HStack(spacing: 4) {
                             Image(systemName: trend.icon)
-                                .font(.caption2)
+                                .font(Constants.Typography.Caption.font)
                             Text("5.2%")
-                                .font(.caption2)
+                                .font(Constants.Typography.Mono.Caption.font)
                         }
                         .foregroundColor(trend.color)
                         .accessibilityLabel("Trend: \(trend == .up ? "up" : trend == .down ? "down" : "neutral")")
@@ -157,7 +171,7 @@ struct StatCard: View {
                 }
                 
                 Text(value)
-                    .font(Constants.Typography.H1.font)
+                    .font(Constants.Typography.Mono.H1.font)
                     .foregroundColor(Constants.Colors.textPrimary)
                 
                 if let subtitle = subtitle {

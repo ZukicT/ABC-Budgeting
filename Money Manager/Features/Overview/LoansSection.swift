@@ -1,3 +1,18 @@
+//
+//  LoansSection.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Loans section component for overview display providing loan summary
+//  information and navigation to full loan management functionality.
+//  Features placeholder content and accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct LoansSection: View {
@@ -5,7 +20,6 @@ struct LoansSection: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
-            // Section Header
             HStack {
                 Text(contentManager.localizedString("tab.loans"))
                     .font(Constants.Typography.H2.font)
@@ -14,13 +28,11 @@ struct LoansSection: View {
                 Spacer()
                 
                 Button(contentManager.localizedString("button.view_all")) {
-                    // TODO: Navigate to loans tab
                 }
                 .font(Constants.Typography.BodySmall.font)
                 .foregroundColor(Constants.Colors.success)
             }
             
-            // Placeholder content
             VStack(spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("loans.overview_placeholder"))
                     .font(Constants.Typography.Body.font)

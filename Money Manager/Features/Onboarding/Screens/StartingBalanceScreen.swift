@@ -1,23 +1,19 @@
-import SwiftUI
+//
+//  StartingBalanceScreen.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Starting balance input screen for onboarding with currency-aware input
+//  validation, quick amount selection, and proper state management. Features
+//  back navigation, accessibility compliance, and data persistence.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * StartingBalanceScreen
- * 
- * A comprehensive starting balance input screen for onboarding with currency-aware
- * input validation, quick amount selection, and proper state management. Features
- * back navigation and accessibility support.
- * 
- * Features:
- * - Currency-aware input validation using InputValidationUtility
- * - Quick amount buttons for common values (100, 500, 1000, 5000)
- * - Real-time input validation with visual feedback
- * - Back button navigation
- * - Accessibility compliance (VoiceOver, Dynamic Type)
- * - Data persistence using CurrencyUtility
- * 
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct StartingBalanceScreen: View {
     @ObservedObject var viewModel: OnboardingViewModel
@@ -44,16 +40,16 @@ struct StartingBalanceScreen: View {
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .bold))
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(.white)
                             
                             Text(contentManager.localizedString("onboarding.back"))
-                                .font(TrapFontUtility.trapFont(size: 16, weight: .bold))
+                                .font(Constants.Typography.Caption.font)
                                 .foregroundColor(.white)
                         }
                                .frame(height: Constants.StartingBalance.backButtonHeight)
                                .padding(.horizontal, Constants.StartingBalance.backButtonHorizontalPadding)
-                               .background(Color.black)
+                               .background(Constants.Colors.textPrimary)
                                .cornerRadius(Constants.StartingBalance.backButtonCornerRadius)
                     }
                     
@@ -65,8 +61,8 @@ struct StartingBalanceScreen: View {
                 // Header section
                 VStack(spacing: Constants.StartingBalance.headerSpacing) {
                     Text(contentManager.localizedString("onboarding.starting_balance_title"))
-                        .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.headlineFontSize, weight: .black))
-                        .foregroundColor(Constants.Onboarding.yellowHex)
+                        .font(Constants.Typography.H1.font)
+                        .foregroundColor(Constants.Onboarding.primaryBlueHex)
                         .multilineTextAlignment(.leading)
                         .lineLimit(nil)
                         .lineSpacing(4)
@@ -74,7 +70,7 @@ struct StartingBalanceScreen: View {
                         .fixedSize(horizontal: false, vertical: true)
                     
                     Text(contentManager.localizedString("onboarding.starting_balance_description"))
-                        .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.bodyTextFontSize, weight: .regular))
+                        .font(Constants.Typography.Body.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .multilineTextAlignment(.leading)
                         .lineLimit(nil)
@@ -84,6 +80,7 @@ struct StartingBalanceScreen: View {
                 }
                 .padding(.horizontal, Constants.StartingBalance.headerHorizontalPadding)
                 .padding(.top, Constants.StartingBalance.headerTopPadding)
+                
                 
                 // Balance input section
                 BalanceInputView(
@@ -100,7 +97,7 @@ struct StartingBalanceScreen: View {
                 OnboardingFooter(
                     buttonTitle: "Continue",
                     buttonIcon: "arrow.right",
-                    currentPage: 2,
+                    currentPage: 3,
                     totalPages: OnboardingStep.allCases.count,
                     buttonAction: {
                         if let balance = Double(startingBalance), balance >= 0 {
@@ -143,18 +140,18 @@ struct StartingBalanceScreen: View {
                 // Balance input field
                 VStack(alignment: .leading, spacing: Constants.StartingBalance.inputFieldSpacing) {
                     Text("onboarding.starting_balance_label".localized)
-                        .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.labelFontSize, weight: .bold))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     HStack {
                         Text(currencySymbol)
-                            .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.inputFontSize, weight: .bold))
+                            .font(Constants.Typography.Mono.H3.font)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .frame(width: Constants.StartingBalance.currencySymbolWidth, alignment: .leading)
 
                         TextField("0.00", text: $startingBalance)
-                            .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.inputFontSize, weight: .bold))
+                            .font(Constants.Typography.Mono.H3.font)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .keyboardType(.decimalPad)
                             .textFieldStyle(PlainTextFieldStyle())
@@ -178,7 +175,7 @@ struct StartingBalanceScreen: View {
 
                     if !isValidInput && !startingBalance.isEmpty {
                         Text("onboarding.starting_balance_error".localized)
-                            .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.errorFontSize, weight: .regular))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.error)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -187,7 +184,7 @@ struct StartingBalanceScreen: View {
                 // Quick amount buttons
                 VStack(alignment: .leading, spacing: Constants.StartingBalance.quickAmountsSpacing) {
                     Text("onboarding.quick_amounts".localized)
-                        .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.labelFontSize, weight: .bold))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -201,7 +198,7 @@ struct StartingBalanceScreen: View {
                                 validateInput(String(amount))
                             }) {
                                 Text("\(currencySymbol)\(amount)")
-                                    .font(TrapFontUtility.trapFont(size: Constants.StartingBalance.quickAmountFontSize, weight: .bold))
+                                    .font(Constants.Typography.Mono.Body.font)
                                     .foregroundColor(Constants.Colors.textPrimary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, Constants.StartingBalance.quickAmountButtonVerticalPadding)

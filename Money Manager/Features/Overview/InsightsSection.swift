@@ -1,3 +1,18 @@
+//
+//  InsightsSection.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Insights section component for overview display providing financial
+//  insights and analytics placeholder content. Features coming soon
+//  messaging and accessibility support for future analytics features.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct InsightsSection: View {
@@ -5,7 +20,6 @@ struct InsightsSection: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.medium) {
-            // Section Header
             HStack {
                 Text(contentManager.localizedString("insights.title"))
                     .font(Constants.Typography.H2.font)
@@ -14,13 +28,11 @@ struct InsightsSection: View {
                 Spacer()
                 
                 Button(contentManager.localizedString("button.view_all")) {
-                    // TODO: Navigate to insights or analytics
                 }
                 .font(Constants.Typography.BodySmall.font)
                 .foregroundColor(Constants.Colors.success)
             }
             
-            // Placeholder content
             VStack(spacing: Constants.UI.Spacing.small) {
                 Text(contentManager.localizedString("insights.coming_soon"))
                     .font(Constants.Typography.Body.font)

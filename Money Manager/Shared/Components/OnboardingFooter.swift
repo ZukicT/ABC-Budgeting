@@ -1,3 +1,18 @@
+//
+//  OnboardingFooter.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Reusable footer component for onboarding screens providing navigation controls,
+//  progress indicators, and action buttons. Features consistent styling and
+//  accessibility support for the onboarding flow.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct OnboardingFooter: View {
@@ -36,7 +51,7 @@ struct OnboardingFooter: View {
                 if let secondaryTitle = secondaryButtonTitle, let secondaryAction = secondaryButtonAction {
                     Button(action: secondaryAction) {
                         Text(secondaryTitle)
-                            .font(TrapFontUtility.trapFont(size: 16, weight: .medium))
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.textSecondary)
                             .underline()
                     }
@@ -46,19 +61,13 @@ struct OnboardingFooter: View {
                 
                 // Continue button
                 Button(action: buttonAction) {
-                    HStack(spacing: 8) {
-                        Image(systemName: buttonIcon)
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                        
-                        Text(buttonTitle)
-                            .font(TrapFontUtility.trapFont(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(Color.black)
-                    .cornerRadius(Constants.UI.CornerRadius.primary)
+                    Text(buttonTitle)
+                        .font(Constants.Typography.Button.font)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Constants.Colors.textPrimary)
+                        .cornerRadius(Constants.UI.CornerRadius.primary)
                 }
                 .accessibilityLabel(buttonTitle)
                 .accessibilityHint("Tap to continue")
@@ -75,13 +84,13 @@ struct OnboardingFooter: View {
                         if index == currentPage {
                             // Active indicator (rectangle) - BLACK
                             RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                .fill(Color.black)
+                                .fill(Constants.Colors.textPrimary)
                                 .frame(width: 40, height: 8)
                                 .accessibilityLabel("Page \(index + 1) of \(totalPages), current page")
                         } else {
                             // Inactive indicator (rounded square) - PINK
                             RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
-                                .fill(Color(hex: "#FFB6C8"))
+                                .fill(Color(hex: "#FF6584"))
                                 .frame(width: 8, height: 8)
                                 .accessibilityLabel("Page \(index + 1) of \(totalPages)")
                         }

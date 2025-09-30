@@ -1,3 +1,18 @@
+//
+//  BudgetCategoryFilterView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Category filter component for budget views providing horizontal scrolling
+//  filter tags. Allows users to filter budgets by category with visual
+//  selection states and accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct BudgetCategoryFilterView: View {
@@ -6,10 +21,8 @@ struct BudgetCategoryFilterView: View {
     let categories = CategoryUtilities.budgetCategories
     
     var body: some View {
-        // Category Tags
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Constants.UI.Spacing.small) {
-                // "All" button to show all budgets
                 BudgetCategoryFilterTag(
                     category: nil,
                     displayName: contentManager.localizedString("budget.filter.all"),
@@ -50,7 +63,7 @@ struct BudgetCategoryFilterTag: View {
             HStack(spacing: Constants.UI.Spacing.small) {
                 if let icon = icon {
                     Image(systemName: icon)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(isSelected ? Constants.Colors.backgroundPrimary : Constants.Colors.textPrimary)
                 }
                 

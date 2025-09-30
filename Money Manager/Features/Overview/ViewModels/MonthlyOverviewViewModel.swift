@@ -1,3 +1,18 @@
+//
+//  MonthlyOverviewViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for monthly overview data management providing financial
+//  metrics calculation, trend analysis, and data processing for
+//  monthly financial summaries with proper state management.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
@@ -7,11 +22,9 @@ class MonthlyOverviewViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    // Real transaction data from TransactionViewModel
     private var transactions: [Transaction] = []
     
     init() {
-        // Start with empty data - will be populated from real data
         monthlyData = nil
     }
     
@@ -19,7 +32,6 @@ class MonthlyOverviewViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        // Load real data from starting balance and transactions
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.calculateMonthlyData()
             self.isLoading = false

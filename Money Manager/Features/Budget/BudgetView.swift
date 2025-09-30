@@ -1,23 +1,19 @@
-import SwiftUI
+//
+//  BudgetView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Main budget management view providing comprehensive budget overview, creation,
+//  and tracking capabilities. Features clean empty state for new users and full
+//  functionality for existing budget management with progress tracking.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * BudgetView
- * 
- * Main budget management view providing comprehensive budget overview, creation,
- * and tracking capabilities. Features clean empty state for new users and full
- * functionality for existing budget management.
- * 
- * Features:
- * - Clean empty state with branded illustration and call-to-action
- * - Budget summary card with total allocation and spending overview
- * - Category filtering for budget organization
- * - Mobile-optimized budget list with progress tracking
- * - Full accessibility compliance and responsive design
- * - Integration with AddView for budget creation
- * 
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct BudgetView: View {
     @ObservedObject var viewModel: BudgetViewModel
@@ -169,14 +165,12 @@ private struct BudgetTableHeader: View {
         HStack {
             Text(contentManager.localizedString("budget.budgets"))
                 .font(Constants.Typography.Caption.font)
-                .fontWeight(.bold)
                 .foregroundColor(Constants.Colors.textSecondary)
             
             Spacer()
             
             Text("\(budgetCount) \(contentManager.localizedString("budget.total"))")
                 .font(Constants.Typography.Caption.font)
-                .fontWeight(.medium)
                 .foregroundColor(Constants.Colors.textSecondary)
         }
         .padding(.horizontal, 16)
@@ -227,19 +221,18 @@ private struct MobileBudgetRow: View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                         .fill(Constants.Colors.cleanBlack)
                         .frame(width: 40, height: 40)
                     
                     Image(systemName: budgetCategoryIcon)
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(Constants.Typography.H3.font)
                         .foregroundColor(.white)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(budget.category)
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -258,10 +251,9 @@ private struct MobileBudgetRow: View {
                         }
                         .frame(height: 6)
                         
-                        Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("budget.used_percentage"))")
-                            .font(Constants.Typography.Caption.font)
-                            .fontWeight(.medium)
-                            .foregroundColor(progressColor)
+                    Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("budget.used_percentage"))")
+                        .font(Constants.Typography.Caption.font)
+                        .foregroundColor(progressColor)
                     }
                 }
                 
@@ -270,12 +262,10 @@ private struct MobileBudgetRow: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text(contentManager.localizedString("budget.allocated"))
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text(budget.allocatedAmount, format: .currency(code: "USD"))
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.bold)
                         .foregroundColor(Constants.Colors.textPrimary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
@@ -286,12 +276,10 @@ private struct MobileBudgetRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(contentManager.localizedString("budget.spent"))
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text(budget.spentAmount, format: .currency(code: "USD"))
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.error)
                 }
                 
@@ -300,12 +288,10 @@ private struct MobileBudgetRow: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text(contentManager.localizedString("budget.remaining"))
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text(budget.remainingAmount, format: .currency(code: "USD"))
                         .font(Constants.Typography.Body.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(isOverBudget ? Constants.Colors.error : Constants.Colors.success)
                 }
             }
@@ -366,7 +352,6 @@ private struct BudgetCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(budget.category)
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
                     Text(contentManager.localizedString("budget.budget"))
@@ -380,7 +365,6 @@ private struct BudgetCard: View {
                     HStack(spacing: Constants.UI.Spacing.small) {
                         Text(budget.allocatedAmount, format: .currency(code: "USD"))
                             .font(Constants.Typography.H2.font)
-                            .fontWeight(.bold)
                             .foregroundColor(Constants.Colors.textPrimary)
                         
                         .accessibilityLabel("Edit budget")
@@ -411,14 +395,12 @@ private struct BudgetCard: View {
                 HStack {
                     Text("\(contentManager.localizedString("budget.spent_colon")) \(budget.spentAmount, format: .currency(code: "USD"))")
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Spacer()
                     
                     Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("budget.used_percentage"))")
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.bold)
                         .foregroundColor(progressColor)
                 }
             }
@@ -427,31 +409,28 @@ private struct BudgetCard: View {
                 if isOverBudget {
                     HStack(spacing: 4) {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.caption2)
+                            .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.error)
                         
                         Text("\(contentManager.localizedString("budget.over_by_amount")) \((budget.spentAmount - budget.allocatedAmount), format: .currency(code: "USD"))")
                             .font(Constants.Typography.Caption.font)
-                            .fontWeight(.medium)
                             .foregroundColor(Constants.Colors.error)
                     }
                 } else {
                     Text("\(contentManager.localizedString("budget.remaining_colon")) \(budget.remainingAmount, format: .currency(code: "USD"))")
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
                 
                 Spacer()
                 
                 Text(isOverBudget ? contentManager.localizedString("budget.over_budget") : contentManager.localizedString("budget.on_track"))
-                    .font(.caption2)
-                    .fontWeight(.semibold)
+                    .font(Constants.Typography.Caption.font)
                     .foregroundColor(progressColor)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(progressColor.opacity(0.1))
-                    .cornerRadius(8)
+                    .cornerRadius(Constants.UI.CornerRadius.tertiary)
             }
         }
         .padding(Constants.UI.Padding.cardInternal)
@@ -494,14 +473,12 @@ private struct BudgetSummaryCard: View {
             VStack(spacing: 8) {
                 Text(contentManager.localizedString("budget.total_monthly_budget"))
                     .font(Constants.Typography.Caption.font)
-                    .fontWeight(.medium)
                     .foregroundColor(Constants.Colors.textSecondary)
                     .textCase(.uppercase)
                     .tracking(0.5)
                 
                 Text(formattedTotalAllocated)
                     .font(Constants.Typography.H1.font)
-                    .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
             }
@@ -510,14 +487,12 @@ private struct BudgetSummaryCard: View {
                 VStack(spacing: 6) {
                     Text(contentManager.localizedString("budget.total_spent"))
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                         .textCase(.uppercase)
                         .tracking(0.5)
                     
                     Text(formattedTotalSpent)
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(Constants.Colors.error)
                         .multilineTextAlignment(.center)
                 }
@@ -530,14 +505,12 @@ private struct BudgetSummaryCard: View {
                 VStack(spacing: 6) {
                     Text(contentManager.localizedString("budget.remaining"))
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                         .textCase(.uppercase)
                         .tracking(0.5)
                     
                     Text(formattedTotalRemaining)
                         .font(Constants.Typography.H3.font)
-                        .fontWeight(.semibold)
                         .foregroundColor(totalRemaining >= 0 ? Constants.Colors.success : Constants.Colors.error)
                         .multilineTextAlignment(.center)
                 }

@@ -1,6 +1,20 @@
+//
+//  LoanPickerView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Loan picker component for selecting existing loans to mark as paid.
+//  Features search functionality, loan filtering, and accessibility
+//  support for loan management operations.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-/// Loan picker component for selecting existing loans to mark as paid
 struct LoanPickerView: View {
     let loans: [Loan]
     @Binding var selectedLoan: Loan?
@@ -37,7 +51,7 @@ struct LoanPickerView: View {
             if filteredLoans.isEmpty {
                 VStack(spacing: Constants.UI.Spacing.medium) {
                     Image(systemName: "creditcard")
-                        .font(.system(size: 48))
+                        .font(Constants.Typography.H1.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                     
                     Text(searchText.isEmpty ? contentManager.localizedString("loan.no_unpaid") : contentManager.localizedString("loan.no_found"))
@@ -93,14 +107,13 @@ private struct LoanPickerRow: View {
         HStack(spacing: Constants.UI.Spacing.medium) {
             // Selection Indicator
             Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                .font(.title3)
+                .font(Constants.Typography.H3.font)
                 .foregroundColor(isSelected ? Constants.Colors.success : Constants.Colors.textTertiary)
             
             // Loan Info
             VStack(alignment: .leading, spacing: 4) {
                 Text(loan.name)
                     .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .lineLimit(1)
                 

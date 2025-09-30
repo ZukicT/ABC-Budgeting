@@ -1,3 +1,18 @@
+//
+//  BudgetsOverviewViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for budget overview data management providing budget statistics,
+//  spending analysis, and progress tracking. Handles budget data processing
+//  and state management for overview displays.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 import Foundation
 
@@ -11,7 +26,6 @@ class BudgetsOverviewViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     init() {
-        // Start with empty data - no sample data
         budgetOverviewItems = []
         totalBudgeted = 0.0
         totalSpent = 0.0

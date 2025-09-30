@@ -1,3 +1,18 @@
+//
+//  OverviewView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Main overview screen displaying financial dashboard with balance summary,
+//  recent transactions, budget progress, and loan information. Provides
+//  quick access to add transactions and navigate to other app sections.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct OverviewView: View {
@@ -15,11 +30,8 @@ struct OverviewView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Static Header
                 VStack(spacing: Constants.UI.Spacing.medium) {
-                    // Header with title and total counter
                     HStack(alignment: .center) {
-                        // Title only
                         Text(contentManager.localizedString("overview.title"))
                             .font(Constants.Typography.H1.font)
                             .foregroundColor(Constants.Colors.textPrimary)
@@ -31,7 +43,6 @@ struct OverviewView: View {
                 .padding(Constants.UI.Padding.screenMargin)
                 .background(Constants.Colors.backgroundPrimary)
                 
-                // Scrollable Content Area
                 ScrollView {
                     OverviewContent(
                         onTabSwitch: onTabSwitch, 
@@ -45,7 +56,6 @@ struct OverviewView: View {
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // Plus Button - Left Side
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         showAddView = true
@@ -55,9 +65,7 @@ struct OverviewView: View {
                     }
                 }
                 
-                // Notifications and Settings - Right Side
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Notifications Button
                     Button(action: {
                         showNotifications = true
                     }) {
@@ -65,7 +73,6 @@ struct OverviewView: View {
                             .accessibilityLabel("Notifications")
                     }
                     
-                    // Settings Button
                     Button(action: {
                         showSettings = true
                     }) {

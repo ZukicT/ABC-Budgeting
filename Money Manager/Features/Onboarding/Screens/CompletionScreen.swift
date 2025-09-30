@@ -1,22 +1,19 @@
-import SwiftUI
+//
+//  CompletionScreen.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Final onboarding screen celebrating user completion with multi-colored
+//  headline, encouraging message, and navigation to main app. Features
+//  brand-consistent design, proper state management, and accessibility compliance.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * CompletionScreen
- *
- * Final onboarding screen celebrating user completion with multi-colored
- * headline, encouraging message, and navigation to main app. Features
- * brand-consistent design and proper state management.
- *
- * Features:
- * - Multi-colored headline with brand colors
- * - Completion celebration messaging
- * - Proper onboarding completion flow
- * - Asset-based illustration with error handling
- * - Accessibility compliance
- *
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct CompletionScreen: View {
     @ObservedObject var viewModel: OnboardingViewModel
@@ -31,22 +28,22 @@ struct CompletionScreen: View {
                         // Fallback content when image fails to load
                         VStack(spacing: 20) {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 80))
+                                .font(Constants.Typography.H1.font)
                                 .foregroundColor(Constants.Onboarding.pinkHex)
                             
                             Text(contentManager.localizedString("onboarding.welcome_completion"))
-                                .font(TrapFontUtility.trapFont(size: 24, weight: .bold))
+                                .font(Constants.Typography.H3.font)
                                 .foregroundColor(Constants.Colors.textPrimary)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
-                        Image("Hero-Illustartion_Final")
+                        Image("All-Set-Hero-Image")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(maxWidth: .infinity, maxHeight: 290)
                             .onAppear {
                                 // Verify image exists
-                                if UIImage(named: "Hero-Illustartion_Final") == nil {
+                                if UIImage(named: "All-Set-Hero-Image") == nil {
                                     imageLoadError = true
                                 }
                             }
@@ -55,14 +52,12 @@ struct CompletionScreen: View {
             ),
             headline: "You're All Set!",
             headlineColors: [
-                Constants.Onboarding.pinkHex,  // "You're "
-                Constants.Onboarding.primaryBlueHex,   // "All "
-                Constants.Onboarding.yellowHex // "Set!"
+                Constants.Onboarding.primaryBlueHex  // "You're All Set!" - entire hero text in brand blue
             ],
             bodyText: "Welcome to the Money Manager community! You're now ready to take control of your finances and achieve your financial goals.",
-            buttonTitle: "Start Your Journey",
+            buttonTitle: "Continue",
             buttonIcon: "sparkles",
-            currentPage: 4,
+            currentPage: 5,
             totalPages: OnboardingStep.allCases.count,
             buttonAction: {
                 viewModel.completeOnboarding()

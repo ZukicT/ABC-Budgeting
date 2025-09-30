@@ -47,15 +47,5 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Trap-Black.otf</string>
-		<string>Trap-Bold.otf</string>
-		<string>Trap-ExtraBold.otf</string>
-		<string>Trap-Light.otf</string>
-		<string>Trap-Medium.otf</string>
-		<string>Trap-Regular.otf</string>
-		<string>Trap-SemiBold.otf</string>
-	</array>
 </dict>
 </plist>

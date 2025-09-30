@@ -1,3 +1,18 @@
+//
+//  FinancialInsightsSection.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Financial insights section displaying comprehensive financial analysis
+//  with income vs expense charts and spending category breakdowns.
+//  Features data visualization and financial trend analysis.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct FinancialInsightsSection: View {
@@ -10,7 +25,6 @@ struct FinancialInsightsSection: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
-            // Section Header
             HStack {
                 Text(contentManager.localizedString("overview.financial_insights_title"))
                     .font(Constants.Typography.H2.font)
@@ -19,12 +33,8 @@ struct FinancialInsightsSection: View {
                 Spacer()
             }
             
-            // Charts Content
             VStack(spacing: Constants.UI.Spacing.large) {
-                // Income vs Expense Chart
                 IncomeExpenseChart(data: incomeExpenseData)
-                
-                // Spending Category Chart
                 SpendingCategoryChart(data: categorySpendingData)
             }
         }

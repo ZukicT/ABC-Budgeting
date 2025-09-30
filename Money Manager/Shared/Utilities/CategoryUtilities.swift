@@ -1,9 +1,22 @@
+//
+//  CategoryUtilities.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Centralized category management utilities providing localized names, icons,
+//  and colors for transaction categories. Eliminates code duplication and
+//  ensures consistent category handling across the app.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-/// Centralized category management utilities to eliminate code duplication
 struct CategoryUtilities {
     
-    // MARK: - Localized Category Names
     static func localizedName(for category: String) -> String {
         let contentManager = MultilingualContentManager.shared
         switch category.lowercased() {
@@ -23,7 +36,6 @@ struct CategoryUtilities {
         }
     }
     
-    // MARK: - Category Icons
     static func icon(for category: String) -> String {
         switch category.lowercased() {
         case "food", "food & dining": return "fork.knife"

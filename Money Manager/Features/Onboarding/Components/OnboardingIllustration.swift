@@ -1,3 +1,18 @@
+//
+//  OnboardingIllustration.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Onboarding illustration component with asset-based hero illustration
+//  and fallback content for error handling. Features responsive layout
+//  and accessibility support for onboarding screens.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct OnboardingIllustration: View {
@@ -7,17 +22,14 @@ struct OnboardingIllustration: View {
         GeometryReader { geometry in
             ZStack {
                 if imageLoadError {
-                    // Fallback content when image fails to load
                     FallbackIllustration()
                 } else {
-                    // Hero illustration asset with error handling
-                    Image("hero-illustrations")
+                    Image("Main-Hero-Image-1")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .frame(maxWidth: .infinity, maxHeight: 250)
                         .onAppear {
-                            // Verify image exists
-                            if UIImage(named: "hero-illustrations") == nil {
+                            if UIImage(named: "Main-Hero-Image-1") == nil {
                                 imageLoadError = true
                             }
                         }

@@ -1,6 +1,20 @@
+//
+//  BaseView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Base view protocol and common UI components providing consistent styling
+//  and behavior across the app. Includes loading states, error states, and
+//  common view patterns with accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-// MARK: - Base View Protocol
 protocol BaseView: View {
     associatedtype Content: View
     var content: Content { get }
@@ -10,11 +24,10 @@ extension BaseView {
     var body: some View {
         content
             .background(Constants.Colors.backgroundPrimary)
-            .preferredColorScheme(.none) // Respects system appearance
+            .preferredColorScheme(.none)
     }
 }
 
-// MARK: - Loading State View
 struct LoadingStateView: View {
     let message: String
     
@@ -60,7 +73,7 @@ struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
             Image(systemName: icon)
-                .font(.system(size: 64))
+                .font(Constants.Typography.H1.font)
                 .foregroundColor(Constants.Colors.textTertiary)
                 .accessibilityHidden(true)
             
@@ -100,7 +113,7 @@ struct ErrorStateView: View {
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 64))
+                .font(Constants.Typography.H1.font)
                 .foregroundColor(Constants.Colors.error)
                 .accessibilityHidden(true)
             

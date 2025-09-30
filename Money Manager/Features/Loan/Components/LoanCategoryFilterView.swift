@@ -1,3 +1,18 @@
+//
+//  LoanCategoryFilterView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Category filter component for loan views providing horizontal scrolling
+//  filter tags. Allows users to filter loans by category with visual
+//  selection states and accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct LoanCategoryFilterView: View {
@@ -6,10 +21,8 @@ struct LoanCategoryFilterView: View {
     let categories = LoanCategory.allCases
     
     var body: some View {
-        // Category Tags
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Constants.UI.Spacing.small) {
-                // "All" button to show all loans
                 CategoryFilterTag(
                     category: nil,
                     displayName: contentManager.localizedString("loan.filter.all"),
@@ -50,7 +63,7 @@ struct CategoryFilterTag: View {
             HStack(spacing: Constants.UI.Spacing.small) {
                 if let icon = icon {
                     Image(systemName: icon)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(isSelected ? Constants.Colors.backgroundPrimary : Constants.Colors.textPrimary)
                 }
                 

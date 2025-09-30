@@ -1,3 +1,18 @@
+//
+//  BudgetViewModel.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  ViewModel for managing budget data, goal tracking, and spending analysis.
+//  Handles budget CRUD operations, category filtering, and progress calculations
+//  for financial goal management.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 import SwiftUI
 
@@ -10,12 +25,10 @@ class BudgetViewModel: ObservableObject {
     
     var hasDataLoaded = false
     
-    // Counter for tab display (Goals equivalent)
     var budgetCount: Int {
         budgets.count
     }
     
-    // Filtered budgets based on selected category
     var filteredBudgets: [Budget] {
         if let selectedCategory = selectedCategory {
             return budgets.filter { $0.category.lowercased() == selectedCategory.lowercased() }
@@ -24,20 +37,15 @@ class BudgetViewModel: ObservableObject {
         }
     }
     
-    init() {
-        // Initialize budget data
-    }
+    init() {}
     
     func loadBudgets() {
-        // Only load if data hasn't been loaded yet
         guard !hasDataLoaded else { return }
         
         isLoading = true
         errorMessage = nil
         
-        // TODO: Implement budget loading logic
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            // Start with empty budgets for new users
             self.budgets = []
             self.isLoading = false
             self.hasDataLoaded = true

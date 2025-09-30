@@ -1,7 +1,20 @@
+//
+//  TransactionCard.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Reusable transaction card component providing consistent transaction display
+//  with category icons, formatting, and accessibility support. Used across
+//  the app for uniform transaction presentation.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
-/// Shared TransactionCard component used across the app
-/// Provides consistent transaction display with category icons and formatting
 struct TransactionCard: View {
     let transaction: Transaction
     
@@ -9,13 +22,12 @@ struct TransactionCard: View {
         HStack(spacing: Constants.UI.Spacing.medium) {
             // Category Icon - Fixed Size
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: Constants.UI.CornerRadius.tertiary)
                     .fill(Constants.Colors.cleanBlack)
                     .frame(width: 40, height: 40)
                 
                 Image(systemName: categoryIcon(for: transaction.category))
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                    .font(Constants.Typography.H3.font)
                     .foregroundColor(.white)
             }
             .accessibilityHidden(true)
@@ -25,7 +37,6 @@ struct TransactionCard: View {
                 // Transaction Title - Primary Information
                 Text(transaction.title)
                     .font(Constants.Typography.Body.font)
-                    .fontWeight(.semibold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .lineLimit(1)
                     .truncationMode(.tail)
@@ -34,7 +45,6 @@ struct TransactionCard: View {
                 HStack(spacing: 6) {
                     Text(transaction.category.localizedCategoryName)
                         .font(Constants.Typography.Caption.font)
-                        .fontWeight(.medium)
                         .foregroundColor(Constants.Colors.textSecondary)
                     
                     Text("•")
@@ -42,7 +52,7 @@ struct TransactionCard: View {
                         .foregroundColor(Constants.Colors.textTertiary)
                     
                     Text(transaction.date, format: .dateTime.month(.abbreviated).day().year(.twoDigits))
-                        .font(Constants.Typography.Caption.font)
+                        .font(Constants.Typography.Mono.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
             }
@@ -51,17 +61,15 @@ struct TransactionCard: View {
             // Amount Section - Fixed Width
             VStack(alignment: .trailing, spacing: 2) {
                 // Amount - Most Prominent
-                Text(transaction.amount, format: .currency(code: "USD"))
-                    .font(Constants.Typography.H3.font)
-                    .fontWeight(.bold)
-                    .foregroundColor(transaction.amount >= 0 ? Constants.Colors.success : Constants.Colors.error)
+        Text(transaction.amount, format: .currency(code: "USD"))
+            .font(Constants.Typography.Mono.H3.font)
+            .foregroundColor(transaction.amount >= 0 ? Constants.Colors.success : Constants.Colors.error)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                 
                 // Transaction Type Label
                 Text(transaction.amount >= 0 ? "Income" : "Expense")
-                    .font(.caption2)
-                    .fontWeight(.medium)
+                    .font(Constants.Typography.Caption.font)
                     .foregroundColor(transaction.amount >= 0 ? Constants.Colors.success : Constants.Colors.error)
             }
             .frame(width: 80, alignment: .trailing)

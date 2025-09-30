@@ -1,13 +1,26 @@
+//
+//  MultilingualContentManager.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Manages multilingual content and localization for the entire app.
+//  Handles language switching, string localization, and content management
+//  across different languages including English, Chinese, and Japanese.
+//
+//  Review Date: September 29, 2025
+//
+
 import Foundation
 
-/// Manages multilingual content for the entire app
 class MultilingualContentManager: ObservableObject {
     static let shared = MultilingualContentManager()
     
     @Published var currentLanguage: String = "en-US"
     
     private init() {
-        // Load saved language preference
         currentLanguage = UserDefaults.standard.string(forKey: "selected_language") ?? "en-US"
     }
     
@@ -15,8 +28,6 @@ class MultilingualContentManager: ObservableObject {
         currentLanguage = language
         UserDefaults.standard.set(language, forKey: "selected_language")
     }
-    
-    // MARK: - Localization Helper
     
     func localizedString(_ key: String) -> String {
         switch currentLanguage {
@@ -192,6 +203,8 @@ class MultilingualContentManager: ObservableObject {
         "onboarding.step_counter": "Step",
         "onboarding.of": "of",
         "onboarding.back": "Back",
+        "onboarding.choose_language": "Choose Your Language",
+        "onboarding.language_description": "Select your preferred language for the app. We're always adding more languages to make Money Manager accessible to everyone.",
         "onboarding.choose_currency": "Choose your currency",
         "onboarding.currency_description": "Select the currency that best fits your financial needs and location",
         "onboarding.starting_balance_title": "What's your starting balance?",
@@ -273,7 +286,7 @@ class MultilingualContentManager: ObservableObject {
         "settings.version_history_subtitle": "View recent updates and changes",
         "settings.privacy_policy_subtitle": "Read our privacy policy",
         "settings.terms_subtitle": "Read our terms of service",
-        "settings.font_licensing_subtitle": "Trap font family licensing information",
+        "settings.font_licensing_subtitle": "Arvo font family licensing information",
         
         // Version History
         "version.track_evolution": "Track the evolution of Money Manager",
@@ -281,7 +294,7 @@ class MultilingualContentManager: ObservableObject {
         "version.version": "Version",
         
         // Font Licensing
-        "font.licensing_title": "Trap Font Family Licensing Information",
+        "font.licensing_title": "Arvo Font Family Licensing Information",
         
         // Clear Data Warning
         "clear_data.warning": "This will permanently delete all your transactions, budgets, and loans. This action cannot be undone. You will be asked to set a new starting balance.",
@@ -317,7 +330,7 @@ class MultilingualContentManager: ObservableObject {
         "settings.subtitle.version_history": "View recent updates and changes",
         "settings.subtitle.privacy_policy": "Read our privacy policy",
         "settings.subtitle.terms_of_service": "Read our terms of service",
-        "settings.subtitle.font_licensing": "Trap font family licensing information",
+        "settings.subtitle.font_licensing": "Arvo font family licensing information",
         
         // Add Form CTAs
         "add.cta.add_transaction": "Add Transaction",
@@ -748,7 +761,7 @@ class MultilingualContentManager: ObservableObject {
         "settings.subtitle.version_history": "查看最近的更新和更改",
         "settings.subtitle.privacy_policy": "阅读我们的隐私政策",
         "settings.subtitle.terms_of_service": "阅读我们的服务条款",
-        "settings.subtitle.font_licensing": "Trap字体家族许可信息",
+        "settings.subtitle.font_licensing": "Arvo字体家族许可信息",
         
         // Add Form CTAs
         "add.cta.add_transaction": "添加交易",
@@ -878,6 +891,8 @@ class MultilingualContentManager: ObservableObject {
         "onboarding.step_counter": "步骤",
         "onboarding.of": "共",
         "onboarding.back": "返回",
+        "onboarding.choose_language": "选择您的语言",
+        "onboarding.language_description": "选择您偏好的应用语言。我们一直在添加更多语言，让Money Manager对每个人都能使用。",
         "onboarding.choose_currency": "选择您的货币",
         "onboarding.currency_description": "选择最适合您财务需求和所在地的货币",
         "onboarding.starting_balance_title": "您的起始余额是多少？",
@@ -996,7 +1011,7 @@ class MultilingualContentManager: ObservableObject {
         "settings.version_history_subtitle": "查看最近的更新和更改",
         "settings.privacy_policy_subtitle": "阅读我们的隐私政策",
         "settings.terms_subtitle": "阅读我们的服务条款",
-        "settings.font_licensing_subtitle": "Trap字体家族许可信息",
+        "settings.font_licensing_subtitle": "Arvo字体家族许可信息",
         
         // Export Labels
         "export.exporting": "正在导出...",
@@ -1008,7 +1023,7 @@ class MultilingualContentManager: ObservableObject {
         "version.version": "版本",
         
         // Font Licensing
-        "font.licensing_title": "Trap字体家族许可信息",
+        "font.licensing_title": "Arvo字体家族许可信息",
         
         // Clear Data Warning
         "clear_data.warning": "这将永久删除您的所有交易、预算和贷款。此操作无法撤销。您将被要求设置新的起始余额。",
@@ -1326,7 +1341,7 @@ class MultilingualContentManager: ObservableObject {
         "settings.subtitle.version_history": "最近の更新と変更を表示",
         "settings.subtitle.privacy_policy": "プライバシーポリシーを読む",
         "settings.subtitle.terms_of_service": "利用規約を読む",
-        "settings.subtitle.font_licensing": "Trapフォントファミリーのライセンス情報",
+        "settings.subtitle.font_licensing": "Arvoフォントファミリーのライセンス情報",
         
         // Add Form CTAs
         "add.cta.add_transaction": "取引を追加",
@@ -1456,6 +1471,8 @@ class MultilingualContentManager: ObservableObject {
         "onboarding.step_counter": "ステップ",
         "onboarding.of": "/",
         "onboarding.back": "戻る",
+        "onboarding.choose_language": "言語を選択",
+        "onboarding.language_description": "アプリの言語を選択してください。Money Managerを誰でも使えるように、常に新しい言語を追加しています。",
         "onboarding.choose_currency": "通貨を選択",
         "onboarding.currency_description": "あなたの財務ニーズと所在地に最適な通貨を選択してください",
         "onboarding.starting_balance_title": "開始残高はいくらですか？",
@@ -1574,7 +1591,7 @@ class MultilingualContentManager: ObservableObject {
         "settings.version_history_subtitle": "最近の更新と変更を表示",
         "settings.privacy_policy_subtitle": "プライバシーポリシーを読む",
         "settings.terms_subtitle": "利用規約を読む",
-        "settings.font_licensing_subtitle": "Trapフォントファミリーライセンス情報",
+        "settings.font_licensing_subtitle": "Arvoフォントファミリーライセンス情報",
         
         // Export Labels
         "export.exporting": "エクスポート中...",
@@ -1586,7 +1603,7 @@ class MultilingualContentManager: ObservableObject {
         "version.version": "バージョン",
         
         // Font Licensing
-        "font.licensing_title": "Trapフォントファミリーライセンス情報",
+        "font.licensing_title": "Arvoフォントファミリーライセンス情報",
         
         // Clear Data Warning
         "clear_data.warning": "これにより、すべての取引、予算、ローンが永久に削除されます。この操作は元に戻せません。新しい開始残高を設定するよう求められます。",
@@ -2227,15 +2244,15 @@ class MultilingualContentManager: ObservableObject {
             
             最后更新：2024年9月28日
             
-            Trap字体许可信息
+            Arvo字体许可信息
             
             字体设计师
             
-            Trap字体由专业字体设计师设计，为Money Manager应用程序提供现代、专业的视觉体验。
+            Arvo字体由专业字体设计师Anton Koovit设计，为Money Manager应用程序提供现代、专业的视觉体验。
             
             使用权利
             
-            您有权在Money Manager应用程序中使用Trap字体：
+            您有权在Money Manager应用程序中使用Arvo字体：
             
             • 个人使用：完全允许
             • 商业使用：在应用程序内完全允许
@@ -2253,7 +2270,7 @@ class MultilingualContentManager: ObservableObject {
             
             版权信息
             
-            Trap字体受版权保护：
+            Arvo字体受版权保护：
             
             • 版权归字体设计师所有
             • 所有权利保留
@@ -2264,7 +2281,7 @@ class MultilingualContentManager: ObservableObject {
             
             如果您对字体使用有任何疑问，请通过应用内支持联系我们。
             
-            此许可确保Trap字体在Money Manager中的合法和适当使用。
+            此许可确保Arvo字体在Money Manager中的合法和适当使用。
             """
         case "ja-JP":
             return """
@@ -2272,15 +2289,15 @@ class MultilingualContentManager: ObservableObject {
             
             最終更新：2024年9月28日
             
-            Trapフォントライセンス情報
+            Arvoフォントライセンス情報
             
             フォントデザイナー
             
-            Trapフォントは専門のフォントデザイナーによって設計され、Money Managerアプリケーションにモダンでプロフェッショナルな視覚体験を提供します。
+            Arvoフォントは専門のフォントデザイナーAnton Koovitによって設計され、Money Managerアプリケーションにモダンでプロフェッショナルな視覚体験を提供します。
             
             使用権利
             
-            あなたはMoney Managerアプリケーション内でTrapフォントを使用する権利があります：
+            あなたはMoney Managerアプリケーション内でArvoフォントを使用する権利があります：
             
             • 個人使用：完全に許可
             • 商業使用：アプリケーション内で完全に許可
@@ -2298,7 +2315,7 @@ class MultilingualContentManager: ObservableObject {
             
             著作権情報
             
-            Trapフォントは著作権で保護されています：
+            Arvoフォントは著作権で保護されています：
             
             • 著作権はフォントデザイナーに帰属
             • すべての権利を留保
@@ -2309,7 +2326,7 @@ class MultilingualContentManager: ObservableObject {
             
             フォント使用についてご質問がございましたら、アプリ内サポートからお問い合わせください。
             
-            このライセンスにより、TrapフォントのMoney Managerでの合法的で適切な使用が保証されます。
+            このライセンスにより、ArvoフォントのMoney Managerでの合法的で適切な使用が保証されます。
             """
         default:
             return """
@@ -2317,15 +2334,15 @@ class MultilingualContentManager: ObservableObject {
             
             Last Updated: September 28, 2024
             
-            Trap Font Licensing Information
+            Arvo Font Licensing Information
             
             Font Designer
             
-            The Trap font was designed by professional font designers to provide a modern, professional visual experience for the Money Manager application.
+            The Arvo font was designed by professional font designer Anton Koovit to provide a modern, professional visual experience for the Money Manager application.
             
             Usage Rights
             
-            You have the right to use the Trap font within the Money Manager application:
+            You have the right to use the Arvo font within the Money Manager application:
             
             • Personal Use: Fully permitted
             • Commercial Use: Fully permitted within the application
@@ -2343,7 +2360,7 @@ class MultilingualContentManager: ObservableObject {
             
             Copyright Information
             
-            The Trap font is protected by copyright:
+            The Arvo font is protected by copyright:
             
             • Copyright belongs to the font designer
             • All rights reserved
@@ -2354,7 +2371,7 @@ class MultilingualContentManager: ObservableObject {
             
             If you have any questions about font usage, please contact us through in-app support.
             
-            This license ensures the legal and appropriate use of the Trap font in Money Manager.
+            This license ensures the legal and appropriate use of the Arvo font in Money Manager.
             """
         }
     }

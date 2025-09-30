@@ -1,3 +1,18 @@
+//
+//  OnboardingView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Main onboarding flow view managing user setup process. Handles step-by-step
+//  onboarding including welcome, currency selection, starting balance, notifications,
+//  and completion with smooth transitions and user guidance.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct OnboardingView: View {
@@ -6,8 +21,6 @@ struct OnboardingView: View {
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     init() {
-        // Create a temporary OnboardingManager to pass to the view model
-        // The actual onboardingManager will be injected via environmentObject
         _viewModel = StateObject(wrappedValue: OnboardingViewModel())
     }
     
@@ -21,6 +34,8 @@ struct OnboardingView: View {
             switch viewModel.currentStep {
             case .welcome:
                 WelcomeScreen(viewModel: viewModel)
+            case .language:
+                LanguageScreen(viewModel: viewModel)
             case .currency:
                 CurrencyScreen(viewModel: viewModel)
             case .startingBalance:

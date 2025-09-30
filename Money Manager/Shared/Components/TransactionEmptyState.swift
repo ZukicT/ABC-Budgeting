@@ -1,50 +1,50 @@
-import SwiftUI
+//
+//  TransactionEmptyState.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Custom empty state component for the Transaction view featuring branded
+//  illustration, encouraging messaging, and prominent call-to-action button.
+//  Provides clean onboarding experience for new users without transactions.
+//
+//  Review Date: September 29, 2025
+//
 
-/**
- * TransactionEmptyState
- * 
- * Custom empty state component for the Transaction view featuring a branded
- * illustration, encouraging messaging, and prominent call-to-action button.
- * 
- * Features:
- * - Custom branded illustration (Transaction-Empty.png)
- * - Brand yellow call-to-action button
- * - Professional messaging and typography
- * - Accessibility compliance
- * - Responsive layout
- * 
- * Last Review: 2025-01-26
- * Status: Production Ready
- */
+import SwiftUI
 
 struct TransactionEmptyState: View {
     let actionTitle: String
     let action: () -> Void
+    let imageSize: CGFloat
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     init(
         actionTitle: String? = nil,
+        imageSize: CGFloat = 200,
         action: @escaping () -> Void
     ) {
         let contentManager = MultilingualContentManager.shared
         self.actionTitle = actionTitle ?? contentManager.localizedString("cta.add_transaction")
+        self.imageSize = imageSize
         self.action = action
     }
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
             // Custom illustration
-            Image("Transaction-Empty")
+            Image("Empty-State-Image")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 200, maxHeight: 200)
+                .frame(maxWidth: imageSize, maxHeight: imageSize)
                 .accessibilityHidden(true)
             
             // Content section
             VStack(spacing: Constants.UI.Spacing.medium) {
                 Text(contentManager.localizedString("transactions.no_transactions"))
                     .font(Constants.Typography.H2.font)
-                    .fontWeight(.bold)
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
@@ -61,11 +61,10 @@ struct TransactionEmptyState: View {
             Button(action: action) {
                 Text(actionTitle)
                     .font(Constants.Typography.Button.font)
-                    .fontWeight(.bold)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(Color.black)
+                    .background(Constants.Colors.textPrimary)
                     .cornerRadius(Constants.UI.CornerRadius.primary)
             }
             .accessibilityLabel(actionTitle)

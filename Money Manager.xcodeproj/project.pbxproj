@@ -260,7 +260,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_UIAppFonts = "Trap-Black.otf Trap-Bold.otf Trap-ExtraBold.otf Trap-Light.otf Trap-Medium.otf Trap-Regular.otf Trap-SemiBold.otf";
+				INFOPLIST_KEY_UIAppFonts = "Arvo-Regular.ttf Arvo-Bold.ttf Arvo-Italic.ttf Arvo-BoldItalic.ttf";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -291,7 +291,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_UIAppFonts = "Trap-Black.otf Trap-Bold.otf Trap-ExtraBold.otf Trap-Light.otf Trap-Medium.otf Trap-Regular.otf Trap-SemiBold.otf";
+				INFOPLIST_KEY_UIAppFonts = "Arvo-Regular.ttf Arvo-Bold.ttf Arvo-Italic.ttf Arvo-BoldItalic.ttf";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

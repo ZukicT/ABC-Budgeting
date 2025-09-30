@@ -1,3 +1,18 @@
+//
+//  LoanOverviewSection.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Loan overview section displaying loan summary with payment tracking and
+//  quick navigation. Features loan statistics, payment status, and navigation
+//  to full loan management with accessibility support.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct LoanOverviewSection: View {
@@ -15,7 +30,6 @@ struct LoanOverviewSection: View {
     
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.large) {
-            // Section Header
             HStack {
                 Text(contentManager.localizedString("overview.loans_title"))
                     .font(Constants.Typography.H2.font)
@@ -23,9 +37,8 @@ struct LoanOverviewSection: View {
                 
                 Spacer()
                 
-                // See All Button
                 Button(action: {
-                    onTabSwitch(3) // Switch to Loans tab
+                    onTabSwitch(3)
                 }) {
                     Text(contentManager.localizedString("button.view_all"))
                         .font(Constants.Typography.BodySmall.font)
@@ -43,6 +56,7 @@ struct LoanOverviewSection: View {
             } else if loanViewModel.loans.isEmpty {
                 LoanEmptyState(
                     actionTitle: contentManager.localizedString("cta.add_loan"),
+                    imageSize: 80,
                     action: {
                         // TODO: Navigate to add loan
                     }
@@ -181,7 +195,7 @@ private struct LoanOverviewCard: View {
                         .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                     
-                    Text("\\(loanCount) \\(loanCount == 1 ? contentManager.localizedString(\"loan.count\") : contentManager.localizedString(\"loan.count_plural\"))")
+                    Text("\(loanCount) \(loanCount == 1 ? contentManager.localizedString("loan.count") : contentManager.localizedString("loan.count_plural"))")
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textSecondary)
                 }
@@ -193,17 +207,16 @@ private struct LoanOverviewCard: View {
                     HStack(spacing: 4) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(Constants.Colors.error)
-                            .font(.system(size: 12, weight: .medium))
+                            .font(Constants.Typography.Caption.font)
                         
                         Text("\(overdueCount) overdue")
                             .font(Constants.Typography.Caption.font)
                             .foregroundColor(Constants.Colors.error)
-                            .fontWeight(.medium)
                     }
                     .padding(.horizontal, Constants.UI.Spacing.small)
                     .padding(.vertical, 4)
                     .background(Constants.Colors.error.opacity(0.1))
-                    .cornerRadius(8)
+                    .cornerRadius(Constants.UI.CornerRadius.tertiary)
                 }
             }
             
@@ -221,7 +234,6 @@ private struct LoanOverviewCard: View {
                     Text(CurrencyUtility.formatAmount(totalRemainingBalance))
                         .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.error)
-                        .fontWeight(.bold)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                 }
@@ -236,7 +248,6 @@ private struct LoanOverviewCard: View {
                     Text(CurrencyUtility.formatAmount(totalMonthlyPayments))
                         .font(Constants.Typography.H3.font)
                         .foregroundColor(Constants.Colors.warning)
-                        .fontWeight(.bold)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                 }
@@ -253,9 +264,8 @@ private struct LoanOverviewCard: View {
                             .foregroundColor(Constants.Colors.textSecondary)
                         
                         Text(String(format: "%.1f%%", averageInterestRate))
-                            .font(Constants.Typography.Body.font)
-                            .foregroundColor(Constants.Colors.primaryOrange)
-                            .fontWeight(.bold)
+                            .font(Constants.Typography.Mono.Body.font)
+                            .foregroundColor(Constants.Colors.primaryPink)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -267,12 +277,11 @@ private struct LoanOverviewCard: View {
                             
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(String(format: "%.1f%%", highestLoan.loan.interestRate))
-                                    .font(Constants.Typography.Body.font)
+                                    .font(Constants.Typography.Mono.Body.font)
                                     .foregroundColor(Constants.Colors.error)
-                                    .fontWeight(.bold)
                                 
                                 Text(highestLoan.loan.name)
-                                    .font(.caption2)
+                                    .font(Constants.Typography.Caption.font)
                                     .foregroundColor(Constants.Colors.textTertiary)
                                     .lineLimit(1)
                             }
@@ -287,13 +296,12 @@ private struct LoanOverviewCard: View {
                         Text(contentManager.localizedString("loan.overview.debt_by_category"))
                             .font(Constants.Typography.BodySmall.font)
                             .foregroundColor(Constants.Colors.textSecondary)
-                            .fontWeight(.medium)
                         
                         VStack(spacing: 6) {
                             ForEach(Array(categoryBreakdown.prefix(3).enumerated()), id: \.offset) { index, item in
                                 HStack(spacing: Constants.UI.Spacing.small) {
                                     Circle()
-                                        .fill(Constants.Colors.primaryOrange)
+                                        .fill(Constants.Colors.primaryPink)
                                         .frame(width: 8, height: 8)
                                     
                                     Text(item.0)
@@ -305,7 +313,6 @@ private struct LoanOverviewCard: View {
                                     Text("\(Int(item.1 * 100))%")
                                         .font(Constants.Typography.Caption.font)
                                         .foregroundColor(Constants.Colors.textSecondary)
-                                        .fontWeight(.medium)
                                 }
                             }
                         }

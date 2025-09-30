@@ -1,3 +1,18 @@
+//
+//  LoanDetailView.swift
+//  Money Manager
+//
+//  Created by Development Team
+//  Copyright © 2025 Money Manager. All rights reserved.
+//
+//  Code Summary:
+//  Comprehensive detail view for displaying and managing individual loans.
+//  Features detailed loan information, edit/delete actions, payment tracking,
+//  and proper error handling with accessibility compliance.
+//
+//  Review Date: September 29, 2025
+//
+
 import SwiftUI
 
 struct LoanDetailView: View {
@@ -70,15 +85,15 @@ struct LoanDetailView: View {
                     
                     VStack(alignment: .leading, spacing: 4) {
                         // Remaining Amount - Primary focus (smaller font)
-                        Text(loan.remainingAmount.formatted(.currency(code: "USD")))
-                            .font(.system(size: 32, weight: .bold))
-                            .foregroundColor(Constants.Colors.textPrimary)
+                    Text(loan.remainingAmount.formatted(.currency(code: "USD")))
+                        .font(Constants.Typography.Mono.H1.font)
+                        .foregroundColor(Constants.Colors.textPrimary)
                             .accessibilityLabel("Remaining amount: \(loan.remainingAmount.formatted(.currency(code: "USD")))")
                             .accessibilityAddTraits(.isStaticText)
                         
                         // Loan Name - Secondary
                         Text(loan.name)
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(Constants.Typography.H3.font)
                             .foregroundColor(Constants.Colors.textPrimary)
                             .accessibilityLabel("Loan name: \(loan.name)")
                             .accessibilityAddTraits(.isStaticText)
@@ -89,7 +104,7 @@ struct LoanDetailView: View {
                 
                 // Progress Percentage - Tertiary
                 Text("\(Int(progressPercentage * 100))\(contentManager.localizedString("loan.paid_percentage"))")
-                    .font(.system(size: 16, weight: .medium))
+                    .font(Constants.Typography.Mono.Body.font)
                     .foregroundColor(loanTypeColor)
                     .accessibilityLabel("Progress: \(Int(progressPercentage * 100)) percent paid")
                     .accessibilityAddTraits(.isStaticText)
@@ -107,13 +122,13 @@ struct LoanDetailView: View {
                         Rectangle()
                             .fill(Constants.Colors.textTertiary.opacity(0.2))
                             .frame(height: 8)
-                            .cornerRadius(4)
+                            .cornerRadius(Constants.UI.CornerRadius.quaternary)
                         
                         // Progress Fill
                         Rectangle()
                             .fill(loanTypeColor)
                             .frame(width: geometry.size.width * progressPercentage, height: 8)
-                            .cornerRadius(4)
+                            .cornerRadius(Constants.UI.CornerRadius.quaternary)
                     }
                 }
                 .frame(height: 8)
@@ -126,12 +141,12 @@ struct LoanDetailView: View {
                 // Principal Amount
                 HStack {
                     Text("loan.principal".localized)
-                        .font(.system(size: 11, weight: .bold))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                         .tracking(1.0)
                     Spacer()
                     Text(loan.principalAmount.formatted(.currency(code: "USD")))
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(Constants.Typography.Mono.Body.font)
                         .foregroundColor(Constants.Colors.textPrimary)
                 }
                 .padding(.horizontal, 24)
@@ -145,12 +160,12 @@ struct LoanDetailView: View {
                 // Monthly Payment
                 HStack {
                     Text("loan.monthly_payment_caps".localized)
-                        .font(.system(size: 11, weight: .bold))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                         .tracking(1.0)
                     Spacer()
                     Text(loan.monthlyPayment.formatted(.currency(code: "USD")))
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(Constants.Typography.Mono.Body.font)
                         .foregroundColor(Constants.Colors.error)
                 }
                 .padding(.horizontal, 24)
@@ -164,12 +179,12 @@ struct LoanDetailView: View {
                 // Interest Rate
                 HStack {
                     Text("loan.interest_rate_caps".localized)
-                        .font(.system(size: 11, weight: .bold))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                         .tracking(1.0)
                     Spacer()
                     Text(String(format: "%.2f%%", loan.interestRate))
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(Constants.Typography.Mono.Body.font)
                         .foregroundColor(Constants.Colors.warning)
                 }
                 .padding(.horizontal, 24)
@@ -183,12 +198,12 @@ struct LoanDetailView: View {
                 // Due Date
                 HStack {
                     Text("loan.due_date_caps".localized)
-                        .font(.system(size: 11, weight: .bold))
+                        .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.textTertiary)
                         .tracking(1.0)
                     Spacer()
                     Text(loan.dueDate.formatted(date: .abbreviated, time: .omitted))
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(Constants.Typography.Mono.Body.font)
                         .foregroundColor(Constants.Colors.info)
                 }
                 .padding(.horizontal, 24)
@@ -205,15 +220,15 @@ struct LoanDetailView: View {
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "pencil")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                         Text("loan.edit".localized)
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                     }
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
                     .background(Constants.Colors.cleanBlack)
-                    .cornerRadius(12)
+                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                 }
                 .accessibilityLabel(contentManager.localizedString("accessibility.edit_loan"))
                 .accessibilityHint("Double tap to edit this loan")
@@ -224,15 +239,15 @@ struct LoanDetailView: View {
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "trash")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                         Text("loan.delete".localized)
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(Constants.Typography.Caption.font)
                     }
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 44)
                     .background(Constants.Colors.error)
-                    .cornerRadius(12)
+                    .cornerRadius(Constants.UI.CornerRadius.secondary)
                 }
                 .accessibilityLabel(contentManager.localizedString("accessibility.delete_loan"))
                 .accessibilityHint("Double tap to delete this loan")
@@ -301,7 +316,7 @@ private struct LoanTypeIcon: View {
                 .frame(width: size, height: size)
             
             Image(systemName: iconInfo.name)
-                .font(.system(size: size * 0.5, weight: .medium))
+                .font(Constants.Typography.Caption.font)
                 .foregroundColor(iconInfo.color)
         }
         .accessibilityElement(children: .ignore)
