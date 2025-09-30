@@ -1,6 +1,6 @@
 ---
 name: ✨ Feature Request
-about: Suggest a new feature or enhancement for Money Manager
+about: Suggest a new feature or enhancement for Nuvio
 title: '[FEATURE] '
 labels: ['enhancement', 'needs-review']
 assignees: ''
@@ -81,4 +81,4 @@ assignees: ''
 - **Platform:** [iOS, iPadOS, Both]
 
 ---
-**Thank you for helping improve Money Manager! 🚀**
+**Thank you for helping improve Nuvio! 🚀**

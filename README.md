@@ -1,10 +1,10 @@
-# Money Manager
+# Nuvio
 
 A comprehensive iOS personal finance management application built with SwiftUI.
 
 ## 📱 Overview
 
-Money Manager is a modern, intuitive iOS app designed to help users take control of their personal finances. The app provides essential budgeting, loan tracking, and financial insights in a clean, user-friendly interface built with SwiftUI.
+Nuvio is a modern, intuitive iOS app designed to help users take control of their personal finances. The app provides essential budgeting, loan tracking, and financial insights in a clean, user-friendly interface built with SwiftUI.
 
 ## ✨ Features
 
@@ -63,7 +63,7 @@ This project uses **Linear** for project management and ticket tracking:
 ## 📁 Project Structure
 
 ```
-Money Manager/
+Nuvio/
 ├── App.swift                    # Main app entry point
 ├── Application/                 # App lifecycle management
 ├── Features/                    # Feature modules
@@ -102,7 +102,7 @@ Money Manager/
 
 2. **Open in Xcode**
    ```bash
-   open "Money Manager.xcodeproj"
+   open "Nuvio.xcodeproj"
    ```
 
 3. **Build and Run**
@@ -124,10 +124,10 @@ Money Manager/
 ### Running Tests
 ```bash
 # Run all tests
-xcodebuild test -project "Money Manager.xcodeproj" -scheme "Money Manager"
+xcodebuild test -project "Nuvio.xcodeproj" -scheme "Nuvio"
 
 # Run specific test target
-xcodebuild test -project "Money Manager.xcodeproj" -scheme "Money Manager" -destination "platform=iOS Simulator,name=iPhone 17,OS=26.0"
+xcodebuild test -project "Nuvio.xcodeproj" -scheme "Nuvio" -destination "platform=iOS Simulator,name=iPhone 17,OS=26.0"
 ```
 
 ### Test Coverage

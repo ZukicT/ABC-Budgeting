@@ -88,4 +88,4 @@
 - **Component:** [UI, Data, Performance, etc.]
 
 ---
-**Thank you for contributing to Money Manager! 🚀**
+**Thank you for contributing to Nuvio! 🚀**

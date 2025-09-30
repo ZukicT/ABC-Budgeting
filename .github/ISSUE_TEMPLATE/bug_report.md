@@ -1,6 +1,6 @@
 ---
 name: 🐛 Bug Report
-about: Report a bug or unexpected behavior in Money Manager
+about: Report a bug or unexpected behavior in Nuvio
 title: '[BUG] '
 labels: ['bug', 'needs-triage']
 assignees: ''
@@ -73,4 +73,4 @@ assignees: ''
 - **Platform:** [iOS, iPadOS, Both]
 
 ---
-**Thank you for helping improve Money Manager! 🚀**
+**Thank you for helping improve Nuvio! 🚀**

@@ -1,6 +1,6 @@
 ---
 name: 📝 General Issue
-about: Ask a question, report a problem, or discuss Money Manager
+about: Ask a question, report a problem, or discuss Nuvio
 title: '[QUESTION] '
 labels: ['question', 'needs-triage']
 assignees: ''
@@ -54,4 +54,4 @@ assignees: ''
 - **Component:** [UI, Data, Navigation, etc.]
 
 ---
-**Thank you for contributing to Money Manager! 🚀**
+**Thank you for contributing to Nuvio! 🚀**
