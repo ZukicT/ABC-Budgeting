@@ -52,7 +52,7 @@ struct LoanEmptyState: View {
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
-                    .lineLimit(3)
+                    .lineLimit(2)
                     .accessibilityLabel(contentManager.localizedString("loan.empty_description"))
             }
             

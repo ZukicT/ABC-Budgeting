@@ -14,7 +14,7 @@
 //
 
 import XCTest
-@testable import Money_Manager
+@testable import Nuvio
 
 class ExportFunctionalityTests: XCTestCase {
     

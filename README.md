@@ -96,8 +96,8 @@ Nuvio/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/ZukicT/Money-Manager.git
-   cd Money-Manager
+   git clone https://github.com/ZukicT/Nuvio.git
+   cd Nuvio
    ```
 
 2. **Open in Xcode**

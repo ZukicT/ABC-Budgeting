@@ -26,6 +26,7 @@ struct OverviewView: View {
     @ObservedObject var budgetViewModel: BudgetViewModel
     @ObservedObject var transactionViewModel: TransactionViewModel
     @ObservedObject var dataClearingService: DataClearingService
+    @ObservedObject var budgetTransactionService: BudgetTransactionService
     
     var body: some View {
         NavigationStack {
@@ -89,7 +90,7 @@ struct OverviewView: View {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
-                AddView(loanViewModel: loanViewModel, budgetViewModel: budgetViewModel, transactionViewModel: transactionViewModel)
+                AddView(loanViewModel: loanViewModel, budgetViewModel: budgetViewModel, transactionViewModel: transactionViewModel, budgetTransactionService: budgetTransactionService)
             }
         }
     }
@@ -140,6 +141,7 @@ private struct OverviewContent: View {
         loanViewModel: LoanViewModel(),
         budgetViewModel: BudgetViewModel(),
         transactionViewModel: TransactionViewModel(),
-        dataClearingService: DataClearingService()
+        dataClearingService: DataClearingService(),
+        budgetTransactionService: BudgetTransactionService()
     )
 }

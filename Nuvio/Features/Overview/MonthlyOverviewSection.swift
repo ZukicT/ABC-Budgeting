@@ -78,7 +78,8 @@ private struct MonthlyOverviewCard: View {
                     format: .currency,
                     color: Constants.Colors.success,
                     monthDate: data.currentMonth.date,
-                    monthFormatter: monthFormatter
+                    monthFormatter: monthFormatter,
+                    percentage: data.currentMonth.incomePercentage
                 )
                 
                 // Monthly Expenses Card
@@ -89,7 +90,8 @@ private struct MonthlyOverviewCard: View {
                     format: .currency,
                     color: Constants.Colors.error,
                     monthDate: data.currentMonth.date,
-                    monthFormatter: monthFormatter
+                    monthFormatter: monthFormatter,
+                    percentage: data.currentMonth.expensePercentage
                 )
             }
         }
@@ -135,6 +137,7 @@ private struct MetricCard: View {
     let color: Color
     let monthDate: Date
     let monthFormatter: DateFormatter
+    let percentage: Double
     
     /// Supported value formats for display
     enum ValueFormat {
@@ -165,10 +168,9 @@ private struct MetricCard: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                 
-                // Percentage change next to value
+                // Percentage of starting balance next to value
                 TrendIndicator(
-                    currentValue: value,
-                    previousValue: previousValue,
+                    percentage: percentage,
                     color: color
                 )
                 
@@ -193,87 +195,16 @@ private struct MetricCard: View {
 }
 
 // MARK: - Trend Indicator
-/// Component showing trend direction and percentage change from previous period
+/// Component showing percentage of starting balance
 private struct TrendIndicator: View {
-    let currentValue: Double
-    let previousValue: Double
+    let percentage: Double
     let color: Color
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     
-    /// Determines trend direction based on value comparison
-    private var trendDirection: TrendDirection {
-        if currentValue > previousValue {
-            return .up
-        } else if currentValue < previousValue {
-            return .down
-        } else {
-            return .neutral
-        }
-    }
-    
-    /// Calculates percentage change from previous value
-    private var changePercentage: Double {
-        guard previousValue != 0 else { 
-            // If no previous data, show 100% for any current value > 0
-            return currentValue > 0 ? 100.0 : 0.0
-        }
-        return ((currentValue - previousValue) / abs(previousValue)) * 100
-    }
-    
-    /// Determines if we should show the trend indicator
-    private var shouldShowTrend: Bool {
-        // Show trend if we have current data, regardless of previous data
-        return currentValue > 0 || previousValue > 0
-    }
-    
     var body: some View {
-        if shouldShowTrend {
-            HStack(spacing: Constants.UI.Spacing.micro) {
-                // Trend triangle icon
-                Image(systemName: trendDirection.symbol)
-                    .font(Constants.Typography.Caption.font)
-                    .foregroundColor(color)
-                    .rotationEffect(trendDirection.rotation)
-                
-                // Percentage change text
-                Text("\(String(format: "%.1f", abs(changePercentage)))%")
-                    .font(Constants.Typography.Caption.font)
-                    .foregroundColor(color)
-            }
-        } else {
-            // Show "New" indicator when there's current data but no previous data
-            Text(contentManager.localizedString("chart.new"))
-                .font(Constants.Typography.Caption.font)
-                .foregroundColor(color)
-                .padding(.horizontal, 4)
-                .padding(.vertical, 2)
-                .background(color.opacity(0.1))
-                .cornerRadius(Constants.UI.CornerRadius.quaternary)
-        }
-    }
-    
-    /// Trend direction enum with associated symbols and colors
-    enum TrendDirection {
-        case up, down, neutral
-        
-        /// SF Symbol name for trend direction
-        var symbol: String {
-            switch self {
-            case .up: return "triangle.fill"
-            case .down: return "triangle.fill"
-            case .neutral: return "minus"
-            }
-        }
-        
-        
-        /// Rotation angle for triangle direction
-        var rotation: Angle {
-            switch self {
-            case .up: return .degrees(0)
-            case .down: return .degrees(180)
-            case .neutral: return .degrees(0)
-            }
-        }
+        Text("\(String(format: "%.1f", percentage))%")
+            .font(Constants.Typography.Caption.font)
+            .foregroundColor(color)
     }
 }
 

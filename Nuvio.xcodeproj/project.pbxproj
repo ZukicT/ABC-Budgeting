@@ -11,13 +11,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DC20FE7E2DE16A92006253C1 /* Nuvio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nuvio.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC20FE7E2DE16A92006253C1 /* Nuvio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nuvio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DC20FE802DE16A92006253C1 /* Nuvio */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Nuvio";
+			path = Nuvio;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -64,11 +64,11 @@
 			fileSystemSynchronizedGroups = (
 				DC20FE802DE16A92006253C1 /* Nuvio */,
 			);
-			name = "Nuvio";
+			name = Nuvio;
 			packageProductDependencies = (
 				DC6566902DE6C01200BAEEE0 /* AsyncAlgorithms */,
 			);
-			productName = "Nuvio";
+			productName = Nuvio;
 			productReference = DC20FE7E2DE16A92006253C1 /* Nuvio.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -272,10 +272,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tarikzukic.MoneyManager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tarikzukic.Nuvio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -303,10 +303,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tarikzukic.MoneyManager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tarikzukic.Nuvio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

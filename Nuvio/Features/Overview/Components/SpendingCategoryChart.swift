@@ -96,49 +96,64 @@ struct SpendingCategoryChart: View {
                         // Handle tap to select category
                     }
                     
-                    // Compact Legend Below Chart
-                    LazyVGrid(columns: [
-                        GridItem(.flexible()),
-                        GridItem(.flexible())
-                    ], spacing: Constants.UI.Spacing.small) {
-                        ForEach(data.prefix(6)) { item in
-                            HStack(spacing: Constants.UI.Spacing.small) {
-                                Circle()
-                                    .fill(item.color)
-                                    .frame(width: 10, height: 10)
-                                
-                                VStack(alignment: .leading, spacing: 1) {
-                                    Text(item.category)
-                                        .font(Constants.Typography.Caption.font)
-                                        .foregroundColor(Constants.Colors.textPrimary)
-                                        .lineLimit(1)
-                                    
-                                    Text("$\(Int(item.amount))")
-                                        .font(Constants.Typography.Mono.Caption.font)
-                                        .foregroundColor(Constants.Colors.textSecondary)
-                                }
-                                
-                                Spacer()
-                            }
-                            .padding(.horizontal, Constants.UI.Spacing.small)
-                            .padding(.vertical, 4)
-                            .background(Constants.Colors.primaryLightBlue.opacity(0.1))
-                            .cornerRadius(Constants.UI.CornerRadius.tertiary)
+                    // Enhanced Legend Card Below Chart
+                    VStack(alignment: .leading, spacing: Constants.UI.Spacing.medium) {
+                        // Legend Header
+                        HStack {
+                            Text(contentManager.localizedString("chart.legend_title"))
+                                .font(Constants.Typography.BodySmall.font)
+                                .foregroundColor(Constants.Colors.textPrimary)
+                            
+                            Spacer()
+                            
+                            Text("\(data.count) \(contentManager.localizedString("chart.categories"))")
+                                .font(Constants.Typography.Caption.font)
+                                .foregroundColor(Constants.Colors.textSecondary)
                         }
                         
-                        if data.count > 6 {
-                            HStack {
-                                Text("+ \(data.count - 6) more")
-                                    .font(Constants.Typography.Caption.font)
-                                    .foregroundColor(Constants.Colors.textTertiary)
-                                Spacer()
+                        // Legend Items in Grid Layout
+                        LazyVGrid(columns: [
+                            GridItem(.flexible()),
+                            GridItem(.flexible())
+                        ], spacing: Constants.UI.Spacing.small) {
+                            ForEach(data.prefix(6)) { item in
+                                HStack(spacing: Constants.UI.Spacing.small) {
+                                    Circle()
+                                        .fill(item.color)
+                                        .frame(width: 12, height: 12)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(item.category)
+                                            .font(Constants.Typography.Caption.font)
+                                            .foregroundColor(Constants.Colors.textPrimary)
+                                            .lineLimit(1)
+                                        
+                                        Text("$\(Int(item.amount))")
+                                            .font(Constants.Typography.Mono.Caption.font)
+                                            .foregroundColor(Constants.Colors.textSecondary)
+                                    }
+                                    
+                                    Spacer()
+                                }
                             }
-                            .padding(.horizontal, Constants.UI.Spacing.small)
-                            .padding(.vertical, 4)
-                            .background(Constants.Colors.primaryLightBlue.opacity(0.1))
-                            .cornerRadius(Constants.UI.CornerRadius.tertiary)
+                            
+                            if data.count > 6 {
+                                HStack {
+                                    Text("+ \(data.count - 6) \(contentManager.localizedString("chart.more_categories"))")
+                                        .font(Constants.Typography.Caption.font)
+                                        .foregroundColor(Constants.Colors.textTertiary)
+                                    Spacer()
+                                }
+                            }
                         }
                     }
+                    .padding(Constants.UI.Spacing.medium)
+                    .background(Constants.Colors.cardBackground)
+                    .cornerRadius(Constants.UI.cardCornerRadius)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Constants.UI.cardCornerRadius)
+                            .stroke(Constants.Colors.textPrimary.opacity(0.1), lineWidth: 1)
+                    )
                 }
                 
             }

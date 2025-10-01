@@ -12,7 +12,7 @@
 	"argv": [
 		"/opt/homebrew/bin/xcode-build-server"
 	],
-	"workspace": "/Users/tarikzukic/Desktop/Spookers/Money Manager/Nuvio.xcodeproj/project.xcworkspace",
+	"workspace": "/Users/tarikzukic/Desktop/Spookers/Nuvio/Nuvio.xcodeproj/project.xcworkspace",
 	"build_root": "/Users/tarikzukic/Library/Developer/Xcode/DerivedData/Nuvio-buswfxzhtqcbxpeipmuovwddfpjw",
 	"scheme": "Nuvio",
 	"kind": "xcode"

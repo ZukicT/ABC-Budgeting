@@ -261,7 +261,10 @@ struct BudgetEditView: View {
             category: category,
             allocatedAmount: allocatedValue,
             spentAmount: budget.spentAmount,
-            remainingAmount: max(0, newRemainingAmount)
+            remainingAmount: max(0, newRemainingAmount),
+            startDate: budget.startDate,
+            endDate: budget.endDate,
+            periodType: budget.periodType
         )
         
         dismiss()
@@ -279,6 +282,9 @@ struct BudgetEditView: View {
         category: "Food",
         allocatedAmount: 500.0,
         spentAmount: 320.45,
-        remainingAmount: 179.55
+        remainingAmount: 179.55,
+        startDate: Date(),
+        endDate: Calendar.current.date(byAdding: .month, value: 1, to: Date()) ?? Date(),
+        periodType: .monthly
     )))
 }

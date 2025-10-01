@@ -54,6 +54,7 @@ struct TransactionEmptyState: View {
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
+                    .lineLimit(2)
                     .accessibilityLabel(contentManager.localizedString("transactions.add_first"))
             }
             

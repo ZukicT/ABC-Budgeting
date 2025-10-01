@@ -83,20 +83,43 @@ struct Budget: Identifiable {
     let allocatedAmount: Double
     let spentAmount: Double
     let remainingAmount: Double
+    let startDate: Date
+    let endDate: Date
+    let periodType: BudgetPeriodType
     
-    init(category: String, allocatedAmount: Double, spentAmount: Double, remainingAmount: Double) {
+    init(category: String, allocatedAmount: Double, spentAmount: Double, remainingAmount: Double, startDate: Date, endDate: Date, periodType: BudgetPeriodType) {
         self.id = UUID()
         self.category = category
         self.allocatedAmount = allocatedAmount
         self.spentAmount = spentAmount
         self.remainingAmount = remainingAmount
+        self.startDate = startDate
+        self.endDate = endDate
+        self.periodType = periodType
     }
     
-    init(id: UUID, category: String, allocatedAmount: Double, spentAmount: Double, remainingAmount: Double) {
+    init(id: UUID, category: String, allocatedAmount: Double, spentAmount: Double, remainingAmount: Double, startDate: Date, endDate: Date, periodType: BudgetPeriodType) {
         self.id = id
         self.category = category
         self.allocatedAmount = allocatedAmount
         self.spentAmount = spentAmount
         self.remainingAmount = remainingAmount
+        self.startDate = startDate
+        self.endDate = endDate
+        self.periodType = periodType
+    }
+}
+
+enum BudgetPeriodType: String, CaseIterable {
+    case weekly = "weekly"
+    case monthly = "monthly"
+    case yearly = "yearly"
+    
+    var displayName: String {
+        switch self {
+        case .weekly: return "Weekly"
+        case .monthly: return "Monthly"
+        case .yearly: return "Yearly"
+        }
     }
 }

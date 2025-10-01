@@ -35,7 +35,8 @@ struct MainTabView: View {
                 loanViewModel: loanViewModel,
                 budgetViewModel: budgetViewModel,
                 transactionViewModel: transactionViewModel,
-                dataClearingService: dataClearingService
+                dataClearingService: dataClearingService,
+                budgetTransactionService: budgetTransactionService
             )
                 .tabItem {
                     Image(systemName: "house.fill")
@@ -49,7 +50,8 @@ struct MainTabView: View {
                 viewModel: transactionViewModel, 
                 dataClearingService: dataClearingService,
                 loanViewModel: loanViewModel,
-                budgetViewModel: budgetViewModel
+                budgetViewModel: budgetViewModel,
+                budgetTransactionService: budgetTransactionService
             )
                 .tabItem {
                     Image(systemName: "doc.text.fill")
@@ -63,7 +65,8 @@ struct MainTabView: View {
                 viewModel: budgetViewModel, 
                 dataClearingService: dataClearingService,
                 loanViewModel: loanViewModel,
-                transactionViewModel: transactionViewModel
+                transactionViewModel: transactionViewModel,
+                budgetTransactionService: budgetTransactionService
             )
                 .tabItem {
                     Image(systemName: "chart.bar.fill")
@@ -77,7 +80,8 @@ struct MainTabView: View {
                 viewModel: loanViewModel, 
                 dataClearingService: dataClearingService,
                 budgetViewModel: budgetViewModel,
-                transactionViewModel: transactionViewModel
+                transactionViewModel: transactionViewModel,
+                budgetTransactionService: budgetTransactionService
             )
                 .tabItem {
                     Image(systemName: "building.columns.fill")
@@ -87,28 +91,25 @@ struct MainTabView: View {
                 .accessibilityLabel("Loans tab")
                 .accessibilityHint("View and manage your loans")
         }
-        .accentColor(Constants.Colors.accentColor) // Selected tab color
+        .accentColor(Color(red: 0.341, green: 0.455, blue: 0.804)) // Brand color for selected tabs
         .preferredColorScheme(.none) // Respects system appearance
         .onAppear {
-            // Configure tab bar appearance for unselected tab colors
+            // Configure tab bar appearance safely
             DispatchQueue.main.async {
+                // Use a safer approach - only set properties that are guaranteed to work
+                let ctaButtonColor = UIColor(red: 0.247, green: 0.239, blue: 0.337, alpha: 1.0)
+                
+                // Set unselected item tint color (this is the safest approach)
+                UITabBar.appearance().unselectedItemTintColor = ctaButtonColor
+                
+                // Configure appearance with minimal settings to avoid swizzling issues
                 let appearance = UITabBarAppearance()
-                appearance.configureWithOpaqueBackground()
-                appearance.backgroundColor = UIColor.systemBackground
+                appearance.configureWithDefaultBackground()
                 
-                // Set unselected tab item colors - use our custom dark gray (#3F3D56)
-                appearance.stackedLayoutAppearance.normal.iconColor = UIColor(red: 0.247, green: 0.239, blue: 0.337, alpha: 1.0)
-                appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-                    .foregroundColor: UIColor(red: 0.247, green: 0.239, blue: 0.337, alpha: 1.0)
-                ]
+                // Only set the properties we need
+                appearance.stackedLayoutAppearance.normal.iconColor = ctaButtonColor
                 
-                // Set selected tab item colors - use our brand blue (#5774CD)
-                appearance.stackedLayoutAppearance.selected.iconColor = UIColor(red: 0.341, green: 0.455, blue: 0.804, alpha: 1.0)
-                appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-                    .foregroundColor: UIColor(red: 0.341, green: 0.455, blue: 0.804, alpha: 1.0)
-                ]
-                
-                // Apply to all appearance types
+                // Apply appearance safely
                 UITabBar.appearance().standardAppearance = appearance
                 UITabBar.appearance().scrollEdgeAppearance = appearance
             }

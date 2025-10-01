@@ -52,8 +52,8 @@ struct BudgetEmptyState: View {
                     .foregroundColor(Constants.Colors.textPrimary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
-                    .lineLimit(3)
-                    .accessibilityLabel("Create your first budget to track spending and reach your financial goals.")
+                    .lineLimit(2)
+                    .accessibilityLabel("Create your first budget to track spending")
             }
             
             Button(action: action) {

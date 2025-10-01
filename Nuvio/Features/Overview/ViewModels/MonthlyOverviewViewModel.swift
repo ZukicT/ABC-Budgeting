@@ -56,7 +56,7 @@ class MonthlyOverviewViewModel: ObservableObject {
         let previousMonthEnd = calendar.date(byAdding: .month, value: -1, to: currentMonthEnd) ?? now
         
         // Get starting balance from onboarding
-        _ = CurrencyUtility.startingBalance
+        let startingBalance = CurrencyUtility.startingBalance
         
         // Filter transactions by month
         let currentMonthTransactions = transactions.filter { transaction in
@@ -93,17 +93,27 @@ class MonthlyOverviewViewModel: ObservableObject {
             return
         }
         
+        // Calculate percentages against starting balance
+        let currentIncomePercentage = startingBalance > 0 ? (currentIncome / startingBalance) * 100 : 0
+        let currentExpensePercentage = startingBalance > 0 ? (currentExpenses / startingBalance) * 100 : 0
+        let previousIncomePercentage = startingBalance > 0 ? (previousIncome / startingBalance) * 100 : 0
+        let previousExpensePercentage = startingBalance > 0 ? (previousExpenses / startingBalance) * 100 : 0
+        
         // Create month data objects
         let currentMonthData = MonthData(
             income: currentIncome,
             expenses: currentExpenses,
-            date: currentMonthStart
+            date: currentMonthStart,
+            incomePercentage: currentIncomePercentage,
+            expensePercentage: currentExpensePercentage
         )
         
         let previousMonthData = MonthData(
             income: previousIncome,
             expenses: previousExpenses,
-            date: previousMonthStart
+            date: previousMonthStart,
+            incomePercentage: previousIncomePercentage,
+            expensePercentage: previousExpensePercentage
         )
         
         // Calculate month-over-month change (percentage) based on income
@@ -114,7 +124,8 @@ class MonthlyOverviewViewModel: ObservableObject {
         self.monthlyData = MonthlyOverviewData(
             currentMonth: currentMonthData,
             previousMonth: previousMonthData,
-            monthOverMonthChange: monthOverMonthChange
+            monthOverMonthChange: monthOverMonthChange,
+            startingBalance: startingBalance
         )
     }
 }
@@ -124,11 +135,14 @@ struct MonthlyOverviewData {
     let currentMonth: MonthData
     let previousMonth: MonthData
     let monthOverMonthChange: Double
+    let startingBalance: Double
 }
 
 struct MonthData {
     let income: Double
     let expenses: Double
     let date: Date
+    let incomePercentage: Double
+    let expensePercentage: Double
 }
 

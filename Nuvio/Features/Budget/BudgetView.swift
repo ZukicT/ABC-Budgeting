@@ -20,6 +20,7 @@ struct BudgetView: View {
     @ObservedObject var dataClearingService: DataClearingService
     @ObservedObject var loanViewModel: LoanViewModel
     @ObservedObject var transactionViewModel: TransactionViewModel
+    @ObservedObject var budgetTransactionService: BudgetTransactionService
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var showSettings = false
     @State private var showNotifications = false
@@ -51,7 +52,7 @@ struct BudgetView: View {
                 NotificationView()
             }
             .sheet(isPresented: $showAddView) {
-                AddView(loanViewModel: loanViewModel, budgetViewModel: viewModel, transactionViewModel: transactionViewModel)
+                AddView(loanViewModel: loanViewModel, budgetViewModel: viewModel, transactionViewModel: transactionViewModel, budgetTransactionService: budgetTransactionService)
             }
             .sheet(item: $selectedBudget) { budget in
                 BudgetDetailView(budgetId: budget.id, budgetViewModel: viewModel)
@@ -534,6 +535,7 @@ private struct BudgetSummaryCard: View {
         viewModel: BudgetViewModel(), 
         dataClearingService: DataClearingService(),
         loanViewModel: LoanViewModel(),
-        transactionViewModel: TransactionViewModel()
+        transactionViewModel: TransactionViewModel(),
+        budgetTransactionService: BudgetTransactionService()
     )
 }

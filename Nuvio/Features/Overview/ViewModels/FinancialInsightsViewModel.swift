@@ -16,6 +16,7 @@
 import SwiftUI
 import Charts
 
+@MainActor
 class FinancialInsightsViewModel: ObservableObject {
     @Published var incomeExpenseData: [IncomeExpenseData] = []
     @Published var categorySpendingData: [CategorySpendingData] = []
@@ -34,8 +35,9 @@ class FinancialInsightsViewModel: ObservableObject {
         
         // Note: Load real data from Core Data or transaction service
         // For now, we'll keep empty data to show empty states
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.isLoading = false
+        Task { @MainActor in
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+            isLoading = false
             // Keep data empty to demonstrate empty states
             // In a real implementation, this would load from Core Data
         }

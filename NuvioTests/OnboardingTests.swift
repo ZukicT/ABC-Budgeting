@@ -15,7 +15,7 @@
 
 import XCTest
 import SwiftUI
-@testable import Money_Manager
+@testable import Nuvio
 
 class OnboardingTests: XCTestCase {
     

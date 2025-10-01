@@ -20,6 +20,7 @@ struct TransactionView: View {
     @ObservedObject var dataClearingService: DataClearingService
     @ObservedObject var loanViewModel: LoanViewModel
     @ObservedObject var budgetViewModel: BudgetViewModel
+    @ObservedObject var budgetTransactionService: BudgetTransactionService
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var selectedCategory: String = ""
     @State private var showSettings = false
@@ -104,7 +105,8 @@ struct TransactionView: View {
                 AddView(
                     loanViewModel: loanViewModel, 
                     budgetViewModel: budgetViewModel,
-                    transactionViewModel: viewModel
+                    transactionViewModel: viewModel,
+                    budgetTransactionService: budgetTransactionService
                 )
             }
             .sheet(item: $selectedTransaction) { transaction in
@@ -321,6 +323,7 @@ private struct MonthHeader: View {
         viewModel: TransactionViewModel(), 
         dataClearingService: DataClearingService(),
         loanViewModel: LoanViewModel(),
-        budgetViewModel: BudgetViewModel()
+        budgetViewModel: BudgetViewModel(),
+        budgetTransactionService: BudgetTransactionService()
     )
 }

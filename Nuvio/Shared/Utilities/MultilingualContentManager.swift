@@ -16,7 +16,7 @@
 import Foundation
 
 class MultilingualContentManager: ObservableObject {
-    static let shared = MultilingualContentManager()
+    nonisolated(unsafe) static let shared = MultilingualContentManager()
     
     @Published var currentLanguage: String = "en-US"
     
@@ -78,7 +78,7 @@ class MultilingualContentManager: ObservableObject {
         "transactions.filter": "Filter",
         "transactions.all": "All",
         "transactions.no_transactions": "No transactions yet",
-        "transactions.add_first": "Add your first transaction to get started",
+        "transactions.add_first": "Add your first transaction",
         "transactions.loading": "Loading transactions...",
         
         // Budget Tab
@@ -453,7 +453,7 @@ class MultilingualContentManager: ObservableObject {
         
         // Budget Empty State
         "budget.empty_title": "No Budgets Yet",
-        "budget.empty_description": "Create your first budget to track spending and reach your financial goals.",
+        "budget.empty_description": "Create your first budget to track spending",
         
         // Budgets Overview Section
         "budgets_overview.title": "Budgets Overview",
@@ -517,6 +517,11 @@ class MultilingualContentManager: ObservableObject {
         "chart.up_arrow": "▲",
         "chart.down_arrow": "▼",
         
+        // Chart Legend
+        "chart.legend_title": "Spending Categories",
+        "chart.categories": "categories",
+        "chart.more_categories": "more",
+        
         // Budget Labels
         "budget.budget": "Budget",
         "budget.spent_colon": "Spent:",
@@ -566,7 +571,7 @@ class MultilingualContentManager: ObservableObject {
         
         // Loan Empty State
         "loan.empty_title": "No Loans Yet",
-        "loan.empty_description": "Add your first loan to start tracking your debt.",
+        "loan.empty_description": "Add your first loan to track debt",
         
         // Transaction Edit
         "transaction.edit_title": "Edit Transaction",
@@ -688,7 +693,7 @@ class MultilingualContentManager: ObservableObject {
         "transactions.filter": "筛选",
         "transactions.all": "全部",
         "transactions.no_transactions": "暂无交易",
-        "transactions.add_first": "添加您的第一笔交易开始使用",
+        "transactions.add_first": "添加您的第一笔交易",
         "transactions.loading": "正在加载交易...",
         
         // Budget Tab
@@ -1079,7 +1084,7 @@ class MultilingualContentManager: ObservableObject {
         
         // Budget Empty State
         "budget.empty_title": "暂无预算",
-        "budget.empty_description": "创建您的第一个预算来跟踪支出并实现财务目标。",
+        "budget.empty_description": "创建您的第一个预算来跟踪支出",
         
         // Budgets Overview Section
         "budgets_overview.title": "预算概览",
@@ -1144,9 +1149,14 @@ class MultilingualContentManager: ObservableObject {
         "chart.up_arrow": "▲",
         "chart.down_arrow": "▼",
         
+        // Chart Legend
+        "chart.legend_title": "支出类别",
+        "chart.categories": "个类别",
+        "chart.more_categories": "更多",
+        
         // Loan Empty State
         "loan.empty_title": "暂无贷款",
-        "loan.empty_description": "添加您的第一笔贷款开始跟踪债务。",
+        "loan.empty_description": "添加您的第一笔贷款来跟踪债务",
         
         // Transaction Edit
         "transaction.edit_title": "编辑交易",
@@ -1268,7 +1278,7 @@ class MultilingualContentManager: ObservableObject {
         "transactions.filter": "フィルター",
         "transactions.all": "すべて",
         "transactions.no_transactions": "取引がありません",
-        "transactions.add_first": "最初の取引を追加して開始",
+        "transactions.add_first": "最初の取引を追加",
         "transactions.loading": "取引を読み込み中...",
         
         // Budget Tab
@@ -1659,7 +1669,7 @@ class MultilingualContentManager: ObservableObject {
         
         // Budget Empty State
         "budget.empty_title": "予算がありません",
-        "budget.empty_description": "支出を追跡し、財務目標を達成するために最初の予算を作成してください。",
+        "budget.empty_description": "支出を追跡する最初の予算を作成",
         
         // Budgets Overview Section
         "budgets_overview.title": "予算概要",
@@ -1724,9 +1734,14 @@ class MultilingualContentManager: ObservableObject {
         "chart.up_arrow": "▲",
         "chart.down_arrow": "▼",
         
+        // Chart Legend
+        "chart.legend_title": "支出カテゴリ",
+        "chart.categories": "カテゴリ",
+        "chart.more_categories": "その他",
+        
         // Loan Empty State
         "loan.empty_title": "ローンがありません",
-        "loan.empty_description": "最初のローンを追加して債務の追跡を開始してください。",
+        "loan.empty_description": "最初のローンを追加して債務を追跡",
         
         // Transaction Edit
         "transaction.edit_title": "取引を編集",

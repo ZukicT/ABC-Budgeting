@@ -43,6 +43,7 @@ struct HapticFeedbackManager {
     
     // MARK: - Safe Haptic Feedback
     
+    @MainActor
     static func impact(_ type: FeedbackType) {
         // Check if haptic feedback is available
         guard UIDevice.current.userInterfaceIdiom == .phone else {
@@ -61,32 +62,39 @@ struct HapticFeedbackManager {
     
     // MARK: - Convenience Methods
     
+    @MainActor
     static func light() {
         impact(.light)
     }
     
+    @MainActor
     static func medium() {
         impact(.medium)
     }
     
+    @MainActor
     static func heavy() {
         impact(.heavy)
     }
     
+    @MainActor
     static func success() {
         impact(.success)
     }
     
+    @MainActor
     static func warning() {
         impact(.warning)
     }
     
+    @MainActor
     static func error() {
         impact(.error)
     }
     
     // MARK: - Selection Feedback
     
+    @MainActor
     static func selection() {
         guard UIDevice.current.userInterfaceIdiom == .phone else { return }
         
@@ -96,6 +104,7 @@ struct HapticFeedbackManager {
     
     // MARK: - Notification Feedback
     
+    @MainActor
     static func notification(_ type: UINotificationFeedbackGenerator.FeedbackType) {
         guard UIDevice.current.userInterfaceIdiom == .phone else { return }
         

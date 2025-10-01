@@ -22,6 +22,7 @@ struct AddView: View {
     @ObservedObject var loanViewModel: LoanViewModel
     @ObservedObject var budgetViewModel: BudgetViewModel
     @ObservedObject var transactionViewModel: TransactionViewModel
+    @ObservedObject var budgetTransactionService: BudgetTransactionService
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     
     enum AddType: String, CaseIterable {
@@ -87,7 +88,7 @@ struct AddView: View {
                         case .transaction:
                             TransactionForm(transactionViewModel: transactionViewModel)
                         case .budget:
-                            BudgetForm(budgetViewModel: budgetViewModel)
+                            BudgetForm(budgetViewModel: budgetViewModel, budgetTransactionService: budgetTransactionService)
                         case .loan:
                             LoanForm(loanViewModel: loanViewModel)
                         }
@@ -407,7 +408,7 @@ private struct TransactionForm: View {
             .animation(.easeInOut(duration: 0.3), value: showingSuccess)
             
             if showingSuccess {
-                Text(contentManager.localizedString("success.transaction_added"))
+                Text(contentManager.localizedString("add.success.transaction_added"))
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.accentColor)
                     .transition(.opacity)
@@ -438,7 +439,7 @@ private struct TransactionForm: View {
             showingSuccess = true
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             withAnimation(.easeInOut(duration: 0.3)) {
                 showingSuccess = false
                 isSubmitting = false
@@ -464,6 +465,7 @@ private struct TransactionForm: View {
 // MARK: - Budget Form
 private struct BudgetForm: View {
     @ObservedObject var budgetViewModel: BudgetViewModel
+    @ObservedObject var budgetTransactionService: BudgetTransactionService
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var contentManager = MultilingualContentManager.shared
     @State private var category = "Food"
@@ -591,7 +593,7 @@ private struct BudgetForm: View {
             .animation(.easeInOut(duration: 0.3), value: showingSuccess)
             
             if showingSuccess {
-                Text(contentManager.localizedString("success.budget_created"))
+                Text(contentManager.localizedString("add.success.budget_created"))
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.accentColor)
                     .transition(.opacity)
@@ -606,13 +608,21 @@ private struct BudgetForm: View {
         
         HapticFeedbackManager.medium()
         
-        // Add the budget to the view model
+        // Map period string to BudgetPeriodType
+        let periodType: BudgetPeriodType = {
+            switch period {
+            case contentManager.localizedString("add.period.weekly"): return .weekly
+            case contentManager.localizedString("add.period.yearly"): return .yearly
+            default: return .monthly
+            }
+        }()
+        
+        // Create budget with historical transaction calculation
         let allocatedAmount = Double(amount) ?? 0.0
-        let newBudget = Budget(
+        let newBudget = budgetTransactionService.createBudgetWithHistoricalData(
             category: category,
             allocatedAmount: allocatedAmount,
-            spentAmount: 0.0, // New budgets start with 0 spent
-            remainingAmount: allocatedAmount // Remaining = allocated - spent
+            periodType: periodType
         )
         
         budgetViewModel.addBudget(newBudget)
@@ -621,7 +631,7 @@ private struct BudgetForm: View {
             showingSuccess = true
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             withAnimation(.easeInOut(duration: 0.3)) {
                 showingSuccess = false
                 isSubmitting = false
@@ -966,7 +976,7 @@ private struct LoanForm: View {
             .animation(.easeInOut(duration: 0.3), value: showingSuccess)
             
             if showingSuccess {
-                Text(loanAction == .addNew ? "Loan added successfully!" : "Payment marked successfully!")
+                Text(loanAction == .addNew ? contentManager.localizedString("add.success.loan_added") : contentManager.localizedString("add.success.payment_marked"))
                     .font(Constants.Typography.Caption.font)
                     .foregroundColor(Constants.Colors.accentColor)
                     .transition(.opacity)
@@ -1079,7 +1089,7 @@ private struct LoanForm: View {
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             withAnimation(.easeInOut(duration: 0.3)) {
                 showingSuccess = false
                 isSubmitting = false
@@ -1101,5 +1111,5 @@ private struct LoanForm: View {
 }
 
 #Preview {
-    AddView(loanViewModel: LoanViewModel(), budgetViewModel: BudgetViewModel(), transactionViewModel: TransactionViewModel())
+    AddView(loanViewModel: LoanViewModel(), budgetViewModel: BudgetViewModel(), transactionViewModel: TransactionViewModel(), budgetTransactionService: BudgetTransactionService())
 }

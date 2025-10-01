@@ -118,7 +118,7 @@ struct BalanceChartView: View {
         case .positive:
             return Constants.Colors.success // Blue
         case .negative:
-            return Constants.Onboarding.yellowHex // Brand Yellow
+            return Constants.Colors.primaryPink // Brand Pink
         case .neutral:
             return Constants.Colors.textSecondary
         }
@@ -226,6 +226,26 @@ struct BalanceChartView: View {
             .reduce(0) { $0 + abs($1.amount) }
     }
     
+    /// Calculates the starting balance for the selected time period
+    private func getStartingBalanceForPeriod() -> Double {
+        let dateRange = getDateRange(for: selectedTimeRange)
+        let periodStartDate = dateRange.start
+        
+        // Calculate balance at the start of the selected period
+        let transactionsBeforePeriod = transactionViewModel.transactions
+            .filter { $0.date < periodStartDate }
+        
+        let incomeBeforePeriod = transactionsBeforePeriod
+            .filter { $0.amount > 0 }
+            .reduce(0) { $0 + $1.amount }
+        
+        let expensesBeforePeriod = transactionsBeforePeriod
+            .filter { $0.amount < 0 }
+            .reduce(0) { $0 + abs($1.amount) }
+        
+        return CurrencyUtility.startingBalance + incomeBeforePeriod - expensesBeforePeriod
+    }
+    
     var body: some View {
         VStack(spacing: Constants.UI.Spacing.small) {
             headerSection
@@ -285,15 +305,11 @@ struct BalanceChartView: View {
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.success)
                     
-                    if getPreviousPeriodIncome() == 0 && currentPeriodIncome > 0 {
-                        Text(contentManager.localizedString("chart.new"))
-                            .font(Constants.Typography.Caption.font)
-                            .foregroundColor(Constants.Colors.success)
-                    } else {
-                        Text("(\(incomeChangePercentage > 0 ? "+" : "")\(String(format: "%.1f", incomeChangePercentage))%)")
-                            .font(Constants.Typography.Caption.font)
-                            .foregroundColor(Constants.Colors.success)
-                    }
+                    let periodStartingBalance = getStartingBalanceForPeriod()
+                    let incomePercentageOfStartingBalance = periodStartingBalance > 0 ? (currentPeriodIncome / periodStartingBalance) * 100 : 0
+                    Text("(\(String(format: "%.1f", incomePercentageOfStartingBalance))%)")
+                        .font(Constants.Typography.Caption.font)
+                        .foregroundColor(Constants.Colors.success)
                     
                     Text("\(currentPeriodLabel) \(contentManager.localizedString("income.label"))")
                         .font(Constants.Typography.Caption.font)
@@ -313,15 +329,11 @@ struct BalanceChartView: View {
                         .font(Constants.Typography.Caption.font)
                         .foregroundColor(Constants.Colors.error)
                     
-                    if getPreviousPeriodExpenses() == 0 && currentPeriodExpenses > 0 {
-                        Text(contentManager.localizedString("chart.new"))
-                            .font(Constants.Typography.Caption.font)
-                            .foregroundColor(Constants.Colors.error)
-                    } else {
-                        Text("(\(expenseChangePercentage > 0 ? "+" : "")\(String(format: "%.1f", expenseChangePercentage))%)")
-                            .font(Constants.Typography.Caption.font)
-                            .foregroundColor(Constants.Colors.error)
-                    }
+                    let periodStartingBalance = getStartingBalanceForPeriod()
+                    let expensePercentageOfStartingBalance = periodStartingBalance > 0 ? (currentPeriodExpenses / periodStartingBalance) * 100 : 0
+                    Text("(\(String(format: "%.1f", expensePercentageOfStartingBalance))%)")
+                        .font(Constants.Typography.Caption.font)
+                        .foregroundColor(Constants.Colors.error)
                     
                     Text("\(currentPeriodLabel) \(contentManager.localizedString("expense.label"))")
                         .font(Constants.Typography.Caption.font)
@@ -488,11 +500,11 @@ struct BalanceChartView: View {
             } else if isAboveBaseline == currentAboveBaseline {
                 currentSegment.append(dataPoint)
             } else {
-                if !currentSegment.isEmpty {
+                if !currentSegment.isEmpty, let aboveBaseline = currentAboveBaseline {
                     segments.append(ChartSegment(
                         data: currentSegment,
                         color: lineColor,
-                        isAboveBaseline: currentAboveBaseline!
+                        isAboveBaseline: aboveBaseline
                     ))
                 }
                 currentSegment = [dataPoint]
@@ -500,11 +512,11 @@ struct BalanceChartView: View {
             }
         }
         
-        if !currentSegment.isEmpty {
+        if !currentSegment.isEmpty, let aboveBaseline = currentAboveBaseline {
             segments.append(ChartSegment(
                 data: currentSegment,
                 color: lineColor,
-                isAboveBaseline: currentAboveBaseline!
+                isAboveBaseline: aboveBaseline
             ))
         }
         
@@ -645,14 +657,15 @@ struct BalanceChartView: View {
     private func refreshChartData() {
         isLoading = true
         
-        // Use background queue for heavy calculations
-        DispatchQueue.global(qos: .userInitiated).async {
-            // Pre-calculate chart data on background thread
-            let _ = self.chartData
+        // Use Task for proper Swift 6 concurrency
+        Task { @MainActor in
+            // Pre-calculate chart data on main actor
+            let _ = chartData
             
-            DispatchQueue.main.async {
-                self.isLoading = false
-            }
+            // Simulate some processing time if needed
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+            
+            isLoading = false
         }
     }
     

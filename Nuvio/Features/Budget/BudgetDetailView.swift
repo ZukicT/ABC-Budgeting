@@ -49,7 +49,7 @@ struct BudgetDetailView: View {
     
     private var budgetBinding: Binding<Budget> {
         Binding(
-            get: { budget ?? Budget(category: "Unknown", allocatedAmount: 0, spentAmount: 0, remainingAmount: 0) },
+            get: { budget ?? Budget(category: "Unknown", allocatedAmount: 0, spentAmount: 0, remainingAmount: 0, startDate: Date(), endDate: Date(), periodType: .monthly) },
             set: { updatedBudget in
                 budgetViewModel.updateBudget(updatedBudget)
             }
@@ -272,7 +272,15 @@ struct BudgetDetailView: View {
 
 #Preview {
     let viewModel = BudgetViewModel()
-    let sampleBudget = Budget(category: "Food", allocatedAmount: 500.0, spentAmount: 320.45, remainingAmount: 179.55)
+    let sampleBudget = Budget(
+        category: "Food", 
+        allocatedAmount: 500.0, 
+        spentAmount: 320.45, 
+        remainingAmount: 179.55,
+        startDate: Date(),
+        endDate: Calendar.current.date(byAdding: .month, value: 1, to: Date()) ?? Date(),
+        periodType: .monthly
+    )
     viewModel.addBudget(sampleBudget)
     
     return BudgetDetailView(

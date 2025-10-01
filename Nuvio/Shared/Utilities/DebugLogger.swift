@@ -42,15 +42,15 @@ struct DebugLogger {
     
     // MARK: - Rate Limiting
     
-    private static var logCounts: [String: Int] = [:]
-    private static var lastLogTimes: [String: Date] = [:]
+    nonisolated(unsafe) private static var logCounts: [String: Int] = [:]
+    nonisolated(unsafe) private static var lastLogTimes: [String: Date] = [:]
     private static let maxLogsPerMinute = 10
     private static let logCooldown: TimeInterval = 60.0 // 1 minute
     
     // MARK: - Configuration
     
     private static let isDebugMode = false // Set to false for production
-    private static let subsystem = "com.moneymanager.app"
+    private static let subsystem = "com.nuvio.app"
     
     // MARK: - Logging Methods
     
